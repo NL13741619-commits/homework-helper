@@ -30,6 +30,8 @@
     button:disabled { background: #94a3b8; }
     .btn-secondary { background: #64748b; margin-top: 8px; }
     .btn-outline { background: white; color: #2563eb; border: 2px solid #2563eb; }
+    .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-row button { flex: 1; padding: 10px; font-size: 0.9rem; }
     .error { background: #fef2f2; color: #b91c1c; padding: 12px; border-radius: 10px; margin-bottom: 12px; display: none; }
     .error.show { display: block; }
     .hidden { display: none; }
@@ -38,6 +40,11 @@
     .history-item:last-child { border-bottom: none; }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; background: #e0f2fe; color: #0369a1; }
     .result-box { white-space: pre-wrap; background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 8px; font-size: 0.9rem; line-height: 1.5; }
+    .chat-box { margin-top: 12px; background: #f8fafc; border-radius: 10px; padding: 12px; }
+    .chat-msg { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.4; }
+    .chat-msg.user { color: #1d4ed8; }
+    .chat-msg.ai { color: #166534; }
+    .note { font-size: 0.8rem; color: #64748b; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -74,12 +81,35 @@
           <option value="english">英文</option>
           <option value="chemistry">化學</option>
         </select>
+                <label>選擇老師</label>
+        <select id="teacher">
+          <option value="gemini">📷 拍照老師（Gemini）</option>
+          <option value="groq">✍️ 文字老師（Groq）</option>
+          <option value="auto">🔄 自動切換</option>
+        </select>
         <label>題目說明（選填）</label>
         <textarea id="question" rows="2" placeholder="可簡單描述這次作業"></textarea>
         <label>上傳作業照片</label>
         <input type="file" id="fileInput" accept="image/*" />
         <div class="error" id="mainError"></div>
         <button id="submitBtn">送出批改</button>
+
+        <div id="voicePanel" class="hidden">
+          <div class="btn-row">
+            <button type="button" id="btnSpeak">🔊 朗讀</button>
+            <button type="button" id="btnPause" class="btn-secondary">⏸ 暫停</button>
+            <button type="button" id="btnStop" class="btn-secondary">🔇 停止</button>
+          </div>
+          <p class="note">批改完成會自動朗讀，可暫停或停止</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px;">針對這次作業追問</h3>
+        <div id="chatLog"></div>
+        <textarea id="chatInput" rows="2" placeholder="例如：為什麼這題要先通分？"></textarea>
+        <button id="chatBtn">送出問題</button>
+        <p class="note">追問會再呼叫 AI，會使用額度</p>
       </div>
 
       <div class="card">
@@ -88,11 +118,10 @@
       </div>
     </div>
   </div>
-
-  <script>
+    <script>
     const SUPABASE_URL = 'https://svtkpdmqemidlasowqew.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf';
-    const GEMINI_API_KEY = 'AQ.Ab8RN6JCJbxN1u8FBULsqO_oHt4PTkrcNSFMMm1WzLP9srZo7w';
+    const GEMINI_API_KEY = 'AQ.Ab8RN6LVykUZ2-HBTsRwi0YN5Gl3ZQrFGl8P596Go0l0b7k_4A';
 
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -103,9 +132,14 @@
     const mainError = document.getElementById('mainError');
     const userEmail = document.getElementById('userEmail');
     const historyList = document.getElementById('historyList');
+    const voicePanel = document.getElementById('voicePanel');
+    const chatLog = document.getElementById('chatLog');
 
     const levelMap = { elementary: '國小', junior: '國中', senior: '高中' };
     const subjectMap = { math: '數學', english: '英文', chemistry: '化學' };
+
+    let lastResult = '';
+    let lastContext = '';
 
     async function checkUser() {
       const { data: { user } } = await supabaseClient.auth.getUser();
@@ -165,48 +199,100 @@
       });
     }
 
-    async function callGemini(level, subject, question, imageBase64) {
+    function speakText(text) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'zh-TW';
+      u.rate = 1;
+      window.speechSynthesis.speak(u);
+    }
+
+    document.getElementById('btnSpeak').onclick = function() {
+      if (lastResult) speakText(lastResult);
+    };
+    document.getElementById('btnPause').onclick = function() {
+      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        window.speechSynthesis.pause();
+      } else if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    };
+    document.getElementById('btnStop').onclick = function() {
+      window.speechSynthesis.cancel();
+    };
+
+    async function callGeminiText(prompt) {
+      const body = {
+        contents: [{ parts: [{ text: prompt }] }]
+      };
+      const res = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + GEMINI_API_KEY,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        }
+      );
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error('AI 呼叫失敗：' + res.status + ' ' + errText);
+      }
+      const data = await res.json();
+      return data.candidates[0].content.parts[0].text;
+    }
+
+    async function callGeminiVision(level, subject, question, imageBase64) {
       const levelText = levelMap[level] || level;
       const subjectText = subjectMap[subject] || subject;
-
-      const prompt = '你是一位有耐心的台灣家長輔助老師。請根據作業照片批改，並用家長也看得懂的方式解說。\n\n學段：' + levelText + '\n科目：' + subjectText + '\n題目說明：' + (question || '（無額外說明）') + '\n\n請依這個格式回答：\n【評分】（給分數或等級）\n【錯誤指出】（哪裡有問題）\n【正確做法】（分步驟說明）\n【給家長的說明】（用簡單的話解釋，讓家長能教小孩）\n【給孩子的建議】（鼓勵 + 具體改進）';
+      const prompt = '你是一位有耐心的台灣家長輔助老師。請根據作業照片批改，並用家長也看得懂的方式解說。\n\n學段：' + levelText + '\n科目：' + subjectText + '\n題目說明：' + (question || '（無額外說明）') + '\n\n請依這個格式回答：\n【評分】\n【錯誤指出】\n【正確做法】\n【給家長的說明】\n【給孩子的建議】';
 
       const base64Data = imageBase64.split(',')[1];
       const mimeType = imageBase64.split(';')[0].split(':')[1];
-
       const body = {
         contents: [{
           parts: [
             { text: prompt },
-            {
-              inline_data: {
-                mime_type: mimeType,
-                data: base64Data
-              }
-            }
+            { inline_data: { mime_type: mimeType, data: base64Data } }
           ]
         }]
       };
 
       const res = await fetch(
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent',
-  {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': GEMINI_API_KEY
-    },
-    body: JSON.stringify(body)
-  }
-);
-
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + GEMINI_API_KEY,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        }
+      );
       if (!res.ok) {
         const errText = await res.text();
         throw new Error('AI 呼叫失敗：' + res.status + ' ' + errText);
       }
-
       const data = await res.json();
       return data.candidates[0].content.parts[0].text;
+    }
+          const GROQ_API_KEY = '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';
+
+    async function callGroqText(prompt) {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + GROQ_API_KEY
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error('Groq 失敗：' + res.status + ' ' + errText);
+      }
+      const data = await res.json();
+      return data.choices[0].message.content;
     }
 
     document.getElementById('submitBtn').onclick = async function() {
@@ -215,10 +301,16 @@
       const subject = document.getElementById('subject').value;
       const question = document.getElementById('question').value;
       const file = document.getElementById('fileInput').files[0];
+      const teacher = document.getElementById('teacher') ? document.getElementById('teacher').value : 'gemini';
       const btn = document.getElementById('submitBtn');
 
-      if (!file) {
-        mainError.textContent = '請先選擇作業照片';
+      if (!file && teacher === 'gemini') {
+        mainError.textContent = '拍照老師需要上傳作業照片';
+        mainError.classList.add('show');
+        return;
+      }
+      if (teacher === 'groq' && !question.trim()) {
+        mainError.textContent = '文字老師請在「題目說明」打出題目內容';
         mainError.classList.add('show');
         return;
       }
@@ -230,21 +322,44 @@
       btn.textContent = 'AI 批改中，請稍候...';
 
       try {
-        const imageBase64 = await fileToBase64(file);
-        const aiResult = await callGemini(level, subject, question, imageBase64);
+        let aiResult = '';
+        const levelText = levelMap[level] || level;
+        const subjectText = subjectMap[subject] || subject;
+        const basePrompt = '你是一位有耐心的台灣家長輔助老師。學段：' + levelText + '，科目：' + subjectText + '。題目：' + (question || '見照片') + '\n請依格式回答：\n【評分】\n【錯誤指出】\n【正確做法】\n【給家長的說明】\n【給孩子的建議】';
+
+        if (teacher === 'gemini' || teacher === 'auto') {
+          try {
+            if (!file) throw new Error('無照片');
+            const imageBase64 = await fileToBase64(file);
+            aiResult = await callGeminiVision(level, subject, question, imageBase64);
+          } catch (e) {
+            if (teacher === 'auto') {
+              aiResult = await callGroqText(basePrompt + '\n（目前為文字模式備援）');
+            } else {
+              throw e;
+            }
+          }
+        } else {
+          aiResult = await callGroqText(basePrompt);
+        }
+
+        lastResult = aiResult;
+        lastContext = '學段：' + levelText + '，科目：' + subjectText + '，題目：' + (question || '無') + '\n批改結果：\n' + aiResult;
 
         const { error } = await supabaseClient.from('homeworks').insert({
           user_id: user.id,
           subject: subject,
           level: level,
           question: question,
-          image_url: file.name,
+          image_url: file ? file.name : '',
           result: aiResult
         });
-
         if (error) throw error;
 
-        alert('批改完成！');
+        voicePanel.classList.remove('hidden');
+        speakText(aiResult);
+        chatLog.innerHTML = '';
+        alert('批改完成！正在朗讀解說');
         document.getElementById('fileInput').value = '';
         document.getElementById('question').value = '';
         loadHistory();
@@ -258,10 +373,40 @@
       }
     };
 
+    document.getElementById('chatBtn').onclick = async function() {
+      const q = document.getElementById('chatInput').value.trim();
+      if (!q) return;
+      if (!lastContext) {
+        alert('請先完成一次作業批改，再追問');
+        return;
+      }
+      const btn = document.getElementById('chatBtn');
+      btn.disabled = true;
+      btn.textContent = '思考中...';
+      chatLog.innerHTML += '<div class="chat-msg user">家長：' + q + '</div>';
+
+      try {
+        const prompt = '你是台灣家長輔助老師。根據以下作業批改內容回答家長追問，用簡單清楚的話。\n\n' + lastContext + '\n\n家長問題：' + q;
+        let ans = '';
+        try {
+          ans = await callGeminiText(prompt);
+        } catch (e) {
+          ans = await callGroqText(prompt);
+        }
+        chatLog.innerHTML += '<div class="chat-msg ai">老師：' + ans + '</div>';
+        speakText(ans);
+        document.getElementById('chatInput').value = '';
+      } catch (err) {
+        chatLog.innerHTML += '<div class="chat-msg ai">錯誤：' + (err.message || '失敗') + '</div>';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '送出問題';
+      }
+    };
+
     async function loadHistory() {
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) return;
-
       const { data, error } = await supabaseClient
         .from('homeworks')
         .select('*')
