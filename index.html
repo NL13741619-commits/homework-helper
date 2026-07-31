@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>作業輔助系統</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      background: #f1f5f9; color: #1e293b; min-height: 100vh; padding: 16px;
+    }
+    .container { max-width: 480px; margin: 0 auto; }
+    h1 { text-align: center; color: #2563eb; margin-bottom: 8px; font-size: 1.5rem; }
+    .subtitle { text-align: center; color: #64748b; margin-bottom: 24px; font-size: 0.9rem; }
+    .card {
+      background: white; border-radius: 16px; padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 16px;
+    }
+    label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; padding: 12px; border: 1px solid #e2e8f0;
+      border-radius: 10px; font-size: 1rem; margin-bottom: 14px;
+    }
+    button {
+      width: 100%; padding: 14px; border: none; border-radius: 12px;
+      background: #2563eb; color: white; font-size: 1rem; font-weight: 600; cursor: pointer;
+    }
+    button:disabled { background: #94a3b8; }
+    .btn-secondary { background: #64748b; margin-top: 8px; }
+    .btn-outline { background: white; color: #2563eb; border: 2px solid #2563eb; }
+    .error { background: #fef2f2; color: #b91c1c; padding: 12px; border-radius: 10px; margin-bottom: 12px; display: none; }
+    .error.show { display: block; }
+    .hidden { display: none; }
+    .user-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 0.9rem; color: #64748b; }
+    .history-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
+    .history-item:last-child { border-bottom: none; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; background: #e0f2fe; color: #0369a1; }
+    .result-box { white-space: pre-wrap; background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 8px; font-size: 0.9rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📚 作業輔助系統</h1>
+    <p class="subtitle">國小～高中 · 數學 / 英文 / 化學</p>
+
+    <div id="authSection" class="card">
+      <div class="error" id="authError"></div>
+      <label>Email</label>
+      <input type="email" id="email" placeholder="你的 Email" />
+      <label>密碼</label>
+      <input type="password" id="password" placeholder="密碼（至少6碼）" />
+      <button id="loginBtn">登入</button>
+      <button id="signupBtn" class="btn-secondary">註冊新帳號</button>
+    </div>
+
+    <div id="mainSection" class="hidden">
+      <div class="user-bar">
+        <span id="userEmail"></span>
+        <button id="logoutBtn" class="btn-outline" style="width:auto;padding:6px 12px;font-size:0.85rem;">登出</button>
+      </div>
+
+      <div class="card">
+        <label>學段</label>
+        <select id="level">
+          <option value="elementary">國小</option>
+          <option value="junior">國中</option>
+          <option value="senior">高中</option>
+        </select>
+        <label>科目</label>
+        <select id="subject">
+          <option value="math">數學</option>
+          <option value="english">英文</option>
+          <option value="chemistry">化學</option>
+        </select>
+        <label>題目說明（選填）</label>
+        <textarea id="question" rows="2" placeholder="可簡單描述這次作業"></textarea>
+        <label>上傳作業照片</label>
+        <input type="file" id="fileInput" accept="image/*" />
+        <div class="error" id="mainError"></div>
+        <button id="submitBtn">送出批改</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px;">歷史紀錄</h3>
+        <div id="historyList">尚無紀錄</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://svtkpdmqemidlasowqew.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf';
+    const GEMINI_API_KEY = 'AQ.Ab8RN6I2xLMUTNnxMN-bz2_AeHNDdDSIJucj2ty1h7ipeLYH-g';
+
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const authSection = document.getElementById('authSection');
+    const mainSection = document.getElementById('mainSection');
+    const authError = document.getElementById('authError');
+    const mainError = document.getElementById('mainError');
+    const userEmail = document.getElementById('userEmail');
+    const historyList = document.getElementById('historyList');
+
+    const levelMap = { elementary: '國小', junior: '國中', senior: '高中' };
+    const subjectMap = { math: '數學', english: '英文', chemistry: '化學' };
+
+    async function checkUser() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (user) {
+        authSection.classList.add('hidden');
+        mainSection.classList.remove('hidden');
+        userEmail.textContent = user.email;
+        loadHistory();
+      } else {
+        authSection.classList.remove('hidden');
+        mainSection.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('signupBtn').onclick = async function() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      authError.classList.remove('show');
+      if (!email || !password) {
+        authError.textContent = '請輸入 Email 和密碼';
+        authError.classList.add('show');
+        return;
+      }
+      const { error } = await supabaseClient.auth.signUp({ email, password });
+      if (error) {
+        authError.textContent = error.message;
+        authError.classList.add('show');
+      } else {
+        alert('註冊成功！可直接登入。');
+      }
+    };
+
+    document.getElementById('loginBtn').onclick = async function() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      authError.classList.remove('show');
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        authError.textContent = error.message;
+        authError.classList.add('show');
+      } else {
+        checkUser();
+      }
+    };
+
+    document.getElementById('logoutBtn').onclick = async function() {
+      await supabaseClient.auth.signOut();
+      checkUser();
+    };
+
+    function fileToBase64(file) {
+      return new Promise(function(resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function() { resolve(reader.result); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function callGemini(level, subject, question, imageBase64) {
+      const levelText = levelMap[level] || level;
+      const subjectText = subjectMap[subject] || subject;
+
+      const prompt = '你是一位有耐心的台灣家長輔助老師。請根據作業照片批改，並用家長也看得懂的方式解說。\n\n學段：' + levelText + '\n科目：' + subjectText + '\n題目說明：' + (question || '（無額外說明）') + '\n\n請依這個格式回答：\n【評分】（給分數或等級）\n【錯誤指出】（哪裡有問題）\n【正確做法】（分步驟說明）\n【給家長的說明】（用簡單的話解釋，讓家長能教小孩）\n【給孩子的建議】（鼓勵 + 具體改進）';
+
+      const base64Data = imageBase64.split(',')[1];
+      const mimeType = imageBase64.split(';')[0].split(':')[1];
+
+      const body = {
+        contents: [{
+          parts: [
+            { text: prompt },
+            {
+              inline_data: {
+                mime_type: mimeType,
+                data: base64Data
+              }
+            }
+          ]
+        }]
+      };
+
+      const res = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + GEMINI_API_KEY,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        }
+      );
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error('AI 呼叫失敗：' + res.status + ' ' + errText);
+      }
+
+      const data = await res.json();
+      return data.candidates[0].content.parts[0].text;
+    }
+
+    document.getElementById('submitBtn').onclick = async function() {
+      mainError.classList.remove('show');
+      const level = document.getElementById('level').value;
+      const subject = document.getElementById('subject').value;
+      const question = document.getElementById('question').value;
+      const file = document.getElementById('fileInput').files[0];
+      const btn = document.getElementById('submitBtn');
+
+      if (!file) {
+        mainError.textContent = '請先選擇作業照片';
+        mainError.classList.add('show');
+        return;
+      }
+
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) return;
+
+      btn.disabled = true;
+      btn.textContent = 'AI 批改中，請稍候...';
+
+      try {
+        const imageBase64 = await fileToBase64(file);
+        const aiResult = await callGemini(level, subject, question, imageBase64);
+
+        const { error } = await supabaseClient.from('homeworks').insert({
+          user_id: user.id,
+          subject: subject,
+          level: level,
+          question: question,
+          image_url: file.name,
+          result: aiResult
+        });
+
+        if (error) throw error;
+
+        alert('批改完成！');
+        document.getElementById('fileInput').value = '';
+        document.getElementById('question').value = '';
+        loadHistory();
+      } catch (err) {
+        console.error(err);
+        mainError.textContent = err.message || '發生錯誤';
+        mainError.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '送出批改';
+      }
+    };
+
+    async function loadHistory() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabaseClient
+        .from('homeworks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error || !data || data.length === 0) {
+        historyList.innerHTML = '尚無紀錄';
+        return;
+      }
+
+      historyList.innerHTML = data.map(function(item) {
+        return '<div class="history-item"><span class="badge">' + (levelMap[item.level] || item.level) + ' · ' + (subjectMap[item.subject] || item.subject) + '</span><div style="margin-top:6px;font-size:0.9rem;">' + (item.question || '（無題目說明）') + '</div><div class="result-box">' + (item.result || '') + '</div></div>';
+      }).join('');
+    }
+
+    checkUser();
+  </script>
+</body>
+</html>
