@@ -13,7 +13,7 @@
     }
     .container { max-width: 480px; margin: 0 auto; }
     h1 { text-align: center; color: #2563eb; margin-bottom: 8px; font-size: 1.5rem; }
-    .subtitle { text-align: center; color: #64748b; margin-bottom: 24px; font-size: 0.9rem; }
+    .subtitle { text-align: center; color: #64748b; margin-bottom: 20px; font-size: 0.9rem; }
     .card {
       background: white; border-radius: 16px; padding: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 16px;
@@ -25,7 +25,7 @@
     }
     button {
       width: 100%; padding: 14px; border: none; border-radius: 12px;
-      background: #2563eb; color: white; font-size: 1rem; font-weight: 600; cursor: pointer;
+      background: #2563eb; color: white; font-size: 1rem; font-weight: 600;
     }
     button:disabled { background: #94a3b8; }
     .btn-secondary { background: #64748b; margin-top: 8px; }
@@ -37,10 +37,8 @@
     .hidden { display: none; }
     .user-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 0.9rem; color: #64748b; }
     .history-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
-    .history-item:last-child { border-bottom: none; }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; background: #e0f2fe; color: #0369a1; }
     .result-box { white-space: pre-wrap; background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 8px; font-size: 0.9rem; line-height: 1.5; }
-    .chat-box { margin-top: 12px; background: #f8fafc; border-radius: 10px; padding: 12px; }
     .chat-msg { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.4; }
     .chat-msg.user { color: #1d4ed8; }
     .chat-msg.ai { color: #166534; }
@@ -50,7 +48,7 @@
 <body>
   <div class="container">
     <h1>📚 作業輔助系統</h1>
-    <p class="subtitle">國小～高中 · 數學 / 英文 / 化學</p>
+    <p class="subtitle">後端安全版 · 國小～高中</p>
 
     <div id="authSection" class="card">
       <div class="error" id="authError"></div>
@@ -81,35 +79,33 @@
           <option value="english">英文</option>
           <option value="chemistry">化學</option>
         </select>
-                <label>選擇老師</label>
+        <label>選擇老師</label>
         <select id="teacher">
-          <option value="gemini">📷 拍照老師（Gemini）</option>
-          <option value="groq">✍️ 文字老師（Groq）</option>
-          <option value="auto">🔄 自動切換</option>
+          <option value="auto">🔄 自動（優先拍照）</option>
+          <option value="gemini">📷 拍照老師</option>
+          <option value="groq">✍️ 文字老師</option>
         </select>
-        <label>題目說明（選填）</label>
-        <textarea id="question" rows="2" placeholder="可簡單描述這次作業"></textarea>
+        <label>題目說明（文字老師必填）</label>
+        <textarea id="question" rows="2" placeholder="可描述題目或打出完整題目"></textarea>
         <label>上傳作業照片</label>
         <input type="file" id="fileInput" accept="image/*" />
         <div class="error" id="mainError"></div>
         <button id="submitBtn">送出批改</button>
-
         <div id="voicePanel" class="hidden">
           <div class="btn-row">
             <button type="button" id="btnSpeak">🔊 朗讀</button>
             <button type="button" id="btnPause" class="btn-secondary">⏸ 暫停</button>
             <button type="button" id="btnStop" class="btn-secondary">🔇 停止</button>
           </div>
-          <p class="note">批改完成會自動朗讀，可暫停或停止</p>
         </div>
       </div>
 
       <div class="card">
         <h3 style="margin-bottom:12px;">針對這次作業追問</h3>
         <div id="chatLog"></div>
-        <textarea id="chatInput" rows="2" placeholder="例如：為什麼這題要先通分？"></textarea>
+        <textarea id="chatInput" rows="2" placeholder="例如：為什麼要先通分？"></textarea>
         <button id="chatBtn">送出問題</button>
-        <p class="note">追問會再呼叫 AI，會使用額度</p>
+        <p class="note">追問會再呼叫 AI</p>
       </div>
 
       <div class="card">
@@ -118,10 +114,11 @@
       </div>
     </div>
   </div>
-    <script>
+
+  <script>
     const SUPABASE_URL = 'https://svtkpdmqemidlasowqew.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf';
-    const GEMINI_API_KEY = 'AQ.Ab8RN6LVykUZ2-HBTsRwi0YN5Gl3ZQrFGl8P596Go0l0b7k_4A';
+    const BACKEND_URL = SUPABASE_URL + '/functions/v1/bright-service';
 
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -204,7 +201,6 @@
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
       u.lang = 'zh-TW';
-      u.rate = 1;
       window.speechSynthesis.speak(u);
     }
 
@@ -222,77 +218,24 @@
       window.speechSynthesis.cancel();
     };
 
-    async function callGeminiText(prompt) {
-      const body = {
-        contents: [{ parts: [{ text: prompt }] }]
-      };
-      const res = await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + GEMINI_API_KEY,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        }
-      );
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error('AI 呼叫失敗：' + res.status + ' ' + errText);
-      }
-      const data = await res.json();
-      return data.candidates[0].content.parts[0].text;
-    }
-
-    async function callGeminiVision(level, subject, question, imageBase64) {
-      const levelText = levelMap[level] || level;
-      const subjectText = subjectMap[subject] || subject;
-      const prompt = '你是一位有耐心的台灣家長輔助老師。請根據作業照片批改，並用家長也看得懂的方式解說。\n\n學段：' + levelText + '\n科目：' + subjectText + '\n題目說明：' + (question || '（無額外說明）') + '\n\n請依這個格式回答：\n【評分】\n【錯誤指出】\n【正確做法】\n【給家長的說明】\n【給孩子的建議】';
-
-      const base64Data = imageBase64.split(',')[1];
-      const mimeType = imageBase64.split(';')[0].split(':')[1];
-      const body = {
-        contents: [{
-          parts: [
-            { text: prompt },
-            { inline_data: { mime_type: mimeType, data: base64Data } }
-          ]
-        }]
-      };
-
-      const res = await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + GEMINI_API_KEY,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        }
-      );
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error('AI 呼叫失敗：' + res.status + ' ' + errText);
-      }
-      const data = await res.json();
-      return data.candidates[0].content.parts[0].text;
-    }
-          const GROQ_API_KEY = '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';
-
-    async function callGroqText(prompt) {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    async function callBackend(level, subject, question, imageBase64, teacher) {
+      const res = await fetch(BACKEND_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + GROQ_API_KEY
+          'Authorization': 'Bearer ' + SUPABASE_KEY
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [{ role: 'user', content: prompt }]
+          level: level,
+          subject: subject,
+          question: question,
+          imageBase64: imageBase64 || '',
+          teacher: teacher || 'auto'
         })
       });
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error('Groq 失敗：' + res.status + ' ' + errText);
-      }
       const data = await res.json();
-      return data.choices[0].message.content;
+      if (!res.ok) throw new Error(data.error || '後端錯誤');
+      return data.result;
     }
 
     document.getElementById('submitBtn').onclick = async function() {
@@ -300,17 +243,17 @@
       const level = document.getElementById('level').value;
       const subject = document.getElementById('subject').value;
       const question = document.getElementById('question').value;
+      const teacher = document.getElementById('teacher').value;
       const file = document.getElementById('fileInput').files[0];
-      const teacher = document.getElementById('teacher') ? document.getElementById('teacher').value : 'gemini';
       const btn = document.getElementById('submitBtn');
 
-      if (!file && teacher === 'gemini') {
-        mainError.textContent = '拍照老師需要上傳作業照片';
+      if (teacher === 'gemini' && !file) {
+        mainError.textContent = '拍照老師需要上傳照片';
         mainError.classList.add('show');
         return;
       }
       if (teacher === 'groq' && !question.trim()) {
-        mainError.textContent = '文字老師請在「題目說明」打出題目內容';
+        mainError.textContent = '文字老師請填寫題目說明';
         mainError.classList.add('show');
         return;
       }
@@ -319,34 +262,17 @@
       if (!user) return;
 
       btn.disabled = true;
-      btn.textContent = 'AI 批改中，請稍候...';
+      btn.textContent = 'AI 批改中...';
 
       try {
-        let aiResult = '';
-        const levelText = levelMap[level] || level;
-        const subjectText = subjectMap[subject] || subject;
-        const basePrompt = '你是一位有耐心的台灣家長輔助老師。學段：' + levelText + '，科目：' + subjectText + '。題目：' + (question || '見照片') + '\n請依格式回答：\n【評分】\n【錯誤指出】\n【正確做法】\n【給家長的說明】\n【給孩子的建議】';
-
-        if (teacher === 'gemini' || teacher === 'auto') {
-          try {
-            if (!file) throw new Error('無照片');
-            const imageBase64 = await fileToBase64(file);
-            aiResult = await callGeminiVision(level, subject, question, imageBase64);
-          } catch (e) {
-            if (teacher === 'auto') {
-              aiResult = await callGroqText(basePrompt + '\n（目前為文字模式備援）');
-            } else {
-              throw e;
-            }
-          }
-        } else {
-          aiResult = await callGroqText(basePrompt);
-        }
+        const imageBase64 = file ? await fileToBase64(file) : '';
+        const aiResult = await callBackend(level, subject, question, imageBase64, teacher);
 
         lastResult = aiResult;
-        lastContext = '學段：' + levelText + '，科目：' + subjectText + '，題目：' + (question || '無') + '\n批改結果：\n' + aiResult;
+        lastContext = '學段：' + (levelMap[level] || level) + '，科目：' + (subjectMap[subject] || subject) +
+          '，題目：' + (question || '無') + '\n批改：\n' + aiResult;
 
-        const { error } = await supabaseClient.from('homeworks').insert({
+        await supabaseClient.from('homeworks').insert({
           user_id: user.id,
           subject: subject,
           level: level,
@@ -354,17 +280,15 @@
           image_url: file ? file.name : '',
           result: aiResult
         });
-        if (error) throw error;
 
         voicePanel.classList.remove('hidden');
         speakText(aiResult);
         chatLog.innerHTML = '';
-        alert('批改完成！正在朗讀解說');
+        alert('批改完成！');
         document.getElementById('fileInput').value = '';
         document.getElementById('question').value = '';
         loadHistory();
       } catch (err) {
-        console.error(err);
         mainError.textContent = err.message || '發生錯誤';
         mainError.classList.add('show');
       } finally {
@@ -377,27 +301,21 @@
       const q = document.getElementById('chatInput').value.trim();
       if (!q) return;
       if (!lastContext) {
-        alert('請先完成一次作業批改，再追問');
+        alert('請先完成一次批改');
         return;
       }
       const btn = document.getElementById('chatBtn');
       btn.disabled = true;
       btn.textContent = '思考中...';
       chatLog.innerHTML += '<div class="chat-msg user">家長：' + q + '</div>';
-
       try {
-        const prompt = '你是台灣家長輔助老師。根據以下作業批改內容回答家長追問，用簡單清楚的話。\n\n' + lastContext + '\n\n家長問題：' + q;
-        let ans = '';
-        try {
-          ans = await callGeminiText(prompt);
-        } catch (e) {
-          ans = await callGroqText(prompt);
-        }
+        const prompt = '根據以下作業批改回答家長問題，用簡單清楚的話。\n' + lastContext + '\n\n問題：' + q;
+        const ans = await callBackend('junior', 'math', prompt, '', 'groq');
         chatLog.innerHTML += '<div class="chat-msg ai">老師：' + ans + '</div>';
         speakText(ans);
         document.getElementById('chatInput').value = '';
       } catch (err) {
-        chatLog.innerHTML += '<div class="chat-msg ai">錯誤：' + (err.message || '失敗') + '</div>';
+        chatLog.innerHTML += '<div class="chat-msg ai">錯誤：' + (err.message || '') + '</div>';
       } finally {
         btn.disabled = false;
         btn.textContent = '送出問題';
@@ -407,19 +325,20 @@
     async function loadHistory() {
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) return;
-      const { data, error } = await supabaseClient
+      const { data } = await supabaseClient
         .from('homeworks')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
-
-      if (error || !data || data.length === 0) {
+      if (!data || data.length === 0) {
         historyList.innerHTML = '尚無紀錄';
         return;
       }
-
       historyList.innerHTML = data.map(function(item) {
-        return '<div class="history-item"><span class="badge">' + (levelMap[item.level] || item.level) + ' · ' + (subjectMap[item.subject] || item.subject) + '</span><div style="margin-top:6px;font-size:0.9rem;">' + (item.question || '（無題目說明）') + '</div><div class="result-box">' + (item.result || '') + '</div></div>';
+        return '<div class="history-item"><span class="badge">' +
+          (levelMap[item.level] || item.level) + ' · ' + (subjectMap[item.subject] || item.subject) +
+          '</span><div style="margin-top:6px;font-size:0.9rem;">' + (item.question || '（無說明）') +
+          '</div><div class="result-box">' + (item.result || '') + '</div></div>';
       }).join('');
     }
 
