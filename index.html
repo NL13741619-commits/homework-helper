@@ -84,10 +84,10 @@
         </select>
         <label>選擇老師</label>
         <select id="teacher">
-          <option value="auto">🔄 自動（優先拍照）</option>
-          <option value="gemini">📷 拍照老師</option>
-          <option value="groq">✍️ 文字老師</option>
-        </select>
+  <option value="gemini" selected>📷 看圖批改（上傳照片）</option>
+  <option value="groq">⌨️ 打字批改（請填題目說明）</option>
+  <option value="auto">🔄 自動選擇</option>
+</select>
         <label>題目說明（文字老師必填）</label>
         <textarea id="question" rows="2" placeholder="可描述題目或打出完整題目"></textarea>
         <label>上傳作業照片</label>
