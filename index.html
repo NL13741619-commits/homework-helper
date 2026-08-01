@@ -43,6 +43,9 @@
     .chat-msg.user { color: #1d4ed8; }
     .chat-msg.ai { color: #166534; }
     .note { font-size: 0.8rem; color: #64748b; margin-top: 8px; }
+    .hist-actions { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    .hist-actions button { width: auto; padding: 6px 12px; font-size: 0.8rem; }
+    .hist-check { width: auto; margin: 0; padding: 0; }
   </style>
 </head>
 <body>
@@ -109,7 +112,11 @@
       </div>
 
       <div class="card">
-        <h3 style="margin-bottom:12px;">歷史紀錄</h3>
+        <div class="hist-actions">
+          <h3 style="margin:0;flex:1;">歷史紀錄</h3>
+          <button type="button" id="selectAllBtn" class="btn-outline">全選</button>
+          <button type="button" id="deleteSelectedBtn" class="btn-secondary">刪除所選</button>
+        </div>
         <div id="historyList">尚無紀錄</div>
       </div>
     </div>
@@ -330,17 +337,51 @@
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
+
       if (!data || data.length === 0) {
         historyList.innerHTML = '尚無紀錄';
         return;
       }
+
       historyList.innerHTML = data.map(function(item) {
-        return '<div class="history-item"><span class="badge">' +
-          (levelMap[item.level] || item.level) + ' · ' + (subjectMap[item.subject] || item.subject) +
-          '</span><div style="margin-top:6px;font-size:0.9rem;">' + (item.question || '（無說明）') +
-          '</div><div class="result-box">' + (item.result || '') + '</div></div>';
+        return '<div class="history-item">' +
+          '<label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;">' +
+          '<input type="checkbox" class="hist-check" value="' + item.id + '" />' +
+          '<div style="flex:1;">' +
+          '<span class="badge">' + (levelMap[item.level] || item.level) + ' · ' + (subjectMap[item.subject] || item.subject) + '</span>' +
+          '<div style="margin-top:6px;font-size:0.9rem;">' + (item.question || '（無說明）') + '</div>' +
+          '<div class="result-box">' + (item.result || '') + '</div>' +
+          '<button type="button" class="btn-secondary del-one" data-id="' + item.id + '" style="width:auto;padding:6px 10px;font-size:0.8rem;margin-top:8px;">刪除</button>' +
+          '</div></label></div>';
       }).join('');
     }
+
+    historyList.onclick = async function(e) {
+      if (e.target.classList.contains('del-one')) {
+        e.preventDefault();
+        const id = e.target.getAttribute('data-id');
+        if (!confirm('確定刪除這筆紀錄？')) return;
+        await supabaseClient.from('homeworks').delete().eq('id', id);
+        loadHistory();
+      }
+    };
+
+    document.getElementById('selectAllBtn').onclick = function() {
+      const boxes = document.querySelectorAll('.hist-check');
+      const allChecked = boxes.length > 0 && [...boxes].every(function(b) { return b.checked; });
+      boxes.forEach(function(b) { b.checked = !allChecked; });
+    };
+
+    document.getElementById('deleteSelectedBtn').onclick = async function() {
+      const ids = [...document.querySelectorAll('.hist-check:checked')].map(function(b) { return b.value; });
+      if (ids.length === 0) {
+        alert('請先勾選要刪除的紀錄');
+        return;
+      }
+      if (!confirm('確定刪除選取的 ' + ids.length + ' 筆？')) return;
+      await supabaseClient.from('homeworks').delete().in('id', ids);
+      loadHistory();
+    };
 
     checkUser();
   </script>
