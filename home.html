@@ -50,6 +50,16 @@
     .note { font-size: 0.8rem; color: #64748b; margin-top: 8px; }
     .recent { font-size: 0.9rem; }
     .recent-item { border-bottom: 1px solid #e2e8f0; padding: 10px 0; }
+    .photo-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .photo-row button { flex: 1; padding: 12px; font-size: 0.95rem; }
+    input[type="file"] { display: none; }
+    .preview-wrap { margin-bottom: 14px; display: none; }
+    .preview-wrap.show { display: block; }
+    .preview-wrap img {
+      width: 100%; max-height: 240px; object-fit: contain;
+      border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0;
+    }
+    .preview-name { font-size: 0.8rem; color: #64748b; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -85,8 +95,17 @@
       </select>
       <label>題目說明（文字老師必填）</label>
       <textarea id="question" rows="2" placeholder="可描述題目或打出完整題目"></textarea>
-      <label>上傳作業照片</label>
+      <label>作業照片</label>
+      <div class="photo-row">
+        <button type="button" id="btnCamera" class="btn-outline">📷 拍照</button>
+        <button type="button" id="btnAlbum" class="btn-outline">🖼️ 相簿</button>
+      </div>
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" />
       <input type="file" id="fileInput" accept="image/*" />
+      <div class="preview-wrap" id="previewWrap">
+        <img id="previewImg" alt="作業預覽" />
+        <div class="preview-name" id="previewName"></div>
+      </div>
       <div class="error" id="mainError"></div>
       <button id="submitBtn">送出批改</button>
       <div id="voicePanel" class="hidden">
@@ -129,6 +148,44 @@
     const subjectMap = { math: '數學', english: '英文', chemistry: '化學' };
     let lastResult = '';
     let lastContext = '';
+    let selectedFile = null;
+
+    function setPreview(file) {
+      selectedFile = file || null;
+      const wrap = document.getElementById('previewWrap');
+      const img = document.getElementById('previewImg');
+      const name = document.getElementById('previewName');
+      if (!file) {
+        wrap.classList.remove('show');
+        img.removeAttribute('src');
+        name.textContent = '';
+        return;
+      }
+      img.src = URL.createObjectURL(file);
+      name.textContent = file.name || '已拍照';
+      wrap.classList.add('show');
+    }
+
+    document.getElementById('btnCamera').onclick = function() {
+      document.getElementById('cameraInput').click();
+    };
+    document.getElementById('btnAlbum').onclick = function() {
+      document.getElementById('fileInput').click();
+    };
+    document.getElementById('cameraInput').onchange = function() {
+      const f = this.files && this.files[0];
+      if (f) {
+        document.getElementById('fileInput').value = '';
+        setPreview(f);
+      }
+    };
+    document.getElementById('fileInput').onchange = function() {
+      const f = this.files && this.files[0];
+      if (f) {
+        document.getElementById('cameraInput').value = '';
+        setPreview(f);
+      }
+    };
 
     function fileToBase64(file) {
       return new Promise(function(resolve, reject) {
@@ -183,11 +240,11 @@
       const subject = document.getElementById('subject').value;
       const question = document.getElementById('question').value;
       const teacher = document.getElementById('teacher').value;
-      const file = document.getElementById('fileInput').files[0];
+      const file = selectedFile;
       const btn = document.getElementById('submitBtn');
 
       if (teacher === 'gemini' && !file) {
-        mainError.textContent = '拍照老師需要上傳照片';
+        mainError.textContent = '看圖批改請先拍照或從相簿選圖';
         mainError.classList.add('show');
         return;
       }
@@ -222,7 +279,9 @@
         speakText(aiResult);
         chatLog.innerHTML = '';
         document.getElementById('fileInput').value = '';
+        document.getElementById('cameraInput').value = '';
         document.getElementById('question').value = '';
+        setPreview(null);
         loadRecent();
       } catch (err) {
         mainError.textContent = err.message || '發生錯誤';
