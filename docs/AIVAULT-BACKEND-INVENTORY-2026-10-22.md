@@ -23,7 +23,19 @@ The restored database contains **30 pre-existing public tables** from the former
 - ROC Constitution / Constitutional Court / judicial interpretation tables
 - legal source/document tables
 
-These old tables were **not deleted**. At least one `homeworks` row is present, so destructive cleanup requires a separate decision.
+These old tables were **not deleted**.
+
+Confirmed legacy row counts include:
+- `homeworks`: 18
+- `law_documents`: 143
+- `legal_official_sources`: 1
+- `roc_tw_constitution`: 175
+- `roc_tw_constitutional_court_documents`: 3
+- `roc_tw_constitutional_court_document_sections`: 62
+- `ai_constitution_articles`: 11
+- `ai_constitution_documents`: 2
+- teacher/course tables checked: 0 rows
+- several generic AI knowledge/document tables checked: 0 rows
 
 Existing public security state observed:
 - all 30 old public tables have RLS enabled
