@@ -168,7 +168,7 @@
     },
     {
       "path": "gateway.mjs",
-      "sha256": "d41c62d5c68230f59fdf48ae4a0f2e73c677c4b6f29df5c323ba1adc70517129"
+      "sha256": "9fb01459f421d0ff3ac5fe7e2d7ea698f3515de77ac41be654fd117c9d429776"
     },
     {
       "path": "page.mjs",
@@ -177,6 +177,19 @@
     {
       "path": "dawn-light.html",
       "sha256": "769e9667e81695190af34b95d6f0f6b7132349286a21e0034632abb8e306d95b"
+    },
+    {
+      "path": "instance.mjs",
+      "sha256": "547335eb0df73676e634be93cd4ac832c0be5d4880f49a66dee6a918bce90d35"
+    },
+    {
+      "path": "memory.mjs",
+      "sha256": "ac94e9620f4df3adcbafeecdf654347e3b487e4b23ebc5596ad3f983d62ac3f0"
+    },
+    {
+      "path": "memory.sql",
+      "sha256": "eab382bea6a81217d5935a318bbfc505c73ac0ccb735141f5a4d40ffaea91bcf"
     }
-  ]
+  ],
+  "instance_id": "base-002:dawn-light"
 }

@@ -1,5 +1,6 @@
 import {randomUUID} from 'node:crypto';
 import {DAWN} from './profile.mjs';
+import {DAWN_SYSTEM} from './instance.mjs';
 const PROJECT='svtkpdmqemidlasowqew';
 const json=(code,body)=>new Response(JSON.stringify(body),{status:code,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
 async function boundedText(stream,limit) {
@@ -49,7 +50,7 @@ export function createDawnGateway({enabled=()=>false,modelPolicy,authorize,reser
         reservation.task_type==='dry_run' || !Number.isFinite(reservation.lease_expires_at) || reservation.lease_expires_at<Date.now()+6000) return respond(409,{ok:false,status:'BLOCKED_TASK_OR_LEASE',request_id});
       if(!enabled()) return respond(503,{ok:false,status:'BLOCKED_EXECUTION_MODE',request_id});
       await audit({event_type:'dawn.inference_start',request_id,task_id:body.task_id,reservation_id:reservation.reservation_id,provider:policy.provider,model:policy.model,quota_evidence_id:policy.quota_evidence_id});
-      const result=await invoke({policy,system:DAWN.text_prompt+'\n'+DAWN.evidence_rules,text:body.message,signal:AbortSignal.timeout(5000)});
+      const result=await invoke({policy,system:DAWN_SYSTEM,text:body.message,signal:AbortSignal.timeout(5000)});
       if(typeof result?.text!=='string' || !result.text.trim() || result.text.length>8192 || result.provider!==policy.provider || result.model!==policy.model) throw Error('INVALID_PROVIDER_RESULT');
       const committed=await finishInvocation({reservation,request_id,usage:result.usage||{},mock:result.mock===true,provider:result.provider,model:result.model});
       if(committed?.ok!==true) return respond(409,{ok:false,status:'STALE_FENCING_OR_EVIDENCE_FAILED',request_id});
