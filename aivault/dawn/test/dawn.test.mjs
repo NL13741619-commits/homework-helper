@@ -34,6 +34,7 @@ test('auth, CORS, mode, free policy, malformed/cross-base fields fail closed',as
   [{},payload(),'invalid',undefined,'UNAUTHORIZED'],
   [{enabled:()=>false},payload(),undefined,undefined,'BLOCKED_EXECUTION_MODE'],
   [{modelPolicy:{...policy(),billing_mode:'paid'}},payload(),undefined,undefined,'BLOCKED_NO_MODEL'],
+  [{modelPolicy:null},payload(),undefined,undefined,'BLOCKED_NO_MODEL'],
   [{modelPolicy:{...policy(),valid_until:0}},payload(),undefined,undefined,'BLOCKED_NO_MODEL'],
   [{}, {...payload(),project_ref:'forbidden'},undefined,undefined,'INVALID_INPUT'],
   [{}, {...payload(),model:'paid-fallback'},undefined,undefined,'INVALID_INPUT'],
@@ -86,6 +87,9 @@ test('Gemini transport uses only private server secret, fixed host, bounded conf
  let failures=0;
  const failed=createGeminiTextInvoker({readSecret:async()=> 'fixture-server-secret',fetchImpl:async()=>{failures++;return new Response('{}',{status:429});}});
  await assert.rejects(failed({policy:policy(),system:'fixture',text:'fixture',signal:AbortSignal.timeout(5000)}));assert.equal(failures,1);
+ let timeouts=0;
+ const timed=createGeminiTextInvoker({readSecret:async()=> 'fixture-server-secret',fetchImpl:async()=>{timeouts++;throw new DOMException('fixture timeout','TimeoutError');}});
+ await assert.rejects(timed({policy:policy(),system:'fixture',text:'fixture',signal:AbortSignal.timeout(5000)}));assert.equal(timeouts,1);
 });
 test('ported files contain no primary project settings, embedded JWT/key, shared memory or remote voice runtime',async()=>{
  for(const name of ['profile.mjs','client.mjs','gateway.mjs','page.mjs','dawn-light.html']){
