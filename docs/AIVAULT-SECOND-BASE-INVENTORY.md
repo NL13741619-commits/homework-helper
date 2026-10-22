@@ -14,7 +14,7 @@
 
 Repository: `NL13741619-commits/homework-helper`
 
-main 現有檔案：
+盤點開始時 main 舊系統檔案：
 - `README.md` — 舊 Homework Helper 說明
 - `index.html` — Email/Password Auth 登入與註冊
 - `home.html` — 作業批改、圖片上傳、AI 呼叫、歷史紀錄
@@ -23,6 +23,8 @@ main 現有檔案：
 
 前端已明確指向 Supabase `svtkpdmqemidlasowqew`，並使用 publishable key。
 `home.html` 呼叫 `/functions/v1/bright-service`，並讀寫 `homeworks`。
+
+本輪另新增非破壞性的盤點/架構/保護邊界文件；未修改或刪除上述舊系統前端檔案。
 
 ## 第二基地 Supabase 現況
 
@@ -66,8 +68,8 @@ PostgreSQL: 17
 2. DB 恢復可讀後先做完整 schema/RLS/RPC/Auth/Storage 盤點。
 3. 先備份/記錄可回復資訊，再提出 cleanup 清單。
 4. 未取得 destructive cleanup 核准前，不刪除任何舊資料、函式或前端。
-5. AIVAULT 新工程使用 feature branch + Draft PR；不得直接破壞 main。
+5. 後續自主 Agent 程式碼施工採 feature branch + Draft PR，不允許自主 runner 直接寫 main。此次由主控 GPT 寫入 main 的內容僅限盤點、架構與機器可讀安全邊界文件。
 
 ## 安全結論
 
-目前可確認第二基地與正式安全團聚使用不同 GitHub repository 與不同 Supabase project ref。第一階段只完成盤點與施工邊界建立，尚未執行 destructive migration。
+目前可確認第二基地與正式安全團聚使用不同 GitHub repository 與不同 Supabase project ref。第一階段只完成盤點、設計與施工邊界建立，尚未執行 destructive migration。
