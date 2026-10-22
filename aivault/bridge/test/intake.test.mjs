@@ -17,6 +17,7 @@ test('strict allowlist and untrusted payload policy',()=>{
     [c=>c.payload.shell='echo evil','MALFORMED_PAYLOAD'],
     [c=>c.command_id=12345678,'MALFORMED_PAYLOAD'],
     [c=>c.nonce=[], 'MALFORMED_PAYLOAD']
+    ,[c=>c.issued_at='now','MALFORMED_PAYLOAD']
   ]) {const c=command(); mutate(c); assert.equal(validateCommand(c),expected);}
 });
 test('HTTP auth, kill switch, limits, actor binding and RPC flow',async()=>{

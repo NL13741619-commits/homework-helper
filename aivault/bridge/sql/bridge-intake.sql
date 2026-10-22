@@ -28,6 +28,8 @@ begin
     or jsonb_typeof(p_body->'nonce') is distinct from 'string'
     or jsonb_typeof(p_body->'issued_at') is distinct from 'string'
     or jsonb_typeof(p_body->'expires_at') is distinct from 'string'
+    or coalesce(p_body->>'issued_at','') !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?(Z|[+-][0-9]{2}:[0-9]{2})$'
+    or coalesce(p_body->>'expires_at','') !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?(Z|[+-][0-9]{2}:[0-9]{2})$'
     or coalesce(p_body->>'command_id','') !~ '^[a-zA-Z0-9_-]{8,128}$'
     or coalesce(p_body->>'nonce','') !~ '^[a-zA-Z0-9_-]{16,128}$'
     or jsonb_typeof(p_body->'payload') is distinct from 'object' then v_error:='MALFORMED_PAYLOAD';
@@ -72,6 +74,8 @@ begin
    if v_error is null then
     v_now := clock_timestamp();
     if t.id is null then v_error:='NOT_FOUND';
+    elsif coalesce(to_jsonb(t)->>'channel_id','')<>'' and
+      current_setting('aivault.channel_scope',true) is distinct from to_jsonb(t)->>'channel_id' then v_error:='CHANNEL_SCOPE_REQUIRED';
     elsif t.expires_at is null or t.expires_at<=v_now then v_error:='TASK_EXPIRED';
     elsif p_action='claim' then
      select * into l from public.ai_agent_leases where task_id=t.id;

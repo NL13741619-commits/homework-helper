@@ -20,6 +20,8 @@ export function validateCommand(c, now = Date.now()) {
   if (p.branch !== 'feature/aivault-rebuild') return 'DIRECT_MAIN_OR_BRANCH_DENIED';
   if (p.model !== 'none') return 'MODEL_REQUEST_DENIED';
   if (p.mode !== 'mock' || JSON.stringify(p.tests) !== '["bridge_contract_v1"]') return 'PAYLOAD_POLICY_DENIED';
+  const timestamp=/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?(Z|[+-][0-9]{2}:[0-9]{2})$/;
+  if(!timestamp.test(c.issued_at) || !timestamp.test(c.expires_at)) return 'MALFORMED_PAYLOAD';
   const issued = Date.parse(c.issued_at), expires = Date.parse(c.expires_at);
   if (!Number.isFinite(issued) || !Number.isFinite(expires) || expires <= now || expires > now + 600_000 || issued > now + 30_000 || issued < now - 300_000 || expires <= issued) return 'EXPIRED_COMMAND';
   return null;
@@ -51,8 +53,7 @@ export function createIntake({ tokens, rpc, enabled = () => false, audit = event
       if (action === 'intake') {
         const error=validateCommand(body);
         if(error) {
-          // SQL validates again and persists rejection without storing untrusted content.
-          await rpc(action,actor,body);
+          audit({event:'bridge.transport_rejected',reason:error});
           return send(400,{error});
         }
       }
