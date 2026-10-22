@@ -6,9 +6,10 @@
 ## 保護區（禁止施工）
 
 - GitHub `NL13741619-commits/safe-reunion-login`
+- GitHub `NL13741619-commits/safe-reunion`
 - Supabase `perfsipperncvjocznhl` (`safe-reunion`)
 
-本次盤點未對上述正式安全團聚前後端進行任何修改。
+本次盤點未對上述安全團聚前端、工程倉庫或正式後端進行任何修改。
 
 ## 第二基地 GitHub 現況
 
@@ -72,4 +73,4 @@ PostgreSQL: 17
 
 ## 安全結論
 
-目前可確認第二基地與正式安全團聚使用不同 GitHub repository 與不同 Supabase project ref。第一階段只完成盤點、設計與施工邊界建立，尚未執行 destructive migration。
+目前可確認第二基地與安全團聚使用不同 GitHub repository 與不同 Supabase project ref。第一階段只完成盤點、設計與施工邊界建立，尚未執行 destructive migration。
