@@ -6,7 +6,8 @@
   },
   "protected_systems": {
     "repositories": [
-      "NL13741619-commits/safe-reunion-login"
+      "NL13741619-commits/safe-reunion-login",
+      "NL13741619-commits/safe-reunion"
     ],
     "supabase_project_refs": [
       "perfsipperncvjocznhl"
