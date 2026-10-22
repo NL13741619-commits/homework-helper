@@ -142,10 +142,10 @@
   "agent_id": "dawn-light",
   "target_repository": "NL13741619-commits/homework-helper",
   "target_project_ref": "svtkpdmqemidlasowqew",
-  "program_status": "MINIMAL_TEXT_PORT_PREPARED",
-  "model_status": "BLOCKED_NO_MODEL",
-  "deployment_status": "NOT_DEPLOYED",
-  "real_inference_executed": false,
+  "program_status": "BOUNDED_LIVE_RUNTIME_DEPLOYED",
+  "model_status": "LOCAL_QWEN_VERIFIED_CLOUD_MODEL_BLOCKED",
+  "deployment_status": "BOUNDED_RUNTIME_DEPLOYED",
+  "real_inference_executed": true,
   "raw_source_files_committed": false,
   "source_dependencies": {
     "dawn-light.html": [
@@ -180,7 +180,7 @@
     },
     {
       "path": "instance.mjs",
-      "sha256": "547335eb0df73676e634be93cd4ac832c0be5d4880f49a66dee6a918bce90d35"
+      "sha256": "8b9adb1087f4b26a4c3c1c31f0e6fb546878e75f723cbb64538ad012c2155241"
     },
     {
       "path": "memory.mjs",
@@ -189,7 +189,49 @@
     {
       "path": "memory.sql",
       "sha256": "eab382bea6a81217d5935a318bbfc505c73ac0ccb735141f5a4d40ffaea91bcf"
+    },
+    {
+      "path": "runtime.mjs",
+      "sha256": "b24ae916e62e8c4cd51a7108adc50918273c7511bd12175289b3c73bafdeece6"
+    },
+    {
+      "path": "runtime.sql",
+      "sha256": "a1da5f404c274710cd86755366cc07242aee8b1c924567e32767e8cec946762a"
+    },
+    {
+      "path": "edge-index.ts",
+      "sha256": "a4b4c0f2a5bcc288b97b94029ff205a8eb9a21b173ba262793d3ce0c2b3d91f2"
+    },
+    {
+      "path": "scheduler.sql",
+      "sha256": "409c909d9cea660b7bd2ea8567da8eee3cafdd23ae0fd5fa47a16c71ea0e56e0"
+    },
+    {
+      "path": "smoke.py",
+      "sha256": "8a5a85d1e28d8603195ce221bf0f08f454570b3cd138b3f0282ccdfe2712e533"
+    },
+    {
+      "path": "install-qwen.py",
+      "sha256": "8b3d39d3fc57577336eae8a4969b11117f9ff4f3ecf70c5c1a2df17d3df6517d"
+    },
+    {
+      "path": "qwen-host.py",
+      "sha256": "9ae477a20021cdd18c1c9d9f37ffc84036d4d7603b214c47f828aca5bb74a3d4"
+    },
+    {
+      "path": "qwen-system.txt",
+      "sha256": "80d7571395a68cca003a7fa9474ab20fbda3f4bbcd1f163b7201155e8b100a5d"
+    },
+    {
+      "path": "qwen-policy.example.json",
+      "sha256": "19c1529170ea628077f7efc0502d8dc9f6ecc9f6b1861e32fab9978b6342be07"
+    },
+    {
+      "path": "qwen-cpu.service.example",
+      "sha256": "72f0b405f89243e95e2108b6bce194c5c294762a6f5dea03fb29c5328cc49573"
     }
   ],
-  "instance_id": "base-002:dawn-light"
+  "instance_id": "base-002:dawn-light",
+  "always_on_model_host": false,
+  "github_outbox_credential_configured": false
 }

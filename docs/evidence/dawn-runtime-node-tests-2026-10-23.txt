@@ -1,0 +1,41 @@
+✔ exactly 1000 bounded logical channel routes (1.735832ms)
+✔ credentials are distinct per service principal (0.952068ms)
+✔ channel route, principal binding, feedback, limits and fail-closed outage (136.421462ms)
+✔ channel RPC pins backend and carries no caller-selected authority (0.577242ms)
+✔ strict allowlist and untrusted payload policy (3.852299ms)
+{"event":"bridge.transport_rejected","reason":"UNAUTHORIZED_SENDER"}
+✔ HTTP auth, kill switch, limits, actor binding and RPC flow (79.473634ms)
+✔ backend outage fails closed; protected endpoint never contacted (0.782642ms)
+✔ read own inbox first; reply goes to authenticated sender inbox (2.242257ms)
+✔ sender uses immutable GitHub identity; spoofed text and unknown bases fail (0.333013ms)
+✔ third registered base routes independently without hardcoded first-base reply (0.664574ms)
+✔ comment replay, same message in another comment, and edited content (0.487266ms)
+✔ legacy text, injection and command body never execute or enter task queue (0.46953ms)
+✔ webhook raw-body HMAC rejects modified body, signature, or oversized delivery (0.991338ms)
+✔ private per-task/fence workspace; no execution or model activation (42.726965ms)
+✔ symlink workspace root is refused (59.630655ms)
+✔ pinned Dawn identity and evidence discipline are retained (1.362077ms)
+✔ second-base instance and server prompt stay fixed despite untrusted role instructions (5.907222ms)
+✔ browser client requires login/task; no first-base endpoint or provider key (1.445924ms)
+✔ auth, CORS, mode, free policy, malformed/cross-base fields fail closed (9.142678ms)
+✔ current dry-run tasks, expired/incorrect fences, missing durable control and failed audit never infer (2.305642ms)
+✔ mock inference stays explicitly mock and stale completion cannot return a result (0.943956ms)
+✔ CORS preflight and response are limited to an explicitly approved origin (1.017987ms)
+✔ Gemini transport uses only private server secret, fixed host, bounded config and no fallback (1.021894ms)
+✔ ported files contain no primary project settings, embedded JWT/key, shared memory or remote voice runtime (11.428961ms)
+✔ private memory pins instance and server principal for every operation (1.597473ms)
+✔ recall is bounded and outages or invalid backend responses fail closed (0.814791ms)
+✔ real inbox filter requires fixed author/base/role, instruction and current expiry (2.697224ms)
+✔ public unauthenticated requests and scheduler submission fail closed (21.237971ms)
+✔ run-once performs literal hash tool and fenced completion with no model or shell (7.169808ms)
+✔ missing model generates a blocked result and concrete help, never a fabricated answer (4.27036ms)
+✔ correlated resume requires a valid task and fixed help ID (0.777735ms)
+✔ unknown outbound POST is reconciled by marker without another POST (3.480346ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 264.250924

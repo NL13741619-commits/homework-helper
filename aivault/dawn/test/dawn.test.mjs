@@ -22,7 +22,7 @@ test('second-base instance and server prompt stay fixed despite untrusted role i
  assert.equal(DAWN_INSTANCE.instance_id,'base-002:dawn-light');
  assert.equal(DAWN_INSTANCE.project_ref,project);
  assert.equal(DAWN_INSTANCE.memory_namespace,'base-002/dawn-light');
- assert.equal(DAWN_INSTANCE.deployment_status,'NOT_DEPLOYED');
+ assert.equal(DAWN_INSTANCE.deployment_status,'BOUNDED_RUNTIME_DEPLOYED');
  assert.equal(Object.isFrozen(DAWN_INSTANCE),true);
  let captured;
  const handler=createDawnGateway(deps({invoke:async q=>{captured=q;return {provider:'gemini',model:'fixture-free-model',text:'mock',mock:true};}}));

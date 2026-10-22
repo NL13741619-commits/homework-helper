@@ -10,7 +10,7 @@ export const DAWN_INSTANCE=Object.freeze({
   inbox:'https://github.com/NL13741619-commits/homework-helper/issues/1',
   memory_namespace:'base-002/dawn-light',
   artifact_namespace:'base-002/dawn-light',
-  deployment_status:'NOT_DEPLOYED'
+  deployment_status:'BOUNDED_RUNTIME_DEPLOYED'
 });
 
 // Server-owned instructions; incoming commands cannot override this identity.

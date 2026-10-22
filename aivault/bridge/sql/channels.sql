@@ -68,7 +68,7 @@ begin
    perform pg_advisory_xact_lock(17412,1000);
    now_at:=clock_timestamp();
    if (select count(*) from public.ai_agent_tasks where channel_id=p_channel and status in ('queued','leased') and expires_at>now_at)>=c.max_pending
-     or (select count(*) from public.ai_agent_tasks where channel_id is not null and status in ('queued','leased') and expires_at>now_at)>=128 then err:='QUEUE_CAPACITY';
+     or (select count(*) from public.ai_agent_tasks where status in ('queued','leased') and expires_at>now_at)>=128 then err:='QUEUE_CAPACITY';
    else
     r:=public.aivault_bridge('intake','base1',p_body);
     if r->>'ok'='true' then
@@ -99,7 +99,7 @@ begin
      elsif p_action='claim' and ((select count(*) from public.ai_agent_leases l join public.ai_agent_tasks q on q.id=l.task_id
         where q.channel_id=p_channel and q.id<>t.id and q.status='leased' and l.expires_at>now_at)>=c.max_running
        or (select count(*) from public.ai_agent_leases l join public.ai_agent_tasks q on q.id=l.task_id
-        where q.channel_id is not null and q.id<>t.id and q.status='leased' and l.expires_at>now_at)>=8) then err:='RUNNER_CAPACITY';
+        where q.id<>t.id and q.status='leased' and l.expires_at>now_at)>=8) then err:='RUNNER_CAPACITY';
      else
       previous_scope:=current_setting('aivault.channel_scope',true);
       perform set_config('aivault.channel_scope',p_channel,true);
