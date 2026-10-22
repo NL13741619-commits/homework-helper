@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://svtkpdmqemidlasowqew.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>曙光 / Dawn Light · AIVAULT</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10140f;color:#f4f1e8;font:16px/1.6 -apple-system,BlinkMacSystemFont,'PingFang TC',sans-serif}main{max-width:760px;margin:auto;padding:40px 20px}.heading{display:flex;align-items:center;gap:18px}.sun{width:72px;height:72px;border-radius:50%;background:radial-gradient(circle,#fff8df 0 25%,#f3c15a 55%,transparent 70%);box-shadow:0 0 44px #eac26533}h1{font-size:28px;margin:0}p{color:#cecdbb}.card{background:#1a2118;border:1px solid #31402c;border-radius:18px;padding:20px;margin:20px 0}.tag{border:1px solid #4a583c;border-radius:20px;padding:5px 12px;font-size:13px}textarea{width:100%;min-height:130px;background:#10170d;color:#fff;border:1px solid #47503b;border-radius:12px;padding:14px;font:inherit}button{font:inherit;padding:10px 20px;margin-top:12px;border:0;border-radius:12px;background:#d7a441;color:#211905}button:disabled{opacity:.45}pre{white-space:pre-wrap;word-break:break-word}.blocked{color:#e5c778}
+</style>
+</head>
+<body><main>
+<header class="heading"><div class="sun" aria-hidden="true"></div><div><h1>曙光 / Dawn Light</h1><p>AIVAULT 第二基地 · dawn-light</p></div></header>
+<section class="card"><span class="tag">角色程式已適配</span><p id="state" class="blocked" role="status">模型尚未接通。此頁不會自動呼叫模型。</p></section>
+<section class="card"><h2>文字對話</h2><label for="message">傳給曙光的訊息</label><textarea id="message" maxlength="4096" placeholder="輸入問題…"></textarea><button id="send" type="button" disabled>傳送</button><pre id="answer" aria-live="polite">需先接入第二基地登入、任務授權與文字服務。</pre></section>
+<section class="card"><h2>其他能力</h2><p>語音：缺少可移植的 relay 後端。</p><p>圖片理解、出圖、影片及 3D：本輪未啟用。</p></section>
+</main><script type="module" src="./page.mjs"></script></body></html>
