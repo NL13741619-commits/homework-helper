@@ -1,0 +1,63 @@
+{
+  "test_id": "DAWN-QA-PREFLIGHT-20261022-155559Z",
+  "checked_at_utc": "2026-10-22T15:55:59Z",
+  "checked_at_taipei": "2026-10-22T23:55:59+08:00",
+  "instance_id": "base-002:dawn-light",
+  "project_ref": "svtkpdmqemidlasowqew",
+  "implementation_commit": "99043f77442c8848111079e059e4c27e5378c43f",
+  "executor": "engineering-agent",
+  "requested_acceptance": [
+    "Dawn independently answers 17+25 with a real approved free model",
+    "Dawn reads its identity and memory capacity through its own scoped tool",
+    "Dawn plans and executes an authorized task and returns actual evidence"
+  ],
+  "observed_edge_function_inventory": [
+    {"slug":"bright-service","version":3,"status":"ACTIVE"},
+    {"slug":"constitution-import","version":3,"status":"ACTIVE"},
+    {"slug":"fetch-roc-tw-constitutional-court","version":2,"status":"ACTIVE"}
+  ],
+  "dawn_gateway_in_inventory": false,
+  "legacy_proxy_review": {
+    "slug": "bright-service",
+    "purpose": "legacy homework prompt forwarding",
+    "configuration_names_only": ["AIVAULT_TASK_URL", "AIVAULT_TASK_KEY"],
+    "dawn_agent_routing": false,
+    "upstream_target_and_free_model_verified": false,
+    "invoked": false
+  },
+  "local_runtime_configuration_present": {
+    "GEMINI_API_KEY": false,
+    "AIVAULT_GEMINI_API_KEY": false,
+    "AIVAULT_DAWN_COMMUNICATION_TOKEN": false,
+    "AIVAULT_DAWN_EXECUTION_TOKEN": false,
+    "AIVAULT_APPROVED_MODEL": false,
+    "AIVAULT_FREE_QUOTA_EVIDENCE": false
+  },
+  "remote_secret_values_read": false,
+  "remote_provider_secret_existence_determined": false,
+  "actual_engineering_tool_checks": {
+    "service_role_memory_status": "PASS",
+    "service_role_identity_entry_read": "PASS",
+    "service_role_keyword_recall": "PASS",
+    "instance_id": "base-002:dawn-light",
+    "capacity_chars": 500000,
+    "entries": 3,
+    "used_chars": 682,
+    "remaining_chars": 499318,
+    "read_test_transaction_rolled_back": true,
+    "autonomous_dawn_executor": false
+  },
+  "model_usage_rows_observed": 0,
+  "provider_request_sent": false,
+  "model_response_received": false,
+  "dawn_answer": null,
+  "answer_accuracy": "NOT_ASSESSED",
+  "autonomous_task_execution": "NOT_EXECUTED",
+  "autonomous_help_and_resume": "NOT_EXECUTED",
+  "always_on_runtime": "NOT_DEPLOYED",
+  "result": "BLOCKED_NO_DEPLOYED_DAWN_RUNTIME_AND_NO_VERIFIED_MODEL",
+  "help_ids": ["DAWN-HOST-001", "DAWN-IDENTITY-001", "DAWN-MODEL-001", "DAWN-LOOP-001"],
+  "paid_fallback": false,
+  "deployment_performed": false,
+  "secrets_changed": false
+}
