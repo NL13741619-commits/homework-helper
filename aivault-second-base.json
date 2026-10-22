@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "base": {
+    "repository": "NL13741619-commits/homework-helper",
+    "supabase_project_ref": "svtkpdmqemidlasowqew"
+  },
+  "protected_systems": {
+    "repositories": [
+      "NL13741619-commits/safe-reunion-login"
+    ],
+    "supabase_project_refs": [
+      "perfsipperncvjocznhl"
+    ]
+  },
+  "policy": {
+    "direct_main_write_by_agent": false,
+    "auto_merge": false,
+    "production_deploy": false,
+    "destructive_cleanup": false,
+    "paid_api": false,
+    "draft_pr_only": true,
+    "secrets_in_issue_or_logs": false
+  },
+  "phase": "INVENTORY_AND_DESIGN",
+  "status": "ACTIVE"
+}
