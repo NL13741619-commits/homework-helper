@@ -8,6 +8,7 @@
 
 禁止施工：
 - `NL13741619-commits/safe-reunion-login`
+- `NL13741619-commits/safe-reunion`
 - Supabase `perfsipperncvjocznhl`
 
 ## 控制流
