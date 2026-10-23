@@ -1,0 +1,1066 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>暗星｜導讀與報告工作站</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f7f8;color:#202123;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+header{background:#fff;border-bottom:1px solid #e5e5e5;padding:18px 20px;position:sticky;top:0;z-index:2}
+h1{margin:0;font-size:20px}header p{margin:6px 0 0;color:#666;font-size:13px}
+main{max-width:1100px;margin:auto;padding:18px;display:grid;gap:16px}.card{background:#fff;border:1px solid #e5e5e5;border-radius:14px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}label{font-size:13px;color:#555;display:block;margin-bottom:6px}
+input,select,textarea,button{font:inherit}input,select,textarea{width:100%;border:1px solid #d7d7d7;border-radius:10px;padding:10px;background:#fff}
+textarea{min-height:220px;resize:vertical}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+button{border:1px solid #ccc;background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer}button.primary{background:#202123;color:#fff;border-color:#202123}
+.status{font-size:13px;padding:9px 11px;border-radius:9px;background:#f1f1f1}.status.confirmed{background:#edf8f0}.status.warn{background:#fff6df}
+.result{white-space:pre-wrap;line-height:1.75;border-top:1px solid #eee;padding-top:14px}.result#result{overflow:visible;padding-right:8px}
+.pagination{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #eee}
+.pagination button{min-width:72px}.pagination button:disabled{opacity:.45;cursor:not-allowed}
+.page-indicator{font-size:13px;color:#555;min-width:110px;text-align:center}
+.darkstar-composer{display:flex;align-items:flex-end;gap:4px;margin-top:10px;border:1px solid #333;border-radius:14px;padding:4px 6px;background:#181818}
+.darkstar-composer-input{flex:1;min-height:39px;max-height:180px;resize:none;border:0!important;outline:0;background:transparent!important;color:#fff!important;padding:9px 7px!important;font-size:16px;line-height:1.45}
+.darkstar-composer-input::placeholder{color:#9a9a9a}
+.darkstar-composer-mic,.darkstar-composer-send{width:39px;height:39px;min-width:39px;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.darkstar-composer-mic{background:transparent;color:#ccc}
+.darkstar-composer-mic:hover{background:#2a2a2a}
+.darkstar-composer-mic.recording{background:#303030;color:#fff}
+.darkstar-composer-send{background:#171717;color:#fff}
+.darkstar-composer-send:disabled{opacity:.35;cursor:default}
+.darkstar-composer .icon{width:22px;height:22px}
+.darkstar-composer .icon-small{width:20px;height:20px}
+.page-jump{width:auto;min-width:80px;padding:8px}.badge{display:inline-block;padding:3px 7px;border-radius:7px;background:#eee;font-size:11px;margin-left:6px}
+.material-list{display:grid;gap:8px;margin-top:10px}.material-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 11px;border:1px solid #e5e5e5;border-radius:9px;background:#fafafa;font-size:13px}.material-item small{color:#777}.material-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.material-hint{font-size:12px;color:#666;margin-top:8px}.pptbox{margin-top:14px;padding:14px;border:1px solid #e5e5e5;border-radius:12px;background:#fafafa}.ppt-meta{font-size:13px;color:#555;margin:6px 0}.voicebox{margin-top:14px;padding:14px;border:1px solid #e5e5e5;border-radius:12px;background:#fafafa}.voice-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.voice-row select{width:auto;min-width:190px}.live-state{font-size:13px;color:#555}
+@media(max-width:760px){.grid{grid-template-columns:1fr 1fr}main{padding:12px}.voice-row select{width:100%}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+</head>
+<body>
+<header><h1>暗星｜導讀與報告工作站</h1><p>獨立測試模組｜不修改 Technical Dark Star 核心頁面</p></header>
+<main>
+<section class="card" id="darkStarControlCard" style="background:#111;color:#eee;border-color:#292929">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><strong>🌑 暗星</strong><span class="badge" style="background:#292929;color:#ddd">工作站控制中樞</span></div><button type="button" id="deleteDarkStarChat" style="border:1px solid #555;background:#1d1d1d;color:#ddd;border-radius:8px;padding:6px 10px;font-size:12px">刪除對話</button></div>
+<div id="darkStarChatLog" style="margin-top:10px;height:230px;max-height:230px;overflow:auto;display:grid;gap:5px">
+<div class="status" style="background:#1d1d1d;color:#eee">🟢 暗星已接管導讀工作站。你直接告訴我目標，我會操作目前頁面的功能並回報實際結果。</div>
+</div>
+<div class="darkstar-composer">
+<textarea id="darkStarChatInput" class="darkstar-composer-input" rows="1" placeholder="傳訊息給 Technical Dark Star……"></textarea>
+<button type="button" id="darkStarChatMic" class="darkstar-composer-mic" aria-label="語音輸入" title="語音輸入" onclick="window.toggleDarkStarChatMic&&window.toggleDarkStarChatMic(event)">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M9 21h6"/></svg>
+</button>
+<button type="button" id="darkStarChatSend" class="darkstar-composer-send" aria-label="送出" title="送出" onclick="window.askDarkStar&&window.askDarkStar()">
+<svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>
+</button>
+</div>
+<div id="darkStarChatState" style="margin-top:7px;font-size:12px;color:#aaa">暗星可以控制導讀、報告、PPT、朗讀、翻頁與停止；不能假裝已完成。</div>
+</section>
+<section class="card">
+<div class="grid">
+<div><label>內容類型</label><select id="kind"><option>教材／課本</option><option>論文</option><option>法律／行政資料</option><option>小說／故事</option><option>一般資料</option></select></div>
+<div><label>報告時間</label><select id="minutes"><option>10</option><option selected>25</option><option>40</option><option>60</option></select></div>
+<div><label>讀者</label><select id="audience"><option selected>研究生</option><option>教師</option><option>專業人士</option></select></div>
+<div><label>深度</label><select id="depth"><option selected>研究生｜分析型</option><option>研究型｜論文型</option></select></div>
+</div>
+<div style="margin-top:12px"><label>主題／標題</label><input id="title" placeholder="例如：第九章 決算制度"></div>
+<div style="margin-top:12px"><label>教材或資料</label><textarea id="source" placeholder="可直接貼上文字；也可以使用下面的多模態素材。"></textarea>
+<div class="material-actions" style="align-items:center"><input id="materialFiles" type="file" multiple accept=".doc,.docx,.ppt,.pptx,.pdf,.xls,.xlsx,.mp4,.mp3,.wav,.jpg,.jpeg,.png"><button type="button" id="clearMaterials">清除素材</button></div><div style="margin-top:10px"><label for="networkUrl">網路連結</label><div style="display:flex;gap:8px;align-items:center"><input id="networkUrl" type="url" inputmode="url" autocomplete="url" placeholder="在這裡貼上網址，例如 https://example.com" style="flex:1;min-width:0"><button type="button" id="confirmUrl" class="primary">加入並讀取</button></div><div id="urlStatus" style="margin-top:6px;font-size:12px;color:#666">貼上網址後按「加入並讀取」，暗星會立即擷取內容。</div></div>
+<div id="materialList" class="material-list"></div>
+<div class="material-hint">支援 Word、PPT、PDF、Excel、MP4、MP3、WAV、JPG／PNG、網路連結。文件型素材可先在前端解析文字；影音／圖片會保留為多模態素材並交由專用理解層處理。</div></div>
+<div class="actions"><button class="primary" id="build">建立導讀＋報告架構</button><button class="primary" id="generateAI">讓暗星直接生成專題報告</button><button id="clear">清除</button></div>
+<div id="state" class="status" style="margin-top:12px">尚未執行</div><div id="aiState" class="status warn" style="margin-top:8px">AI 生成：尚未執行</div>
+</section>
+<section class="card">
+<strong>輸出</strong><span class="badge">多段式</span><div id="result" class="result">等待資料。</div>
+<div id="guideVisuals" style="margin-top:12px;display:grid;gap:12px"></div>
+<div class="pagination" aria-label="輸出翻頁">
+<button id="pagePrev">‹ 上一頁</button>
+<span id="pageIndicator" class="page-indicator">第 0／0 頁</span>
+<button id="pageNext">下一頁 ›</button>
+<select id="pageJump" class="page-jump" aria-label="跳至頁面"><option value="0">頁面</option></select>
+</div>
+<div class="pptbox">
+<strong>📊 導讀 PPT</strong>
+<div id="pptMeta" class="ppt-meta">尚未生成。生成後會依目前輸出頁面建立 PPT，並保留每頁暗星講解稿。</div>
+<div class="actions"><button class="primary" id="generatePPT" type="button">生成導讀 PPT</button></div>
+</div>
+<div class="voicebox"><strong>🎙 暗星自然口語導讀</strong>
+<p style="margin:7px 0;color:#666;font-size:13px">文稿是內容依據；即時語音 負責把內容自然地說出來，不是把文字機械逐字朗讀。</p>
+<div class="voice-row"><select id="voiceSelect" aria-label="暗星聲音"></select><button class="primary" id="speakGuide">▶ 用暗星開始導讀</button><button id="stopGuide">■ 停止</button><span id="liveState" class="live-state">⚪ 尚未連線</span></div>
+</div></section>
+<section class="card">
+<strong>直接口語閱讀</strong><span class="badge">不分析</span>
+<p style="margin:7px 0;color:#666;font-size:13px">把已經完成的導讀、報告或任何講稿直接貼在這裡。這個視窗不經過 AI 分析、不改寫內容，只把原文交給 Gemini Live 自然口語說出來。</p>
+<textarea id="directSpeechText" placeholder="把已完成的導讀／報告直接貼在這裡……"></textarea>
+<div class="actions"><button class="primary" id="directSpeak">▶ 直接口語閱讀</button><button id="directStop">■ 停止</button><span id="directSpeechState" class="live-state">⚪ 尚未執行</span></div>
+</section>
+<section class="card"><strong>暗星生成規則</strong>
+<div class="result">導讀：問題意識 → 核心概念 → 論證主線 → 爭點與閱讀地圖
+研究生分析型：必須深入分析論證、證據、因果／制度關係、不同觀點、限制與實務意義
+研究型論文型：在分析型基礎上增加理論／文獻比較、研究問題、方法與研究缺口
+結論：回答「所以呢？」並收束核心發現
+語音：文稿提供事實與內容邊界，即時語音 以自然繁體中文口語表達；不得虛構案例、引用或已確認事實。
+AI 生成：教材 → 暗星獨立導讀／報告生成服務 → AIVAULT AI Gateway → 暗星模型；只有模型實際回傳完整稿件才顯示為生成成功。語音：生成完成後再交給 即時語音 自然口語表達。</div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const LIVE_FN='wss://svtkpdmqemidlasowqew.supabase.co/functions/v1/technical-dark-star-live-voice-v2';
+const VOICES=[['Zephyr','Zephyr｜明亮'],['Puck','Puck｜歡快'],['Charon','Charon｜資訊豐富'],['Kore','Kore｜堅定'],['Fenrir','Fenrir｜興奮'],['Leda','Leda｜年輕'],['Orus','Orus｜堅定'],['Aoede','Aoede｜輕快'],['Callirrhoe','Callirrhoe｜隨和'],['Autonoe','Autonoe｜明亮'],['Enceladus','Enceladus｜氣聲'],['Iapetus','Iapetus｜清晰'],['Umbriel','Umbriel｜隨和'],['Algieba','Algieba｜柔順'],['Despina','Despina｜柔順'],['Erinome','Erinome｜清晰'],['Algenib','Algenib｜粗獷'],['Rasalgethi','Rasalgethi｜資訊豐富'],['Laomedeia','Laomedeia｜歡快'],['Achernar','Achernar｜柔和'],['Alnilam','Alnilam｜堅定'],['Schedar','Schedar｜均衡'],['Gacrux','Gacrux｜成熟'],['Pulcherrima','Pulcherrima｜前進感'],['Achird','Achird｜友善'],['Zubenelgenubi','Zubenelgenubi｜隨性'],['Vindemiatrix','Vindemiatrix｜溫和'],['Sadachbia','Sadachbia｜活潑'],['Sadaltager','Sadaltager｜知識豐富'],['Sulafat','Sulafat｜溫暖']];
+let ws=null,playCtx=null,nextPlayTime=0,playSources=[],speaking=false,speechText='',speechSegments=[];
+let introRequestedThisRun=false;
+let outputPages=[],currentPage=0;
+let readingMaterials=[];
+let materialAnalysisBusy=0;
+let generatedSlides=[];
+let guideVisuals=[];
+function renderMaterials(){
+  const box=$('materialList'); box.innerHTML='';
+  readingMaterials.forEach((m,i)=>{
+    const el=document.createElement('div'); el.className='material-item';
+    const left=document.createElement('div'); left.innerHTML='<strong>'+escapeHtml(m.name)+'</strong><br><small>'+escapeHtml(m.type||'')+'｜'+escapeHtml(m.status||'待解析')+'</small>';
+    const b=document.createElement('button'); b.textContent='移除'; b.onclick=()=>{readingMaterials.splice(i,1);renderMaterials();};
+    el.append(left,b); box.appendChild(el);
+  });
+}
+function escapeHtml(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function extractFileText(file){
+  const name=file.name.toLowerCase();
+  if(/\.(txt|md|csv)$/.test(name)) return await file.text();
+  if(/\.docx$/.test(name) && window.mammoth){
+    const r=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()}); return r.value||'';
+  }
+  if(/\.xlsx?$/.test(name) && window.XLSX){
+    const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
+    return wb.SheetNames.map(n=>'【工作表：'+n+'】\\n'+XLSX.utils.sheet_to_csv(wb.Sheets[n])).join('\\n\\n');
+  }
+  if(/\.pptx$/.test(name) && window.JSZip){
+    const z=await JSZip.loadAsync(await file.arrayBuffer()); const out=[];
+    const keys=Object.keys(z.files).filter(k=>/^ppt\/slides\/slide\\d+\.xml$/.test(k)).sort((a,b)=>Number(a.match(/slide(\\d+)/)[1])-Number(b.match(/slide(\\d+)/)[1]));
+    for(const k of keys){const xml=await z.files[k].async('text'); const doc=new DOMParser().parseFromString(xml,'application/xml'); out.push('【投影片 '+k.match(/slide(\\d+)/)[1]+'】\\n'+Array.from(doc.getElementsByTagName('a:t')).map(x=>x.textContent).join(' '));}
+    return out.join('\\n\\n');
+  }
+  // 圖片、音訊、影片必須進入真正的多模態分析，不在前端用假文字佔位。
+  if(/\.(jpg|jpeg|png)$/.test(name)) return '';
+  if(/\.(mp4|mp3|wav)$/.test(name)) return '';
+  if(/\.pdf$/.test(name)) return '【PDF 多模態素材】 '+file.name+'\\nPDF 頁面視覺／掃描內容待多模態理解層解析。';
+  return '';
+}
+async function analyzeMultimodalMaterial(m){
+  if(!m.file) return false;
+  const name=String(m.file.name||'').toLowerCase();
+  const type=String(m.type||'').toLowerCase();
+  const isImage=/^image\//.test(type)||/\.(jpg|jpeg|png)$/.test(name);
+  const isAudio=/^audio\//.test(type)||/\.(mp3|wav)$/.test(name);
+  const isVideo=/^video\//.test(type)||/\.mp4$/.test(name);
+  if(!isImage&&!isAudio&&!isVideo) return false;
+  const limit=12*1024*1024;
+  if(m.file.size>limit){m.status='REQUIRES TEST：檔案超過12MB，待大型媒體 Storage／File API 管線';return false;}
+  m.status='多模態理解中…'; renderMaterials();
+  try{
+    const dataUrl=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(m.file);});
+    const mediaType=isImage?'image':isAudio?'audio':'video';
+    const r=await callReportAPI({mode:'multimodal',media_type:mediaType,media:String(dataUrl),prompt:'你是暗星的圖片OCR與視覺理解層。若這是圖片，直接看圖並先逐項辨識實際可見文字，再分析圖像，最後綜合判讀。固定輸出：【圖片文字（OCR）】、【圖像分析】、【綜合判讀】三段；標題、段落、表格、圖例、座標軸、數字、註記與頁首頁尾都要盡可能辨識；看不清楚寫〔無法辨識〕，絕對不能猜字或補字；無法直接由圖片確認的推論標示〔INFERENCE〕；不得虛構。若為影音，分析畫面、語音、字幕、事件與時間關係；音樂分析人聲、樂器、節奏、段落、情緒與可辨識歌詞。'});
+    if(r&&r.analysis){
+      m.text=String(r.analysis);
+      m.status='已完成暗星多模態理解';
+      renderMaterials();
+      return true;
+    }
+    m.status='REQUIRES TEST：多模態模型未回傳分析';
+  }catch(e){m.status='REQUIRES TEST：多模態分析失敗｜'+String(e.message||e);}
+  renderMaterials();
+  return false;
+}
+async function addFiles(files){
+  const list=Array.from(files||[]);
+  if(!list.length)return;
+  for(const file of list){
+    const m={name:file.name,type:file.type||'file',status:'已選取，等待暗星分析',file};
+    readingMaterials.push(m); renderMaterials();
+    try{
+      m.text=await extractFileText(file);
+      const mediaFile=/^(image\/|audio\/|video\/)/.test(m.type||'')||/\.(jpg|jpeg|png|mp4|mp3|wav)$/i.test(file.name);
+      m.status=mediaFile?'待建立導讀時進行多模態理解':(m.text?'已取得可分析文字':'REQUIRES TEST：此檔案格式目前沒有可用解析器');
+    }catch(e){m.status='REQUIRES TEST：解析失敗｜'+String(e.message||e);m.error=String(e.message||e);}
+    renderMaterials();
+  }
+  $('state').textContent='🟢 素材已加入：按「建立導讀＋報告架構」開始真正分析';
+  $('state').className='status confirmed';
+  $('materialFiles').value='';
+}
+function hasVerifiedImageAnalysis(text){
+  const s=String(text||'');
+  return s.includes('【圖片文字（OCR）】')&&s.includes('【圖像分析】')&&s.includes('【綜合判讀】');
+}
+async function buildMaterialSource(){
+  const chunks=[];
+  const typed=$('source').value.trim();
+  if(typed)chunks.push('【使用者直接提供】\n'+typed);
+  for(const m of readingMaterials){
+    const isMedia=Boolean(m.file&&(/^(image\/|audio\/|video\/)/.test(String(m.type||''))||/\.(jpg|jpeg|png|mp4|mp3|wav)$/i.test(String(m.name||m.file.name||''))));
+    const isUrl=m.type==='url'&&m.url;
+    if(m.text){
+      chunks.push('【素材：'+m.name+'】\n'+m.text);
+    }else if(isUrl){
+      m.status='網頁內容擷取中…'; renderMaterials();
+      const r=await callReportAPI({mode:'url',url:m.url});
+      if(!r||typeof r.text!=='string'||r.text.trim().length<20)throw new Error('URL_CONTENT_EMPTY｜'+m.url);
+      m.text=r.text.trim();
+      m.status='已取得網頁內容'; renderMaterials();
+      chunks.push('【網路素材：'+m.url+'】\n'+m.text);
+    }else if(isMedia){
+      const ok=await analyzeMultimodalMaterial(m);
+      if(!ok||!m.text)throw new Error('MULTIMODAL_ANALYSIS_EMPTY｜'+m.name);
+      if(/\.(jpg|jpeg|png)$/i.test(String(m.name||''))&&!hasVerifiedImageAnalysis(m.text))throw new Error('IMAGE_OCR_CONTRACT_FAILED｜'+m.name);
+      chunks.push('【素材：'+m.name+'】\n'+m.text);
+    }else{
+      throw new Error('MATERIAL_TEXT_EMPTY｜'+m.name);
+    }
+  }
+  return chunks.join('\n\n').trim();
+}
+async function generateReadingPPT(){
+  if(!outputPages.length){$('pptMeta').textContent='REQUIRES TEST：請先生成導讀／報告。';return;}
+  if(!window.PptxGenJS){$('pptMeta').textContent='REQUIRES TEST：PPT 生成函式庫尚未載入。';return;}
+  const ppt=new PptxGenJS(); ppt.layout='LAYOUT_WIDE'; ppt.author='AIVAULT｜暗星'; ppt.subject='暗星研究導讀';
+  generatedSlides=outputPages.map((text,i)=>({page:i+1,title:'暗星導讀｜第 '+(i+1)+' 頁',body:text}));
+  speechText=generatedSlides.map(sl=>sl.title+'\\n'+sl.body).join('\\n\\n');
+  speechSegments=generatedSlides.map((sl,i)=>({kind:'ppt-slide',index:i+1,total:generatedSlides.length,text:sl.title+'\\n'+sl.body}));
+  generatedSlides.forEach(sl=>{
+    const slide=ppt.addSlide(); slide.background={color:'FFFFFF'};
+    slide.addText(sl.title,{x:0.55,y:0.35,w:12.2,h:0.45,fontSize:22,bold:true,color:'202123'});
+    slide.addText(sl.body,{x:0.65,y:1.0,w:12.0,h:5.85,fontSize:16,color:'202123',breakLine:false,fit:'shrink',margin:0.08,valign:'top'});
+    if(typeof slide.addNotes==='function') slide.addNotes('暗星講解稿：\\n'+sl.body);
+    slide.addText('第 '+sl.page+' 頁',{x:11.2,y:7.05,w:1.2,h:0.25,fontSize:9,color:'666666',align:'right'});
+  });
+  const filename=(($('title').value.trim()||'暗星導讀').replace(/[\/:*?"<>|]/g,'_'))+'｜暗星導讀.pptx';
+  await ppt.writeFile({fileName:filename});
+  $('pptMeta').textContent='CONFIRMED：已生成 '+generatedSlides.length+' 頁 PPT；每頁均保留對應講解稿，Gemini Live 可依頁序講解。';
+}
+
+function splitOutputPages(text,maxLen=1800){
+  const clean=String(text||'').trim();
+  if(!clean)return [];
+  const pages=[];let rest=clean;
+  while(rest.length>maxLen){
+    let cut=-1;
+    const marks=['\n\n','\n','。','！','？','；'];
+    for(const mark of marks){
+      const i=rest.lastIndexOf(mark,maxLen);
+      if(i>Math.floor(maxLen*0.60)){cut=i+mark.length;break;}
+    }
+    if(cut<0)cut=maxLen;
+    pages.push(rest.slice(0,cut).trim());
+    rest=rest.slice(cut).trim();
+  }
+  if(rest)pages.push(rest);
+  return pages;
+}
+function renderPageControls(){
+  const n=outputPages.length;
+  $('pageIndicator').textContent=n?('第 '+(currentPage+1)+'／'+n+' 頁'):'第 0／0 頁';
+  $('pagePrev').disabled=n===0||currentPage<=0;
+  $('pageNext').disabled=n===0||currentPage>=n-1;
+  const sel=$('pageJump');
+  sel.innerHTML='';
+  if(!n){const o=document.createElement('option');o.value='0';o.textContent='頁面';sel.appendChild(o);return;}
+  for(let i=0;i<n;i++){const o=document.createElement('option');o.value=String(i);o.textContent='第 '+(i+1)+' 頁';sel.appendChild(o);}
+  sel.value=String(currentPage);
+}
+function renderGuideVisuals(){
+  const box=$('guideVisuals');
+  if(!box)return;
+  box.innerHTML='';
+  const items=guideVisuals.filter(x=>x.page===currentPage);
+  items.forEach((item)=>{
+    const wrap=document.createElement('figure');
+    wrap.style.cssText='margin:0;padding:10px;border:1px solid #ddd;border-radius:12px;background:#fff';
+    const img=document.createElement('img');
+    img.src=item.url;
+    img.alt=item.prompt||'暗星生成導讀圖片';
+    img.style.cssText='display:block;width:100%;height:auto;border-radius:8px';
+    wrap.appendChild(img);
+    const cap=document.createElement('figcaption');
+    cap.style.cssText='margin-top:8px;font-size:12px;color:#666;line-height:1.5';
+    cap.textContent='暗星生成圖片｜已回輸暗星視覺分析｜'+(item.analysis_status||'REQUIRES TEST');
+    wrap.appendChild(cap);
+    box.appendChild(wrap);
+  });
+}
+function showOutputPage(index){
+  if(!outputPages.length){currentPage=0;$('result').textContent='等待資料。';renderGuideVisuals();renderPageControls();return;}
+  currentPage=Math.max(0,Math.min(index,outputPages.length-1));
+  $('result').textContent=outputPages[currentPage];
+  $('result').dataset.currentPage=String(currentPage+1);
+  renderGuideVisuals();
+  renderPageControls();
+}
+function renderFullOutput(text){
+  const full=String(text||'').trim();
+  guideVisuals=[];
+  outputPages=splitOutputPages(full,1800);
+  currentPage=0;
+  $('result').dataset.pageCount=String(outputPages.length);
+  showOutputPage(0);
+  renderPageControls();
+}
+async function makeStructure(){
+  const title=$('title').value.trim()||'未命名主題';
+  $('build').disabled=true;
+  $('state').textContent='🟡 暗星正在接收素材，開始分析圖片／文字……';
+  $('state').className='status warn';
+  try{
+    const source=await buildMaterialSource();
+    if(!source)throw new Error('SOURCE_REQUIRED');
+    const base={title,kind:$('kind').value,audience:$('audience').value,depth:$('depth').value,minutes:$('minutes').value,source};
+    const imageOnly=readingMaterials.length===1&&!$('source').value.trim()&&/\.(jpg|jpeg|png)$/i.test(String(readingMaterials[0].name||''));
+    let analysisContext=source;
+    if(!imageOnly){
+      const analysis=await callReportAPI({...base,mode:'parse'});
+      if(!analysis||typeof analysis.analysis_context!=='string'||analysis.analysis_context.length<40) throw new Error('素材分析底稿不足');
+      analysisContext=analysis.analysis_context;
+    }
+    $('state').textContent=imageOnly
+      ? '🟡 暗星已直接理解圖片文字與圖像，正在建立研究導讀……'
+      : '🟡 暗星已完成素材理解，正在建立研究導讀……';
+    const guide=await callReportAPI({...base,mode:'guide',analysis_context:analysisContext});
+    if(!guide||typeof guide.guide!=='string'||guide.guide.length<100) throw new Error('導讀生成格式錯誤');
+    const guideText=guide.guide;
+    renderFullOutput('【暗星研究導讀】\n'+title+'\n\n'+guideText);
+    const hasImage=readingMaterials.some(m=>/\.(jpg|jpeg|png)$/i.test(String(m.name||'')));
+    $('state').textContent=hasImage
+      ? 'CONFIRMED：暗星已完成圖片理解，並據此建立研究導讀。'
+      : 'CONFIRMED：已由素材建立研究導讀。';
+    $('state').className='status confirmed';
+  }catch(e){
+    $('state').textContent='REQUIRES TEST：導讀建立失敗｜'+String(e.message||e);
+    $('state').className='status warn';
+  }finally{
+    $('build').disabled=false;
+  }
+}
+const READING_REPORT_API='https://svtkpdmqemidlasowqew.supabase.co/functions/v1/dark-star-reading-report';
+const darkStarConversation=[];
+function deleteDarkStarChat(){
+  darkStarConversation.length=0;
+  const box=$('darkStarChatLog');
+  if(box){
+    box.innerHTML='<div class="status" style="background:#1d1d1d;color:#eee">⚪ 對話已刪除。暗星已清空本頁對話紀錄，等待新的訊息。</div>';
+  }
+  $('darkStarChatState').textContent='⚪ 本頁對話已刪除';
+}
+function appendDarkStarChat(role,text){
+  const box=$('darkStarChatLog');
+  const el=document.createElement('div');
+  el.className='status '+(role==='darkstar'?'confirmed':'');
+  el.style.background='#1d1d1d';
+  el.style.color='#eee';
+  el.style.borderColor='#333';
+  el.style.padding='6px 8px';
+  el.style.margin='0';
+  el.style.lineHeight='1.4';
+
+  const row=document.createElement('div');
+  row.style.cssText='display:flex;align-items:flex-start;gap:6px';
+
+  const content=document.createElement('div');
+  content.style.flex='1';
+
+  const label=document.createElement('strong');
+  label.style.color='#eee';
+  label.textContent=(role==='user'?'你':'暗星')+'：';
+
+  content.appendChild(label);
+  content.appendChild(document.createTextNode(String(text||'')));
+
+  const del=document.createElement('button');
+  del.type='button';
+  del.setAttribute('aria-label','刪除這則對話');
+  del.title='刪除這則對話';
+  del.style.cssText='border:0;background:transparent;color:#aaa;font-size:18px;line-height:1;padding:0 3px;cursor:pointer';
+  del.textContent='×';
+  del.addEventListener('click',()=>el.remove());
+
+  row.appendChild(content);
+  row.appendChild(del);
+  el.appendChild(row);
+  box.appendChild(el);
+  box.scrollTop=box.scrollHeight;
+}
+let darkStarChatRecognition=null;
+let darkStarChatRecording=false;
+
+function resizeDarkStarChatInput(){
+  const input=$('darkStarChatInput');
+  if(!input)return;
+  input.style.height='auto';
+  input.style.height=Math.min(input.scrollHeight,180)+'px';
+}
+
+const DarkStarChatSpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(DarkStarChatSpeechRecognition){
+  darkStarChatRecognition=new DarkStarChatSpeechRecognition();
+  darkStarChatRecognition.lang='zh-TW';
+  darkStarChatRecognition.continuous=false;
+  darkStarChatRecognition.interimResults=true;
+
+  darkStarChatRecognition.onstart=()=>{
+    darkStarChatRecording=true;
+    $('darkStarChatMic').classList.add('recording');
+    $('darkStarChatMic').setAttribute('aria-pressed','true');
+    $('darkStarChatState').textContent='🟡 正在聆聽……';
+  };
+
+  darkStarChatRecognition.onresult=event=>{
+    let transcript='';
+    let finalText='';
+    for(let i=event.resultIndex;i<event.results.length;i++){
+      const item=event.results[i];
+      const t=item[0]?.transcript||'';
+      transcript+=t;
+      if(item.isFinal)finalText+=t;
+    }
+    $('darkStarChatInput').value=transcript;
+    resizeDarkStarChatInput();
+    $('darkStarChatSend').disabled=false;
+
+    if(finalText.trim()){
+      $('darkStarChatState').textContent='🟢 已辨識：'+finalText.trim();
+      try{darkStarChatRecognition.stop();}catch(e){}
+      setTimeout(()=>{
+        if($('darkStarChatInput').value.trim()) window.askDarkStar();
+      },50);
+    }
+  };
+
+  darkStarChatRecognition.onerror=event=>{
+    darkStarChatRecording=false;
+    $('darkStarChatMic').classList.remove('recording');
+    $('darkStarChatMic').setAttribute('aria-pressed','false');
+    $('darkStarChatState').textContent='🔴 語音辨識錯誤：'+String(event?.error||'unknown');
+  };
+
+  darkStarChatRecognition.onend=()=>{
+    darkStarChatRecording=false;
+    $('darkStarChatMic').classList.remove('recording');
+    $('darkStarChatMic').setAttribute('aria-pressed','false');
+  };
+}else{
+  $('darkStarChatState').textContent='🔴 ERROR：此瀏覽器未提供 SpeechRecognition / webkitSpeechRecognition。';
+}
+
+window.toggleDarkStarChatMic=function(event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  if(!darkStarChatRecognition){
+    $('darkStarChatState').textContent='🔴 ERROR：此瀏覽器未提供語音辨識 API。';
+    return;
+  }
+  if(darkStarChatRecording){
+    try{darkStarChatRecognition.stop();}catch(e){}
+    return;
+  }
+  try{
+    darkStarChatRecognition.start();
+  }catch(e){
+    $('darkStarChatState').textContent='🔴 語音啟動失敗：'+String(e.message||e);
+  }
+};
+
+$('darkStarChatSend').addEventListener('click',event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  window.askDarkStar();
+});
+$('darkStarChatInput').addEventListener('input',()=>{
+  resizeDarkStarChatInput();
+  $('darkStarChatSend').disabled=false;
+});
+$('darkStarChatInput').addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&!event.shiftKey){
+    event.preventDefault();
+    window.askDarkStar();
+  }
+});
+
+window.askDarkStar=async function askDarkStar(){
+  const input=$('darkStarChatInput');
+  const question=input.value.trim();
+  if(!question)return;
+  const btn=$('darkStarChatSend');
+  btn.disabled=true;
+  input.value='';
+  input.style.height='';
+  appendDarkStarChat('user',question);
+  $('darkStarChatState').textContent='🟡 暗星正在思考……';
+  try{
+    const materialSummary=readingMaterials.map(m=>({
+      name:m.name,type:m.type,status:m.status,
+      text:m.text?String(m.text).slice(0,5000):'',url:m.url||''
+    }));
+    const context={
+      title:$('title').value.trim(),
+      kind:$('kind').value,
+      audience:$('audience').value,
+      depth:$('depth').value,
+      state:$('state').textContent,
+      aiState:$('aiState').textContent,
+      urlStatus:$('urlStatus').textContent,
+      materials:materialSummary,
+      output:outputPages.join('\\n\\n').slice(0,12000)
+    };
+    darkStarConversation.push({role:'user',content:question});
+    const r=await callReportAPI({
+      mode:'chat',
+      question,
+      context,
+      history:darkStarConversation.slice(-12),
+      control:true,
+      agent_id:'technical-dark-star',
+      topic_id:getSharedDarkStarTopicId(),
+      conversation_id:getSharedDarkStarConversationId(),
+      source:'dark-star-reading-report'
+    });
+    if(r&&r.action&&r.action!=='NONE'){
+      const actionResult=await darkStarRunAction(r.action,r.params||{});
+      appendDarkStarChat('darkstar',String(r.reply||'')+'\n\n'+actionResult);
+      darkStarConversation.push({role:'assistant',content:String(r.reply||'')+' '+actionResult});
+      $('darkStarChatState').textContent='🟢 暗星已完成本次控制並回報結果';
+      return;
+    }
+    if(!r||typeof r.reply!=='string'||!r.reply.trim())throw new Error('CHAT_REPLY_EMPTY');
+    appendDarkStarChat('darkstar',r.reply.trim());
+    $('darkStarChatState').textContent='🟢 暗星已回答';
+  }catch(e){
+    appendDarkStarChat('darkstar','🔴 ERROR：暗星目前無法回答。'+String(e.message||e));
+    $('darkStarChatState').textContent='🔴 ERROR：'+String(e.message||e);
+  }finally{
+    btn.disabled=false;
+    input.focus();
+  }
+}
+
+
+async function darkStarRunAction(action,params={}){
+  const a=String(action||'').toUpperCase();
+  const value=String(params.value??params.text??params[a]??'').trim();
+
+  const selectSet=(id,v)=>{
+    const el=$(id);
+    if(!el)return '🔴 ERROR：找不到欄位「'+id+'」。';
+    if(el.tagName==='SELECT'){
+      const opt=[...el.options].find(o=>o.value===v||o.textContent.trim()===v);
+      if(!opt)return '🔴 ERROR：暗星要求的「'+v+'」不是目前可用選項。';
+      el.value=opt.value;
+    }else{
+      el.value=v;
+    }
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+    return null;
+  };
+
+  if(a==='GENERATE_IMAGE'){
+    const prompt=String(params.prompt||params.value||'').trim() || ('請為「'+(($('title')?.value||'未命名主題').trim())+'」目前導讀第'+(currentPage+1)+'頁製作研究型資訊圖／架構圖，忠實呈現本頁核心概念、關係與論證，不添加材料沒有的事實。');
+    try{
+      $('state').textContent='🟡 暗星正在生成導讀圖片……';
+      const resp=await fetch('https://svtkpdmqemidlasowqew.supabase.co/functions/v1/dark-star-image-generation',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent_id:'technical-dark-star',prompt,mime_type:'image/jpeg',aspect_ratio:String(params.aspect_ratio||'16:9'),image_size:String(params.image_size||'1K'),reject_svg:true})});
+      const data=await resp.json().catch(()=>({}));
+      if(!resp.ok||data.ok!==true) throw new Error(String(data?.error?.message||data?.error||('HTTP '+resp.status)));
+      const url=String(data?.artifact?.inline_data_url||data?.artifact?.signed_url||'').trim();
+      if(!url)throw new Error('IMAGE_ARTIFACT_URL_EMPTY');
+      let analysis='';
+      let analysisStatus='NOT_VERIFIED';
+      if(String(data?.artifact?.inline_data_url||'').startsWith('data:image/')){
+        try{
+          const vr=await callReportAPI({mode:'multimodal',media_type:'image',media:String(data.artifact.inline_data_url),prompt:'這是暗星剛剛生成的導讀圖片。請重新實際看圖，先辨識圖片中的文字與結構，再分析圖像。固定輸出：【圖片文字（OCR）】、【圖像分析】、【綜合判讀】；不得因為這是自己生成的圖片就假設內容正確。'});
+          analysis=String(vr?.analysis||'').trim();
+          if(!analysis||!hasVerifiedImageAnalysis(analysis)) throw new Error('GENERATED_IMAGE_REINPUT_CONTRACT_FAILED');
+          analysisStatus='CONFIRMED';
+        }catch(analysisError){
+          analysisStatus='NOT_VERIFIED';
+          analysis='【視覺分析尚未驗證】'+String(analysisError?.message||analysisError);
+        }
+      }
+      if(!outputPages.length){
+        outputPages=['【暗星圖片工作頁】\\n'+(($('title')?.value||'未命名主題').trim())+'\\n\\n暗星已生成研究圖片。本頁文字導讀尚待建立。'];
+        currentPage=0;
+        $('result').dataset.pageCount='1';
+        showOutputPage(0);
+      }
+      const item={page:currentPage,url,prompt,analysis,analysis_status:analysisStatus,inline_data_url:String(data?.artifact?.inline_data_url||'').trim()};
+      guideVisuals.push(item);
+      readingMaterials.push({name:'暗星生成導讀圖片｜第'+(currentPage+1)+'頁',type:'image/jpeg',status:analysisStatus==='CONFIRMED'?'已生成並回輸暗星分析':'已生成，回輸分析未驗證',url,text:analysis||'【生成圖片】'+prompt});
+      renderGuideVisuals();
+      if(analysisStatus==='CONFIRMED'){
+        $('state').textContent='CONFIRMED：圖片已生成、回輸暗星視覺分析，並放入目前導讀頁。';
+        $('state').className='status confirmed';
+        return '🟢 IMAGE EXECUTED：已生成 JPEG、完成暗星視覺分析並插入第'+(currentPage+1)+'頁。';
+      }
+      $('state').textContent='REQUIRES TEST：圖片已生成並放入導讀，但暗星視覺分析因目前 AI 配額限制尚未驗證。';
+      $('state').className='status warn';
+      return '🟡 IMAGE GENERATED：JPEG 已插入第'+(currentPage+1)+'頁；視覺分析 NOT_VERIFIED，未偽造分析結果。';
+    }catch(e){
+      $('state').textContent='REQUIRES TEST：圖片生成／回輸失敗｜'+String(e.message||e);
+      $('state').className='status warn';
+      return '🔴 ERROR：'+String(e.message||e);
+    }
+  }
+  const fields={SET_TITLE:'title',SET_KIND:'kind',SET_AUDIENCE:'audience',SET_DEPTH:'depth',SET_MINUTES:'minutes',SET_SOURCE:'source',SET_DIRECT_SPEECH:'directSpeechText',SET_VOICE:'voiceSelect',JUMP_PAGE:'pageJump',SET_FIELD:null};
+  if(a==='SET_FIELD'){
+    const id=String(params.field_id||params.id||'').trim();
+    if(!id)return '🔴 ERROR：暗星沒有取得要填寫的欄位 ID。';
+    const el=$(id);
+    if(!el)return '🔴 ERROR：找不到欄位「'+id+'」。';
+    if(el.type==='file')return '🔴 ERROR：檔案選擇欄位不能由暗星代替使用者選檔。';
+    const v=String(params.value??params.text??'');
+    if(el.tagName==='SELECT'){
+      const opt=[...el.options].find(o=>o.value===v||o.textContent.trim()===v);
+      if(!opt)return '🔴 ERROR：欄位「'+id+'」沒有「'+v+'」這個選項。';
+      el.value=opt.value;
+    }else{
+      el.value=v;
+    }
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+    if(id==='networkUrl')$('confirmUrl')?.click();
+    return '🟢 ACTION EXECUTED：暗星已將文字填入「'+id+'」。';
+  }
+
+  if(fields[a]){
+    if(!value && a!=='JUMP_PAGE')return '🔴 ERROR：暗星沒有取得可套用的修改內容。';
+    const id=fields[a];
+    if(a==='JUMP_PAGE'){
+      const n=Number(value);
+      if(!Number.isInteger(n)||n<1)return '🔴 ERROR：頁碼必須是正整數。';
+      $(id).value=String(n);
+      $(id).dispatchEvent(new Event('change',{bubbles:true}));
+      if(typeof window.showOutputPage==='function')window.showOutputPage(n-1);
+      else $(id).dispatchEvent(new Event('change',{bubbles:true}));
+      return '🟢 ACTION EXECUTED：暗星已跳到第 '+n+' 頁。';
+    }
+    const err=selectSet(id,value);
+    if(err)return err;
+    if(a==='SET_URL')return err;
+    return '🟢 ACTION EXECUTED：暗星已修改「'+id+'」為「'+$(id).value+'」。';
+  }
+
+  if(a==='CLEAR_SOURCE'){
+    const el=$('source');
+    if(!el)return '🔴 ERROR：找不到教材或資料欄位。';
+    el.value='';
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+    return '🟢 ACTION EXECUTED：暗星已清空教材或資料文字。';
+  }
+
+  if(a==='SET_URL'){
+    const el=$('networkUrl');
+    if(!el||!value)return '🔴 ERROR：沒有取得網路連結。';
+    el.value=value;
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+    $('confirmUrl')?.click();
+    await new Promise(r=>setTimeout(r,1200));
+    return '🟡 ACTION EXECUTED：暗星已輸入網址並啟動「加入並讀取」。目前網址狀態：'+($('urlStatus')?.textContent||'');
+  }
+
+  const map={GENERATE_IMAGE:'__handled_above__',GUIDE:'build',REPORT:'generateAI',PPT:'generatePPT',SPEAK:'speakGuide',STOP:'stopGuide',NEXT_PAGE:'pageNext',PREV_PAGE:'pagePrev',CLEAR_MATERIALS:'clearMaterials',CLEAR:'clear',DIRECT_SPEAK:'directSpeak'};
+  const id=map[a];
+  if(!id||!$(id))return '🔴 ERROR：暗星要求的操作不存在。';
+  $(id).click();
+  await new Promise(r=>setTimeout(r,800));
+  return '🟡 ACTION EXECUTED：暗星已控制「'+id+'」。目前頁面狀態：'+($('state')?.textContent||'')+'；AI狀態：'+($('aiState')?.textContent||'')+'。';
+}
+
+function getSharedDarkStarTopicId(){
+  try{
+    let topic=localStorage.getItem('technical-dark-star-topic-id');
+    if(typeof topic==='string'&&topic.trim()) return topic.trim();
+    topic='technical-dark-star-'+(crypto?.randomUUID?crypto.randomUUID():(Date.now()+'-'+Math.random().toString(36).slice(2)));
+    localStorage.setItem('technical-dark-star-topic-id',topic);
+    return topic;
+  }catch(e){
+    return 'technical-dark-star-reading-'+Date.now();
+  }
+}
+
+function getSharedDarkStarConversationId(){
+  try{
+    const id=localStorage.getItem('technical_dark_star_conversation_id');
+    return typeof id==='string'&&id.trim()?id.trim():null;
+  }catch(e){return null;}
+}
+
+async function callReportAPI(body){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),90000);
+  let r;
+  try{
+    r=await fetch(READING_REPORT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});
+  }catch(e){
+    clearTimeout(timer);
+    throw new Error(e.name==='AbortError'?'API_TIMEOUT_90S':('NETWORK_ERROR｜'+String(e.message||e)));
+  }
+  clearTimeout(timer);
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||!d.success){
+    const extra=[d.error||d.message||('HTTP '+r.status)];
+    if(d.content_length!=null)extra.push('content_length='+d.content_length);
+    if(d.batch!=null)extra.push('batch='+d.batch);
+    if(d.content_prefix)extra.push(String(d.content_prefix).slice(0,80));
+    throw new Error(extra.join('｜'));
+  }
+  return d.result;
+}
+async function generateAI(){
+  $('generateAI').disabled=true;
+  $('aiState').textContent='🟡 暗星正在接收素材……';
+  $('aiState').className='status warn';
+  try{
+  const source=await buildMaterialSource();
+  if(!source)throw new Error('SOURCE_REQUIRED｜請先提供教材或資料。');
+  outputPages=[];currentPage=0;$('result').textContent='暗星正在直接生成專題報告……';renderPageControls();
+  $('aiState').textContent='🟡 暗星正在解析材料，準備直接進入專題報告……';
+  $('aiState').className='status warn';
+    const base={title:$('title').value.trim()||'未命名主題',kind:$('kind').value,audience:$('audience').value,depth:$('depth').value,minutes:$('minutes').value,source};
+    const analysis=await callReportAPI({...base,mode:'parse'});
+    if(!analysis||typeof analysis.analysis_context!=='string')throw new Error('文章解析格式錯誤');
+    $('aiState').textContent='🟡 解析完成，暗星直接生成專題報告第 1／3 部分……';
+    let reportParts=[];
+    for(let i=1;i<=3;i++){
+      const part=await callReportAPI({...base,mode:'report_direct',part:i,total_parts:3,analysis_context:analysis.analysis_context});
+      if(!part||typeof part.report_part!=='string')throw new Error('專題報告第 '+i+' 段格式錯誤');
+      reportParts.push(part.report_part);
+      $('aiState').textContent='🟡 專題報告生成中：'+i+'／3……';
+    }
+    const report=reportParts.join('\n\n');
+    $('aiState').textContent='🟡 專題報告完成，正在生成結論……';
+    const conclusion=await callReportAPI({...base,mode:'conclusion',guide:'',analysis_context:analysis.analysis_context,report});
+    if(!conclusion||typeof conclusion.conclusion!=='string')throw new Error('結論生成格式錯誤');
+    $('aiState').textContent='🟡 正式報告與結論完成，暗星正在執行專題報告品質審查……';
+    const quality=await callReportAPI({...base,mode:'quality',direct:true,guide:'',analysis_context:analysis.analysis_context,report,conclusion:conclusion.conclusion});
+    if(!quality||typeof quality.overall!=='string')throw new Error('品質審查格式錯誤');
+
+    const fullText='【暗星專題報告】\n'+base.title+'\n\n'+report+'\n\n【結論】\n'+conclusion.conclusion;
+    const reportLen=String(report||'').length;
+    const conclusionLen=String(conclusion.conclusion||'').length;
+    const fullPages=splitOutputPages(fullText,1800).length;
+    renderFullOutput(fullText);
+    $('result').dataset.fullTextLength=String(fullText.length);
+    $('result').dataset.reportLength=String(reportLen);
+    $('result').dataset.conclusionLength=String(conclusionLen);
+    $('result').dataset.pageCount=String(outputPages.length);
+    const pageProbe=outputPages.length>1?outputPages[1].slice(0,24):'';
+    let diag='暗星直接專題報告診斷｜報告 '+reportLen+' 字｜結論 '+conclusionLen+' 字｜完整稿 '+fullText.length+' 字｜'+fullPages+' 頁';
+    if(outputPages.length<2){
+      diag+='｜REQUIRES TEST：完整稿仍只有1頁。這不是翻頁故障，是實際生成結果未超過1800字。';
+      $('state').className='status warn';
+    }else{
+      diag+='｜第2頁開頭：'+pageProbe;
+      $('state').className=reportLen>=3500?'status confirmed':'status warn';
+    }
+    $('state').textContent=diag;
+    speechText='【專題報告】\n'+base.title+'\n'+report+'\n\n【結論】\n'+conclusion.conclusion;
+    speechSegments=buildSpeechSegments(base.title,'',report,conclusion.conclusion);
+
+    const qmsg='品質審查：'+String(quality.overall||'NEEDS_REVISION')+'｜分數 '+String(quality.score??'未提供')+'／100';
+    $('aiState').textContent=(quality.overall==='PASS'
+      ? 'CONFIRMED：暗星已直接完成「文章解析 → 3段專題報告 → 結論」，未先生成導讀。完整稿 '+outputPages.length+' 頁。Gemini Live 僅負責後續自然口語表達。'
+      : 'REQUIRES REVIEW：暗星已完成專題報告，但品質閘門判定仍需修訂。'+qmsg+'｜完整稿 '+outputPages.length+' 頁');
+    $('aiState').className=quality.overall==='PASS'?'status confirmed':'status warn';
+  }catch(e){
+    $('aiState').textContent='REQUIRES TEST：AI 生成失敗｜'+(e.message||e);
+    $('aiState').className='status warn';
+  }finally{$('generateAI').disabled=false;}
+}
+function initVoices(){const sel=$('voiceSelect');VOICES.forEach(([id,label])=>{const o=document.createElement('option');o.value=id;o.textContent=id+' — '+label;sel.appendChild(o)});sel.value=localStorage.getItem('darkStarVoice')||'Kore';sel.onchange=()=>localStorage.setItem('darkStarVoice',sel.value);}
+function setLiveState(s){$('liveState').textContent=s;}
+const SUPABASE_PUBLIC_KEY='sb_publishable_1D05YGthBrNGg-5L92TLCw_GiLnInBu';
+function readAuthSession(){try{const raw=localStorage.getItem('sb-svtkpdmqemidlasowqew-auth-token');return raw?JSON.parse(raw):null}catch(e){return null}}
+async function accessToken(force=false){
+  const j=readAuthSession();if(!j)return '';
+  let token=String(j.access_token||(j.currentSession&&j.currentSession.access_token)||'').trim();
+  const refreshToken=String(j.refresh_token||(j.currentSession&&j.currentSession.refresh_token)||'').trim();
+  const expiresAt=Number(j.expires_at||(j.currentSession&&j.currentSession.expires_at)||0);
+  const needsRefresh=Boolean(refreshToken)&&(force||!token||(expiresAt>0&&expiresAt*1000-Date.now()<60000));
+  if(!needsRefresh)return token;
+  try{
+    const res=await fetch('https://svtkpdmqemidlasowqew.supabase.co/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLIC_KEY},body:JSON.stringify({refresh_token:refreshToken})});
+    if(!res.ok)return token;
+    const fresh=await res.json();if(!fresh?.access_token)return token;
+    const merged={...j,...fresh,access_token:fresh.access_token,refresh_token:fresh.refresh_token||refreshToken};
+    try{localStorage.setItem('sb-svtkpdmqemidlasowqew-auth-token',JSON.stringify(merged))}catch(e){}
+    return String(fresh.access_token).trim();
+  }catch(e){return token}
+}
+async function ensureAudio(){if(!playCtx)playCtx=new AudioContext();if(playCtx.state!=='running')await playCtx.resume();}
+function stopAudio(){playSources.forEach(s=>{try{s.stop()}catch(e){}});playSources=[];nextPlayTime=0;}
+function playPCM(buf){if(!playCtx)return;const bytes=new Uint8Array(buf),pcm=new Int16Array(bytes.buffer,bytes.byteOffset,Math.floor(bytes.byteLength/2));if(!pcm.length)return;const audio=playCtx.createBuffer(1,pcm.length,24000),data=audio.getChannelData(0);for(let i=0;i<pcm.length;i++)data[i]=pcm[i]/32768;const src=playCtx.createBufferSource();src.buffer=audio;src.connect(playCtx.destination);const now=playCtx.currentTime;if(nextPlayTime<now+.03)nextPlayTime=now+.03;src.start(nextPlayTime);nextPlayTime+=audio.duration;playSources.push(src);src.onended=()=>{const i=playSources.indexOf(src);if(i>=0)playSources.splice(i,1)};}
+function playBase64PCM(b64){try{const bin=atob(b64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);playPCM(u.buffer)}catch(e){}}
+let turnWaitResolve=null,turnWaitReject=null,runSerial=0;
+function handleLiveMessage(raw){if(raw instanceof ArrayBuffer){playPCM(raw);return}let d;try{d=JSON.parse(raw)}catch(e){return}const sc=d.serverContent||d;if(d.type==='live_open'||d.setupComplete)setLiveState('🟢 即時語音 已啟動');const parts=(sc.modelTurn&&sc.modelTurn.parts)||(d.modelTurn&&d.modelTurn.parts)||[];parts.forEach(p=>{const x=p&&p.inlineData;if(x&&x.data&&String(x.mimeType||'').startsWith('audio/'))playBase64PCM(x.data)});if(d.audio&&d.audio.data)playBase64PCM(d.audio.data);if(d.data&&String(d.mimeType||'').startsWith('audio/'))playBase64PCM(d.data);if(sc.turnComplete||d.turnComplete||d.type==='turnComplete'){if(turnWaitResolve){const r=turnWaitResolve;turnWaitResolve=null;turnWaitReject=null;r()}setLiveState('🟢 本段語音完成')}if(d.type==='error'||d.error){const m=d.message||(d.error&&d.error.message)||JSON.stringify(d.error);if(turnWaitReject){const r=turnWaitReject;turnWaitResolve=null;turnWaitReject=null;r(new Error(m))}setLiveState('🔴 '+m);}}
+async function connectLive(forceAuth=false){const q=new URLSearchParams();q.set('voice',$('voiceSelect').value||'Kore');q.set('agent_id','technical-dark-star');const topicId=localStorage.getItem('technical-dark-star-topic-id')||'',conversationId=localStorage.getItem('technical_dark_star_conversation_id')||'',tok=await accessToken(forceAuth);if(topicId)q.set('topic_id',topicId);if(conversationId)q.set('conversation_id',conversationId);if(tok)q.set('access_token',tok);ws=new WebSocket(LIVE_FN+'?'+q.toString());ws.binaryType='arraybuffer';await new Promise((resolve,reject)=>{const socket=ws,t=setTimeout(()=>{try{socket.close()}catch(e){}reject(new Error('連線逾時'))},8000);socket.onopen=()=>{clearTimeout(t);setLiveState('🟢 即時語音 已連線');resolve()};socket.onerror=()=>{clearTimeout(t);reject(new Error('WebSocket error'))};socket.onmessage=e=>{if(ws!==socket)return;handleLiveMessage(e.data)};socket.onclose=()=>{if(ws!==socket)return;if(turnWaitReject){const rr=turnWaitReject;turnWaitResolve=null;turnWaitReject=null;rr(new Error('即時語音連線中斷'))}ws=null;};});}
+function splitSpeechText(text,maxLen=500){
+  const clean=String(text||'').replace(/\\r/g,'').trim();
+  const out=[];let rest=clean;
+  while(rest.length>maxLen){
+    let cut=-1;
+    for(const mark of ['。','！','？','；','：','\\n']){
+      const i=rest.lastIndexOf(mark,maxLen);
+      if(i>Math.floor(maxLen*0.55)){cut=i+1;break}
+    }
+    if(cut<0)cut=maxLen;
+    out.push(rest.slice(0,cut).trim());
+    rest=rest.slice(cut).trim();
+  }
+  if(rest)out.push(rest);
+  return out.filter(Boolean);
+}
+
+function buildSpeechSegments(title,guide,report,conclusion){
+  const guideParts=String(guide||'')
+    .split(/(?=第\\s*[1-9]\\s*段\\s*[｜|:：])/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+
+  const segments=[];
+  if(guideParts.length>=9){
+    guideParts.slice(0,9).forEach((p,i)=>segments.push({kind:'guide',index:i+1,total:9,text:(i===0?'【導讀開始】\\n'+title+'\\n':'')+p}));
+  }else{
+    splitSpeechText(title+'\\n'+guide,900).forEach((p,i)=>segments.push({kind:'guide',index:i+1,total:0,text:p}));
+  }
+
+  splitSpeechText(report,900).forEach((p,i)=>segments.push({kind:'report',index:i+1,total:0,text:p}));
+  splitSpeechText(conclusion,900).forEach((p,i)=>segments.push({kind:'conclusion',index:i+1,total:0,text:p}));
+  return segments;
+}
+
+function waitTurn(timeout=90000){
+  return new Promise((resolve,reject)=>{
+    turnWaitResolve=resolve;turnWaitReject=reject;
+    setTimeout(()=>{
+      if(turnWaitResolve===resolve){
+        turnWaitResolve=null;turnWaitReject=null;
+        reject(new Error('本段語音逾時'));
+      }
+    },timeout);
+  });
+}
+
+async function speakOneChunk(segment,index,total,serial){
+  for(let attempt=1;attempt<=3;attempt++){
+    if(!speaking||serial!==runSerial)throw new Error('已停止');
+    try{
+      if(!ws)await connectLive();
+
+      const shouldIntroduce=!introRequestedThisRun;
+      if(shouldIntroduce)introRequestedThisRun=true;
+      const intro=shouldIntroduce
+        ? '你是暗星。這是本次完整導讀與報告的第一次開場。請自然自我介紹一次，然後直接進入本段內容。'
+        : '你是暗星。這是同一場長篇導讀與報告的接續段落。嚴禁重新自我介紹，嚴禁重新開場，嚴禁說「我是暗星」或任何同義的自我介紹，也不要說「接下來我來介紹」。直接承接上一段內容，自然、完整地說出本段講稿。';
+
+      const prompt=intro+
+        '\\n不要摘要、不要刪除、不要補充原稿以外的事實。不要自行結束整場報告。這只是長篇內容中的第 '+index+' 段，共 '+total+' 段；說完本段後自然等待下一段。請使用自然流暢的繁體中文口語。\\n\\n本段講稿：\\n'+segment.text;
+
+      ws.send(JSON.stringify({type:'text',text:prompt}));
+      setLiveState('🟢 暗星正在連續講述第 '+index+'／'+total+' 段…');
+      await waitTurn(90000);
+      return;
+    }catch(e){
+      if(ws){try{ws.close()}catch(_){}ws=null}
+      if(String(e?.message||e).includes('INVALID_AUTH') && attempt===1){
+        try{await connectLive(true);continue}catch(_){}
+      }
+      if(attempt===3)throw e;
+      setLiveState('🟡 第 '+index+' 段中斷，正在重新連線（'+attempt+'／2）…');
+      await new Promise(r=>setTimeout(r,700));
+    }
+  }
+}
+
+async function speakGuide(){
+  if(!speechText){
+    const result=outputPages.join('\n\n').trim();
+    if(!result||result==='等待資料。'){setLiveState('⚠️ 請先讓暗星生成導讀與報告');return}
+    speechText=result;
+    speechSegments=splitSpeechText(result,500).map((text,i)=>({kind:'fallback',index:i+1,total:0,text}));
+  }
+
+  await ensureAudio();
+  stopAudio();
+  runSerial++;
+  const serial=runSerial;
+  speaking=true;
+  introRequestedThisRun=false;
+
+  const total=speechSegments.length;
+  setLiveState('🟡 暗星長篇導讀準備中，共 '+total+' 個連續段落…');
+
+  try{
+    await connectLive();
+
+    for(let i=0;i<total;i++){
+      if(!speaking||serial!==runSerial)throw new Error('已停止');
+      await speakOneChunk(speechSegments[i],i+1,total,serial);
+    }
+
+    speaking=false;
+    if(ws){try{ws.close()}catch(e){}ws=null}
+    setLiveState('🟢 暗星已完整講完全部 '+total+' 個連續段落');
+  }catch(e){
+    if(serial===runSerial){
+      speaking=false;
+      setLiveState('🔴 語音中斷：'+(e.message||e));
+    }
+    if(ws){try{ws.close()}catch(_){}ws=null}
+  }
+}
+function stopGuide(){speaking=false;stopAudio();if(ws){try{ws.close()}catch(e){}ws=null}setLiveState('⚪ 已停止');}
+function waitDirectAudioDrain(serial){
+  return new Promise((resolve,reject)=>{
+    const check=()=>{
+      if(!speaking||serial!==runSerial){resolve();return}
+      if(!playCtx||nextPlayTime<=playCtx.currentTime+0.05){resolve();return}
+      setTimeout(check,80);
+    };
+    check();
+  });
+}
+
+async function speakDirectChunk(segment,index,total,serial){
+  if(!speaking||serial!==runSerial)throw new Error('已停止');
+  // 4500 字是「一個完整閱讀任務」；內部可切段，但每段使用獨立 Live 連線。
+  if(ws){try{ws.close()}catch(e){}ws=null}
+  await new Promise(r=>setTimeout(r,120));
+  await connectLive();
+  if(!ws||ws.readyState!==WebSocket.OPEN)throw new Error('Gemini Live 連線中斷');
+  const prompt='你是暗星。以下是固定講稿，現在只做自然口語發聲。請逐句忠實照讀本段文字。嚴禁摘要、改寫、重組、刪除、補充、解釋、翻譯或自我介紹；除了正常語音停頓與口語語調外，不得改變文字內容。這是同一個完整閱讀任務的第 '+index+'／'+total+' 段；不要重複前段，也不要預讀後段。讀完本段後停止輸出。請使用自然流暢的繁體中文。\\n\\n固定講稿：\\n'+segment.text;
+  setLiveState('🟢 直接口語閱讀中（完整任務）第 '+index+'／'+total+' 段…');
+  ws.send(JSON.stringify({type:'text',text:prompt}));
+  await waitTurn(90000);
+  await waitDirectAudioDrain(serial);
+  if(ws){try{ws.close()}catch(e){}ws=null}
+  await new Promise(r=>setTimeout(r,120));
+}
+
+async function speakDirectText(){
+  const text=$('directSpeechText').value.trim();
+  if(!text){
+    $('directSpeechState').textContent='⚠️ 請先貼上要直接口語閱讀的內容。';
+    return;
+  }
+  if(speaking)stopGuide();
+  if(ws){try{ws.close()}catch(e){}ws=null}
+  await new Promise(r=>setTimeout(r,120));
+  await ensureAudio();
+  stopAudio();
+  speechText=text;
+  speechSegments=splitSpeechText(text,900).map((t,i)=>({kind:'direct',index:i+1,total:0,text:t}));
+  runSerial++;
+  const serial=runSerial;
+  speaking=true;
+  introRequestedThisRun=false;
+  const total=speechSegments.length;
+  speechSegments=speechSegments.map(s=>({...s,total}));
+  $('directSpeechState').textContent='🟡 完整閱讀任務開始：共 '+text.length+' 字，內部 '+total+' 段；不分析、不改寫、不重送。';
+  setLiveState('🟡 直接口語閱讀準備中…');
+  try{
+    for(let i=0;i<total;i++){
+      if(!speaking||serial!==runSerial)throw new Error('已停止');
+      await speakDirectChunk(speechSegments[i],i+1,total,serial);
+    }
+    await waitDirectAudioDrain(serial);
+    speaking=false;
+    if(ws){try{ws.close()}catch(e){}ws=null}
+    $('directSpeechState').textContent='🟢 CONFIRMED：完整閱讀任務已全部完成，共 '+text.length+' 字、'+total+' 段；未重送任何已開始段落、未讓多個連線同時發聲。';
+  }catch(e){
+    if(serial===runSerial)speaking=false;
+    if(ws){try{ws.close()}catch(e){}ws=null}
+    $('directSpeechState').textContent='🔴 語音中斷（本段不重送）：'+(e.message||e);
+  }
+}
+
+$('deleteDarkStarChat').onclick=deleteDarkStarChat;
+$('darkStarChatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();askDarkStar();}});
+$('build').onclick=()=>makeStructure();
+$('generateAI').onclick=()=>generateAI();
+$('pagePrev').onclick=()=>showOutputPage(currentPage-1);
+$('pageNext').onclick=()=>showOutputPage(currentPage+1);
+$('pageJump').onchange=()=>showOutputPage(Number($('pageJump').value));
+$('generatePPT').onclick=generateReadingPPT;
+$('materialFiles').onchange=async e=>{await addFiles(e.target.files);await darkStarAutoAssist();};
+$('confirmUrl').onclick=async()=>{
+  const input=$('networkUrl');
+  const button=$('confirmUrl');
+  const clean=input.value.trim();
+  if(!clean){ input.focus(); $('urlStatus').textContent='⚠️ 請先貼上網址。'; return; }
+  try{ new URL(clean); }catch(e){ input.focus(); input.setCustomValidity('請輸入有效的網址，例如 https://example.com'); input.reportValidity(); return; }
+  input.setCustomValidity('');
+  button.disabled=true;
+  button.textContent='暗星讀取中…';
+  $('urlStatus').textContent='🟡 暗星正在直接擷取這個網址的內容，不只是加入清單。';
+  $('state').textContent='🟡 暗星正在讀取網路素材…';
+  $('state').className='status warn';
+  const m={name:clean,type:'url',status:'網頁內容擷取中…',url:clean};
+  readingMaterials.push(m); renderMaterials();
+  try{
+    const r=await callReportAPI({mode:'url',url:clean});
+    if(!r||typeof r.text!=='string'||r.text.trim().length<20)throw new Error('URL_CONTENT_EMPTY｜'+clean);
+    m.text=r.text.trim();
+    m.status='CONFIRMED：暗星已讀取網頁內容（'+m.text.length+' 字）';
+    input.value='';
+    $('urlStatus').textContent='🟢 CONFIRMED：暗星已經讀取這個網址，可以直接建立導讀。';
+    $('state').textContent='🟢 CONFIRMED：暗星已讀取網路素材 '+m.text.length+' 字；現在可建立導讀＋報告架構。';
+    $('state').className='status confirmed';
+  }catch(e){
+    m.status='REQUIRES TEST：網頁讀取失敗｜'+String(e.message||e);
+    $('urlStatus').textContent='🔴 暗星沒有取得這個網址的內容：'+String(e.message||e);
+    $('state').textContent='REQUIRES TEST：網路素材讀取失敗｜'+String(e.message||e);
+    $('state').className='status warn';
+  }finally{
+    button.disabled=false;
+    button.textContent='加入並讀取';
+    renderMaterials();
+  }
+};
+$('clearMaterials').onclick=()=>{readingMaterials=[];renderMaterials();};
+$('source').addEventListener('change',()=>darkStarAutoAssist());
+$('clear').onclick=()=>{$('source').value='';$('title').value='';outputPages=[];currentPage=0;renderPageControls();$('result').textContent='等待資料。';$('state').textContent='尚未執行';$('state').className='status';speechText='';speechSegments=[];stopGuide()};
+$('speakGuide').onclick=speakGuide;$('stopGuide').onclick=stopGuide;
+$('directSpeak').onclick=speakDirectText;
+$('directStop').onclick=()=>{$('directSpeechState').textContent='⚪ 已停止';stopGuide()};
+resizeDarkStarChatInput();
+$('darkStarChatSend').disabled=false;
+
+initVoices();renderPageControls();
+let darkStarManaging=true;
+let darkStarManagerSerial=0;
+async function darkStarAutoAssist(){
+  const serial=++darkStarManagerSerial;
+  try{
+    const hasTyped=$('source').value.trim();
+    const hasFiles=readingMaterials.length>0;
+    if(!hasTyped&&!hasFiles){
+      $('state').textContent='🟢 暗星已在導讀工作站待命。你給我素材或目標，我會操作頁面完成工作。';
+      $('state').className='status';
+      return;
+    }
+    if(serial!==darkStarManagerSerial||!darkStarManaging)return;
+    $('state').textContent='🟡 暗星正在接管素材處理……';
+    $('state').className='status warn';
+    await makeStructure();
+  }catch(e){
+    $('state').textContent='REQUIRES TEST：暗星輔助失敗｜'+String(e.message||e);
+    $('state').className='status warn';
+  }
+}
+$('state').textContent='🟢 已就緒：等待執行導讀';
+$('state').className='status';
+</script>
+</body>
+</html>

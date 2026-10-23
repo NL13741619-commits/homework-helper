@@ -1,0 +1,224 @@
+const FN='wss://svtkpdmqemidlasowqew.supabase.co/functions/v1/technical-dark-star-live-voice-v2';
+const SUPABASE_URL='https://svtkpdmqemidlasowqew.supabase.co';
+const SUPABASE_PUBLIC_KEY='sb_publishable_1D05YGthBrNGg-5L92TLCw_GiLnInBu';
+let forceAuthRefresh=false;
+const TURNS_KEY='aivault_ds_live_turns';
+const DRAFT_KEY='aivault_ds_live_draft';
+const CTX_KEY='technical_dark_star_live_context';
+const VOICES=[['Zephyr','Zephyr｜明亮'],['Puck','Puck｜歡快'],['Charon','Charon｜資訊豐富'],['Kore','Kore｜堅定'],['Fenrir','Fenrir｜興奮'],['Leda','Leda｜年輕'],['Orus','Orus｜堅定'],['Aoede','Aoede｜輕快'],['Callirrhoe','Callirrhoe｜隨和'],['Autonoe','Autonoe｜明亮'],['Enceladus','Enceladus｜氣聲'],['Iapetus','Iapetus｜清晰'],['Umbriel','Umbriel｜隨和'],['Algieba','Algieba｜柔順'],['Despina','Despina｜柔順'],['Erinome','Erinome｜清晰'],['Algenib','Algenib｜粗獴'],['Rasalgethi','Rasalgethi｜資訊豐富'],['Laomedeia','Laomedeia｜歡快'],['Achernar','Achernar｜柔和'],['Alnilam','Alnilam｜堅定'],['Schedar','Schedar｜均衡'],['Gacrux','Gacrux｜成熟'],['Pulcherrima','Pulcherrima｜前進感'],['Achird','Achird｜友善'],['Zubenelgenubi','Zubenelgenubi｜隨性'],['Vindemiatrix','Vindemiatrix｜溫和'],['Sadachbia','Sadachbia｜活潔'],['Sadaltager','Sadaltager｜知識豐富'],['Sulafat','Sulafat｜溫暖']];
+let ws=null,stream=null,auto=false,facing='user',mode='video',videoTimer=null,inputCtx=null,processor=null,source=null,playCtx=null,nextPlayTime=0,audioPackets=0,audioBytes=0,reconnecting=false,wanted=false,starting=false,connectPromise=null;
+let camOn=!(typeof window!=='undefined'&&window.dsCamOff),micHold=false;
+let pendingText=[], inBuf='', outBuf='', userEl=null, aiEl=null, playSources=[], userTalkingUntil=0;
+const $=id=>document.getElementById(id);
+function log(s){const el=$('log');if(!el)return;el.textContent+='['+new Date().toLocaleTimeString('zh-TW')+'] '+s+'\n';el.scrollTop=el.scrollHeight}
+function status(s){const el=$('status');if(el)el.textContent=s}
+function setAutoUi(){const b=$('autoBtn');if(b)b.textContent=auto?'⏸ 停止自動連接':'⚡ 自動連接'}
+function bubble(role,text,replace){
+  const chat=$('chat');if(!chat)return;
+  if(replace && role==='user' && userEl){userEl.textContent=text;return}
+  if(replace && role==='ai' && aiEl){aiEl.textContent=text;return}
+  const d=document.createElement('div');d.className='bubble '+(role==='user'?'user':'ai');
+  d.innerHTML='<b>'+(role==='user'?'你':'暗星')+'</b>';
+  const t=document.createElement('div');t.textContent=text;d.appendChild(t);chat.appendChild(d);chat.scrollTop=chat.scrollHeight;
+  if(role==='user')userEl=t; else aiEl=t;
+}
+function saveTurn(role,text){text=String(text||'').trim();if(!text)return;let list=[];try{list=JSON.parse(localStorage.getItem(TURNS_KEY)||'[]')}catch(e){list=[]}list.push({role:role==='user'?'user':'assistant',text,t:Date.now()});try{localStorage.setItem(TURNS_KEY,JSON.stringify(list.slice(-80)))}catch(e){}}
+function flushTurn(){if(inBuf.trim())saveTurn('user',inBuf);if(outBuf.trim())saveTurn('assistant',outBuf);inBuf='';outBuf='';userEl=null;aiEl=null}
+function readAuthSession(){
+  try{
+    const raw=localStorage.getItem('sb-svtkpdmqemidlasowqew-auth-token');
+    if(!raw)return null;
+    const j=JSON.parse(raw);
+    return j&&typeof j==='object'?j:null;
+  }catch(e){return null}
+}
+async function accessToken(force=false){
+  const j=readAuthSession();
+  if(!j)return '';
+  let token=String(j.access_token||(j.currentSession&&j.currentSession.access_token)||'').trim();
+  const refreshToken=String(j.refresh_token||(j.currentSession&&j.currentSession.refresh_token)||'').trim();
+  const expiresAt=Number(j.expires_at||(j.currentSession&&j.currentSession.expires_at)||0);
+  const needsRefresh=Boolean(refreshToken)&&(force||!token||(expiresAt>0&&expiresAt*1000-Date.now()<60000));
+  if(!needsRefresh)return token;
+  try{
+    const res=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLIC_KEY},
+      body:JSON.stringify({refresh_token:refreshToken})
+    });
+    if(!res.ok)return token;
+    const fresh=await res.json();
+    if(!fresh?.access_token)return token;
+    const merged={...j,...fresh,access_token:fresh.access_token,refresh_token:fresh.refresh_token||refreshToken};
+    try{localStorage.setItem('sb-svtkpdmqemidlasowqew-auth-token',JSON.stringify(merged))}catch(e){}
+    forceAuthRefresh=false;
+    return String(fresh.access_token).trim();
+  }catch(e){
+    return token;
+  }
+}
+function sendTextToLive(text){
+  text=String(text||'').trim();if(!text)return false;
+  if(!ws||ws.readyState!==1){pendingText.push(text);status('文字已排隊');return false}
+  try{ws.send(JSON.stringify({type:'text',text}));log('送文字：'+text);bubble('user',text,false);saveTurn('user',text);return true}catch(e){log('送字失敗：'+e.message);return false}
+}
+function flushPending(){pendingText.splice(0).forEach(t=>sendTextToLive(t))}
+function sendTyped(){const input=$('liveInput');const text=(input&&input.value||'').trim();if(!text)return;input.value='';sendTextToLive(text)}
+function initVoices(){const sel=$('voiceSelect');if(!sel)return;sel.innerHTML='';VOICES.forEach(([id,label])=>{const o=document.createElement('option');o.value=id;o.textContent=id+' — '+label;sel.appendChild(o)});const q=new URLSearchParams(location.search);sel.value=q.get('voice')||localStorage.getItem('darkStarVoice')||'Kore';updateVoice();sel.onchange=()=>{localStorage.setItem('darkStarVoice',sel.value);updateVoice()}}
+function updateVoice(){const el=$('voiceStat');if(el)$('voiceStat').textContent=$('voiceSelect').value}
+function bargeIn(){
+  playSources.forEach(function(s){try{s.stop()}catch(e){}});
+  playSources=[];
+  nextPlayTime=0;
+  try{if(outGain&&playCtx){outGain.gain.cancelScheduledValues(playCtx.currentTime);outGain.gain.setValueAtTime(1,playCtx.currentTime)}}catch(e){}
+  userTalkingUntil=Date.now()+700;
+}
+function userLevel(a){let s=0;for(let i=0;i<a.length;i++)s+=a[i]*a[i];return Math.sqrt(s/Math.max(1,a.length))}
+function setMode(m){if(m===mode)return;if(ws||stream)return;mode=m;document.body.className='mode-'+m;const vb=$('voiceBtn'),vd=$('videoBtn');if(vb)vb.classList.toggle('active',m==='voice');if(vd)vd.classList.toggle('active',m==='video');const ms=$('modeStat');if(ms)ms.textContent=m==='voice'?'語音':'視訊'}
+async function openMedia(){if(stream)return;const videoConstraints=mode==='video'&&camOn?{facingMode:{ideal:facing},width:{ideal:640},height:{ideal:480}}:false;const audioConstraints={echoCancellation:true,noiseSuppression:true,autoGainControl:true};let videoStream=null;let audioStream=null;if(videoConstraints){videoStream=await navigator.mediaDevices.getUserMedia({video:videoConstraints,audio:false});}audioStream=await navigator.mediaDevices.getUserMedia({video:false,audio:audioConstraints});const tracks=[];if(videoStream)videoStream.getVideoTracks().forEach(t=>tracks.push(t));if(audioStream)audioStream.getAudioTracks().forEach(t=>tracks.push(t));stream=new MediaStream(tracks);if(mode==='video'&&stream.getVideoTracks().length){const p=$('preview');if(p){p.muted=true;p.autoplay=true;p.playsInline=true;p.srcObject=stream;try{await p.play()}catch(e){setTimeout(()=>p.play().catch(()=>{}),100)}}const c=$('cameraBtn');if(c)c.disabled=false}if(!stream.getAudioTracks().length)throw new Error('未取得麥克風音訊軌');}
+let outDest=null,outEl=null,outMode='direct',dbgRx=0,dbgPlayed=0,dbgErr='';
+function noteErr(where,e){dbgErr=where+': '+((e&&(e.name||e.message))||e);try{console.warn('[DarkStar][audio]',where,e)}catch(_){}paintDbg()}
+let outGain=null,keepAlive=null;
+function rawOut(){return(outMode==='element'&&outDest)?outDest:playCtx.destination}
+function outNode(){if(!playCtx)return null;const target=rawOut();if(!outGain||outGain.context!==playCtx||outGain.__target!==target){try{if(outGain)outGain.disconnect()}catch(e){}outGain=playCtx.createGain();outGain.__dsOut=true;outGain.__target=target;outGain.connect(target)}return outGain}
+// iOS：MediaStreamDestination → <audio> 在沒有聲音輸入時可能重複最後一段緩衝；持續送入極小的恆定訊號讓串流不中斷
+function startKeepAlive(){try{if(!playCtx||!outDest||keepAlive&&keepAlive.context===playCtx)return;const g=playCtx.createGain();g.gain.value=0.00001;let src;if(playCtx.createConstantSource){src=playCtx.createConstantSource();src.offset.value=1}else{src=playCtx.createOscillator();src.frequency.value=20}src.connect(g);g.connect(outDest);src.start();keepAlive=src;keepAlive.__g=g}catch(e){noteErr('keepAlive',e)}}
+// 回合結束：在最後一段播完時做 40ms 淡出，避免尾音殘留
+function fadeTail(){try{if(!playCtx||!outGain)return;const t=Math.max(playCtx.currentTime,nextPlayTime);const gn=outGain.gain;gn.cancelScheduledValues(playCtx.currentTime);gn.setValueAtTime(1,Math.max(playCtx.currentTime,t-0.04));gn.linearRampToValueAtTime(0,t);gn.setValueAtTime(1,t+0.05)}catch(e){noteErr('fade',e)}}
+function resetOut(){try{if(keepAlive){keepAlive.stop();keepAlive.disconnect()}}catch(e){}keepAlive=null;try{if(outGain)outGain.disconnect()}catch(e){}outGain=null;try{if(outEl){outEl.pause();outEl.srcObject=null}}catch(e){}outEl=null;outDest=null;outMode='direct'}
+function unlockAudio(){try{if(navigator.audioSession)navigator.audioSession.type='play-and-record'}catch(e){noteErr('audioSession',e)}try{const AC=window.AudioContext||window.webkitAudioContext;if(!playCtx)playCtx=new AC();playCtx.resume().catch(function(e){noteErr('resume',e)});if(!outEl&&playCtx.createMediaStreamDestination){outDest=playCtx.createMediaStreamDestination();outEl=document.createElement('audio');outEl.setAttribute('playsinline','');outEl.setAttribute('webkit-playsinline','');outEl.autoplay=true;outEl.style.display='none';document.body.appendChild(outEl);outEl.srcObject=outDest.stream;outMode='pending';const el=outEl;el.play().then(function(){if(el===outEl){outMode='element';startKeepAlive()}paintDbg()}).catch(function(e){if(el===outEl)outMode='direct';noteErr('audioEl',e)})}const b=playCtx.createBuffer(1,1,22050),s=playCtx.createBufferSource();s.buffer=b;s.connect(outMode==='pending'?playCtx.destination:outNode());s.start(0);playCtx.onstatechange=function(){paintSoundBtn();paintDbg()};if(!inputCtx)inputCtx=new AC({sampleRate:16000});inputCtx.resume().catch(function(e){noteErr('inputResume',e)})}catch(e){noteErr('unlock',e)}paintSoundBtn();paintDbg()}
+function paintDbg(){let d=document.getElementById('dsAudioDbg');if(!d){if(!document.body)return;d=document.createElement('div');d.id='dsAudioDbg';d.style.cssText='position:fixed;left:4px;right:4px;bottom:4px;z-index:99998;font:11px/1.3 monospace;color:#9f9;background:rgba(0,0,0,.65);padding:3px 6px;border-radius:6px;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';document.body.appendChild(d)}const el=outEl?(outMode+(outEl.paused?' paused':' playing')):'none';let ses='n/a';try{if(navigator.audioSession)ses=navigator.audioSession.type}catch(e){}d.textContent='🔈 收'+dbgRx+' 播'+dbgPlayed+' | ctx '+(playCtx?playCtx.state+' '+playCtx.sampleRate+'Hz':'none')+' | el '+el+' | ses '+ses+(dbgDup?' 重複'+dbgDup:'')+' | err '+(dbgErr||'-')}
+setInterval(paintDbg,1000);
+function paintSoundBtn(){let b=document.getElementById('dsSoundUnlock');if(!b){b=document.createElement('button');b.id='dsSoundUnlock';b.type='button';b.textContent='🔊 點一下開啟聲音';b.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:99999;padding:12px 20px;border-radius:24px;border:0;background:#ffb300;color:#000;font-size:16px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.4);display:none';b.addEventListener('click',function(){unlockAudio();setTimeout(paintSoundBtn,300)});document.body.appendChild(b)}b.style.display=(playCtx&&playCtx.state==='suspended')?'block':'none'}
+setInterval(function(){if(playCtx)paintSoundBtn()},1000);
+async function openAudio(){if(!playCtx)playCtx=new AudioContext();if(playCtx.state!=='running')await playCtx.resume();if(!inputCtx)inputCtx=new AudioContext({sampleRate:16000});if(inputCtx.state!=='running')await inputCtx.resume()}
+let retryN=0,authBlocked=false,topicRetried=false;const TOPIC_MSG='無法取得對話主題，請先在文字聊天傳一則訊息再連線';
+function ensureTopicId(){const k='technical-dark-star-topic-id';try{const v=String(localStorage.getItem(k)||'').trim();if(v)return v;const id='technical-dark-star-'+((typeof crypto!=='undefined'&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.random().toString(36).slice(2)));localStorage.setItem(k,id);log('建立對話主題 '+id);return id}catch(e){log('topic: '+(e&&e.message||e));return ''}}
+function topicRequired(){if(authBlocked)return;if(!topicRetried){topicRetried=true;try{localStorage.removeItem('technical-dark-star-topic-id')}catch(e){}ensureTopicId();log('TOPIC_ID_REQUIRED：已建立主題，重試一次');return}authBlocked=true;auto=false;wanted=false;log('TOPIC_ID_REQUIRED：'+TOPIC_MSG+'（停止重連）');stop().catch(function(){}).then(function(){status('🔴 '+TOPIC_MSG)})}
+const AUTH_MSG='請先登入 AIVAULT 再連線';
+function authRequired(){if(authBlocked)return;authBlocked=true;auto=false;wanted=false;log('AUTH_REQUIRED：'+AUTH_MSG+'（停止重連）');stop().catch(function(e){log('stop: '+(e&&e.message||e))}).then(function(){status('🔴 '+AUTH_MSG)})}
+function scheduleReconnect(){if(!auto||!wanted||reconnecting||authBlocked)return;if(retryN>=6){log('重連 6 次仍失敗，停止');auto=false;wanted=false;stop().catch(function(){}).then(function(){status('🔴 連線失敗，請稍後再試')});return}const delay=Math.min(30000,1000*Math.pow(2,retryN));retryN++;reconnecting=true;status('🟡 斷線重連中（第 '+retryN+' 次）');log((delay/1000)+' 秒後重連');setTimeout(()=>{reconnecting=false;if(!auto||!wanted)return;connect().then(()=>{if(!processor)startAudio();status('🟢 已重連')}).catch(()=>scheduleReconnect())},delay)}
+async function connect(){
+  if(ws&&ws.readyState===1)return;
+  if(connectPromise)return connectPromise;
+  connectPromise=(async()=>{
+  const q=new URLSearchParams();q.set('voice',($('voiceSelect')&&$('voiceSelect').value)||localStorage.getItem('darkStarVoice')||'Kore');q.set('agent_id','technical-dark-star');
+  const topicId=ensureTopicId();const conversationId=localStorage.getItem('technical_dark_star_conversation_id')||'';const tok=await accessToken(forceAuthRefresh);
+  forceAuthRefresh=false;
+  if(topicId)q.set('topic_id',topicId);if(conversationId)q.set('conversation_id',conversationId);if(tok)q.set('access_token',tok);
+  log('連線 '+FN);
+  const socket=new WebSocket(FN+'?'+q.toString());
+  socket.binaryType='arraybuffer';
+  ws=socket;
+  try{
+    await new Promise((resolve,reject)=>{
+      const t=setTimeout(()=>{try{socket.close()}catch(e){}reject(new Error('連線逾時'))},8000);
+      socket.onopen=()=>{clearTimeout(t);clearTimeout(window.__dsRetryOk);window.__dsRetryOk=setTimeout(function(){retryN=0},10000);status('🟢 已連線 live-voice');log('OPEN');flushPending();resolve()};
+      socket.onerror=()=>{clearTimeout(t);log('WS error');reject(new Error('WebSocket error'))};
+      socket.onclose=function(ev){clearTimeout(t);clearTimeout(window.__dsRetryOk);log('CLOSE code='+ev.code+' reason='+(ev.reason||'')+' clean='+ev.wasClean);if(ws===socket)ws=null;if(auto&&wanted)scheduleReconnect();else if(!authBlocked)status('⚪ 已斷線 '+ev.code)};
+      socket.onmessage=e=>handleMessage(e.data);
+    });
+    return;
+  }finally{
+    connectPromise=null;
+  }
+  })();
+  return connectPromise;
+}
+function takeAudio(d){
+  if(!d||typeof d!=='object')return;
+  // 同一則訊息只播放一份音訊（避免同一段聲音以兩種格式重複出現時播兩次）
+  if(d.audio&&d.audio.data){playBase64PCM(d.audio.data,d.audio.mimeType);return}
+  if(d.data&&d.mimeType&&String(d.mimeType).indexOf('audio')===0){playBase64PCM(d.data,d.mimeType);return}
+  const parts=(d.serverContent&&d.serverContent.modelTurn&&d.serverContent.modelTurn.parts)||(d.modelTurn&&d.modelTurn.parts)||[];
+  parts.forEach(function(p){const id=p&&p.inlineData;if(id&&id.data&&String(id.mimeType||'').indexOf('audio')===0)playBase64PCM(id.data,id.mimeType)});
+}
+function handleMessage(raw){
+  if(raw instanceof ArrayBuffer){playPCM(raw);return}
+  if(typeof Blob!=='undefined'&&raw instanceof Blob){raw.arrayBuffer().then(function(b){playPCM(b)}).catch(function(e){noteErr('blob',e)});return}
+  let d;try{d=JSON.parse(raw)}catch(e){return}
+  const sc0=d.serverContent||d;
+  if(d.type==='interrupted'||sc0.interrupted){bargeIn();}
+  takeAudio(d);
+  if(d.type==='live_open'||d.setupComplete){log('live_open '+(d.model||''));status('🟢 Gemini Live 已啟動 '+(d.model||''))}
+  if(d.type==='go_away'){log('go_away');return}
+  const sc=d.serverContent||d;
+  if(sc.inputTranscription&&sc.inputTranscription.text){inBuf+=sc.inputTranscription.text;bubble('user',inBuf,true)}
+  if(sc.outputTranscription&&sc.outputTranscription.text){outBuf+=sc.outputTranscription.text;bubble('ai',outBuf,true)}
+  if(d.type==='inputTranscription'&&d.text){inBuf+=d.text;bubble('user',inBuf,true)}
+  if(d.type==='outputTranscription'&&d.text){outBuf+=d.text;bubble('ai',outBuf,true)}
+  if(sc.turnComplete||d.turnComplete||d.type==='turnComplete'){fadeTail();flushTurn()}
+  if(d.type==='error'||d.error){const m=d.message||(d.error&&d.error.message)||JSON.stringify(d.error||d);log('錯誤：'+m);status('🔴 '+m);if(String(m).includes('AUTH_REQUIRED')){authRequired();return}if(String(m).includes('TOPIC_ID_REQUIRED')){topicRequired();return}if(String(m).includes('INVALID_AUTH')){forceAuthRefresh=true;log('AUTH 失效：下一次重連先更新 Supabase session')}}
+}
+let lastB64='',lastB64At=0,dbgDup=0;
+function playBase64PCM(b64,mime){dbgRx++;if(b64===lastB64&&Date.now()-lastB64At<3000){dbgDup++;return}lastB64=b64;lastB64At=Date.now();const m=/rate=(\d+)/.exec(String(mime||''));try{const bin=atob(b64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);playPCM(u.buffer,m?+m[1]:24000,true)}catch(e){noteErr('decode',e)}}
+function playPCM(buf,rate,counted){if(!counted)dbgRx++;if(!playCtx){noteErr('play','no ctx');return}if(Date.now()<userTalkingUntil)return;const bytes=new Uint8Array(buf),pcm=new Int16Array(bytes.buffer,bytes.byteOffset,Math.floor(bytes.byteLength/2));if(!pcm.length)return;audioPackets++;audioBytes+=bytes.byteLength;if($('audioStat'))$('audioStat').textContent=audioPackets;if($('byteStat'))$('byteStat').textContent=audioBytes.toLocaleString();if(playCtx.state!=='running')playCtx.resume().catch(function(e){noteErr('resume',e)});const audio=playCtx.createBuffer(1,pcm.length,rate||24000),data=audio.getChannelData(0);for(let i=0;i<pcm.length;i++)data[i]=pcm[i]/32768;const src=playCtx.createBufferSource();src.buffer=audio;src.connect(outMode==='pending'?playCtx.destination:outNode());const now=playCtx.currentTime;if(nextPlayTime<now+.03)nextPlayTime=now+.03;src.start(nextPlayTime);nextPlayTime+=audio.duration;dbgPlayed++;playSources.push(src);src.onended=function(){const i=playSources.indexOf(src);if(i>=0)playSources.splice(i,1)}}
+async function start(){if(starting||wanted)return;starting=true;authBlocked=false;retryN=0;topicRetried=false;unlockAudio();try{wanted=true;auto=true;setAutoUi();audioPackets=0;audioBytes=0;if($('audioStat'))$('audioStat').textContent='0';await openMedia();await connect();await openAudio();startAudio();startVideo();if($('startBtn'))$('startBtn').disabled=true;if($('stopBtn'))$('stopBtn').disabled=false;status('🟢 已開始（視訊 JPEG 送往 live-voice）');log('視訊 JPEG 已啟用：每秒 1 張，送往 live-voice');const draft=($('liveInput')&&$('liveInput').value||'').trim();if(draft)sendTextToLive(draft)}catch(e){wanted=false;auto=false;status('🔴 無法啟動：'+(e.message||e));log('啟動失敗：'+(e.message||e))}finally{starting=false}}
+function startVideo(){
+  clearInterval(videoTimer);
+  if(mode !== 'video' || !camOn || !stream || !ws || ws.readyState !== 1) return;
+  const track = stream.getVideoTracks()[0];
+  if(!track){
+    log('找不到視訊軌');
+    return;
+  }
+  const settings = track.getSettings ? track.getSettings() : {};
+  const w = Math.max(1, Math.min(640, settings.width || 640));
+  const h = Math.max(1, Math.min(480, settings.height || 480));
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  const video = $('preview');
+  videoTimer = setInterval(() => {
+    if(!ws || ws.readyState !== 1) return;
+    if(!video || video.readyState < 2) return;
+    try{
+      ctx.drawImage(video, 0, 0, w, h);
+      canvas.toBlob(blob => {
+        if(!blob || !ws || ws.readyState !== 1) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if(!ws || ws.readyState !== 1) return;
+          const result = String(reader.result || '');
+          const comma = result.indexOf(',');
+          if(comma < 0) return;
+          const base64 = result.slice(comma + 1);
+          try{
+            ws.send(JSON.stringify({
+              type: 'video',
+              data: base64,
+              mimeType: 'image/jpeg'
+            }));
+            log('送視訊 JPEG ' + w + 'x' + h);
+          }catch(e){
+            log('送視訊失敗：' + e.message);
+          }
+        };
+        reader.readAsDataURL(blob);
+      }, 'image/jpeg', 0.72);
+    }catch(e){
+      log('擷取視訊失敗：' + e.message);
+    }
+  }, 1000);
+  log('開始每秒送 1 張 JPEG 給 live-voice');
+}
+function startAudio(){if(!stream||!inputCtx||processor)return;source=inputCtx.createMediaStreamSource(stream);processor=inputCtx.createScriptProcessor(512,1,1);const silent=inputCtx.createGain();silent.gain.value=0;processor.onaudioprocess=e=>{if(!ws||ws.readyState!==1||micHold)return;const a=e.inputBuffer.getChannelData(0);const pcm=new Int16Array(a.length);for(let i=0;i<a.length;i++)pcm[i]=Math.max(-1,Math.min(1,a[i]))*32767;let bin='';const u=new Uint8Array(pcm.buffer);for(let i=0;i<u.length;i++)bin+=String.fromCharCode(u[i]);try{ws.send(JSON.stringify({type:'audio',data:btoa(bin),mimeType:'audio/pcm;rate=16000'}))}catch(err){}};source.connect(processor);processor.connect(silent);silent.connect(inputCtx.destination)}
+async function stop(){wanted=false;auto=false;setAutoUi();flushTurn();clearInterval(videoTimer);if(processor)processor.disconnect();if(source)source.disconnect();if(inputCtx)await inputCtx.close().catch(function(){});if(playCtx)await playCtx.close().catch(function(){});inputCtx=null;playCtx=null;resetOut();processor=null;source=null;nextPlayTime=0;if(ws){try{ws.close()}catch(_){}ws=null}if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const p=$('preview');if(p)p.srcObject=null;if($('startBtn'))$('startBtn').disabled=false;if($('stopBtn'))$('stopBtn').disabled=true;status('⚪ 已停止')}
+async function toggleAuto(){if(auto&&wanted){await stop();return}await start()}
+async function switchCamera(){if(mode!=='video'||!stream||!camOn)return;facing=facing==='user'?'environment':'user';const old=stream;const ns=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:{echoCancellation:true}});old.getTracks().forEach(t=>t.stop());stream=ns;const p=$('preview');if(p){p.srcObject=ns;p.classList.toggle('mirror',facing==='user')}if(processor){try{processor.disconnect()}catch(_){}processor=null;source=null;startAudio()}if(ws&&ws.readyState===1)startVideo();}
+// 📷 鏡頭開關：關＝停送畫面、只停掉視訊軌（麥克風軌不動）；開＝重新取得視訊軌並恢復送畫面
+function camUi(){const b=$('camToggleBtn');if(b)b.textContent=camOn?'📷 關鏡頭':'📷 開鏡頭';const c=$('cameraBtn');if(c)c.disabled=!camOn||!stream;const p=$('preview');if(p)p.style.visibility=camOn?'':'hidden'}
+async function setCamera(on){on=!!on;if(mode!=='video')return camOn;const p=$('preview');
+  if(!on){camOn=false;clearInterval(videoTimer);if(stream)stream.getVideoTracks().forEach(t=>{try{t.stop()}catch(_){}try{stream.removeTrack(t)}catch(_){}});if(p)p.srcObject=null;camUi();log('鏡頭已關（只剩語音）');return camOn}
+  camOn=true;camUi();
+  if(stream&&!stream.getVideoTracks().length){try{const vs=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:640},height:{ideal:480}},audio:false});vs.getVideoTracks().forEach(t=>stream.addTrack(t));if(p){p.srcObject=new MediaStream(stream.getVideoTracks());p.play().catch(()=>{})}startVideo();log('鏡頭已開')}catch(e){camOn=false;camUi();log('無法開啟鏡頭：'+e.message);throw e}}
+  return camOn}
+// 📸 拍照問問題用：取一張目前畫面（不經 Live 送出）
+function grabFrame(max){const v=$('preview');if(!camOn||!v||!v.videoWidth)return null;const k=Math.min(1,(max||1280)/Math.max(v.videoWidth,v.videoHeight));const c=document.createElement('canvas');c.width=Math.round(v.videoWidth*k);c.height=Math.round(v.videoHeight*k);c.getContext('2d').drawImage(v,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.85)}
+function lastUserText(){if(inBuf.trim())return inBuf.trim();try{const l=JSON.parse(localStorage.getItem(TURNS_KEY)||'[]');for(let i=l.length-1;i>=0;i--)if(l[i].role==='user')return String(l[i].text||'').trim()}catch(e){}return ''}
+// 暗星朗讀解答時：暫停送麥克風、暫停 Live 播放；結束後恢復
+function holdLive(on){micHold=!!on;try{if(playCtx){if(on)playCtx.suspend();else playCtx.resume()}}catch(e){}}
+function bootFromQuery(){const q=new URLSearchParams(location.search);const m=q.get('mode')==='voice'?'voice':'video';mode='';setMode(m)}
+if($('liveInput'))$('liveInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendTyped()}});
+initVoices();bootFromQuery();window.__AIVAULT_DARK_STAR_START__=start;window.__AIVAULT_DARK_STAR_STOP__=stop;window.__AIVAULT_DARK_STAR_TOGGLE_AUTO__=toggleAuto;window.__AIVAULT_DS_LIVE_TOOLS__={setCamera,camOn:()=>camOn,grabFrame,lastUserText,holdLive,chat:()=>$('chat')};

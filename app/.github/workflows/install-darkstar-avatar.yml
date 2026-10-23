@@ -1,0 +1,31 @@
+name: Install Dark Star Digital Human
+
+on:
+  push:
+    paths-ignore:
+      - '.github/workflows/install-darkstar-avatar.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    if: "github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[darkstar-avatar-installed]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject avatar into Technical Dark Star
+        run: python3 .github/scripts/install_darkstar_avatar.py
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add technical-dark-star.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'feat: add cute Dark Star digital human [darkstar-avatar-installed]'
+          git push

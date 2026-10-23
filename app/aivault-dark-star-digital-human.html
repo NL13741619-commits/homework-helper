@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#07080d">
+<title>AIVAULT｜暗星即時語音＋數字人</title>
+<style>
+:root{
+  --bg:#07080d;--panel:#10131c;--line:#262b39;--text:#e8edf7;--muted:#8b93a7;
+  --ok:#34d399;--warn:#fbbf24;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}
+body{min-height:100dvh}
+header{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(7,8,13,.92);z-index:5
+}
+.mark{width:32px;height:32px;border-radius:10px;background:#111;display:grid;place-items:center;border:1px solid #2a2f3d}
+.title{font-weight:750;font-size:15px}
+.sub{font-size:11px;color:var(--muted)}
+.grow{flex:1}
+.nav a,.btn{
+  display:inline-flex;align-items:center;justify-content:center;height:34px;padding:0 11px;
+  border:1px solid var(--line);border-radius:9px;background:#161924;color:var(--text);
+  text-decoration:none;font-size:12px;font-weight:700;cursor:pointer
+}
+.btn.primary{background:linear-gradient(135deg,#f43f5e,#7c3aed);border-color:transparent}
+.btn.danger{border-color:#7f1d1d;color:#fecaca;background:#1a1012}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.wrap{max-width:1080px;margin:0 auto;padding:14px 14px 28px;display:grid;gap:12px}
+@media(min-width:880px){.wrap{grid-template-columns:1.15fr .85fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px}
+canvas#stage{width:100%;height:auto;border-radius:14px;background:#05060c;display:block;aspect-ratio:4/5}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+select,textarea{
+  width:100%;border:1px solid var(--line);border-radius:10px;background:#0c0f16;color:var(--text);
+  padding:9px 10px;font:inherit
+}
+textarea{min-height:68px;resize:vertical}
+.status{font-size:12px;color:var(--muted);padding:8px 10px;border-radius:10px;background:#0c0f16;margin-top:8px;white-space:pre-wrap}
+.caps{min-height:96px;max-height:220px;overflow:auto;font-size:13px;line-height:1.55}
+.cap{margin:0 0 8px;padding:8px 10px;border-radius:10px}
+.cap.user{background:#152033}
+.cap.ai{background:#19131f}
+.engines{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.eng{font-size:11px;padding:8px;border-radius:10px;border:1px solid var(--line);background:#0c0f16}
+.eng b{display:block;font-size:12px;margin-bottom:2px}
+.live{color:var(--ok)}.res{color:var(--warn)}
+.log{font:11px/1.45 ui-monospace,Menlo,monospace;white-space:pre-wrap;max-height:180px;overflow:auto;color:#cbd5e1}
+.badge{font-size:10px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.badge.on{border-color:#065f46;color:#6ee7b7}
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">✦</div>
+  <div>
+    <div class="title">暗星即時語音＋數字人</div>
+    <div class="sub">大腦 = Technical Dark Star　數字人只是身體</div>
+  </div>
+  <div class="grow"></div>
+  <nav class="nav">
+    <a href="technical-dark-star.html">暗星本體</a>
+    <a href="aivault-video-studio.html">Video Studio</a>
+    <a href="aivault-home.html">Home</a>
+  </nav>
+</header>
+<div class="wrap">
+  <section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <strong>數字人畫面</strong>
+      <span id="speakBadge" class="badge">未說話</span>
+    </div>
+    <canvas id="stage" width="720" height="900" aria-label="暗星數字人" style="display:none"></canvas>
+    <img id="photoAvatarImage" alt="目前使用中的照片數字人" style="width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:14px;background:#05060c;display:none">
+    <video id="photoAvatarVideo" playsinline muted preload="auto" style="width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:14px;background:#05060c;display:none"></video>
+    <div class="status" id="photoAvatarStatus">照片數字人尚未載入。</div>
+    <div class="row">
+      <button class="btn primary" id="btnStart" type="button">開始即時語音</button>
+      <button class="btn danger" id="btnStop" type="button" disabled>停止</button>
+      <button class="btn" id="btnInterrupt" type="button" disabled>立即打斷</button>
+    </div>
+    <div class="row">
+      <label class="sub" style="flex:1">音色
+        <select id="voiceSelect"></select>
+      </label>
+    </div>
+    <div class="status" id="status">尚未連線。按下後走既有 technical-dark-star-live-voice，不是上傳錄音再 TTS。</div>
+  </section>
+  <section>
+    <div class="card">
+      <strong>字幕（只顯示，不是語音系統）</strong>
+      <div class="caps" id="caps"></div>
+      <textarea id="textIn" placeholder="可打字給暗星。語言不鎖死，可中英混合。"></textarea>
+      <div class="row">
+        <button class="btn" id="btnText" type="button">送文字到暗星</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <strong>引擎接口</strong>
+      <div class="engines" id="engines"></div>
+      <div class="status" id="sessionHint">後端 session function 尚未部署時，前端仍直接連 live-voice。</div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <strong>事件</strong>
+      <div class="log" id="log"></div>
+    </div>
+  </section>
+</div>
+<script src="js/aivault-engine-bus.js?v=dh2"></script>
+<script src="js/aivault-dark-star-live-client.js?v=dh4"></script>
+<script src="js/aivault-dark-star-avatar.js?v=dh2"></script>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+
+  // UI safety layer: bind controls BEFORE optional avatar/engine/session initialization.
+  // If a non-critical initializer fails on iPhone Safari, the whole UI must not become dead.
+  var safeClient = null;
+  function ensureSafeClient(){
+    if (safeClient) return safeClient;
+    if (!window.AIVAULTDarkStarLiveClient) throw new Error("Live client script not loaded");
+    safeClient = new AIVAULTDarkStarLiveClient({
+      voice: localStorage.getItem("darkStarVoice") || "Kore"
+    });
+    return safeClient;
+  }
+  $("btnStart").onclick = function(){
+    try {
+      var c = ensureSafeClient();
+      var v = $("voiceSelect").value || localStorage.getItem("darkStarVoice") || "Kore";
+      c.setVoice(v);
+      $("btnStart").disabled = true;
+      $("btnStop").disabled = false;
+      $("btnInterrupt").disabled = false;
+      c.start().catch(function(e){
+        $("btnStart").disabled = false;
+        $("btnStop").disabled = true;
+        $("btnInterrupt").disabled = true;
+        $("status").textContent = "無法啟動：" + (e.message || e);
+      });
+    } catch(e) {
+      $("status").textContent = "初始化失敗：" + (e.message || e);
+    }
+  };
+  $("btnStop").onclick = function(){
+    try { if (safeClient) safeClient.stop(); }
+    catch(e) { $("status").textContent = "停止失敗：" + (e.message || e); }
+  };
+  $("btnInterrupt").onclick = function(){
+    try { if (safeClient) safeClient.interrupt("manual"); }
+    catch(e) { $("status").textContent = "打斷失敗：" + (e.message || e); }
+  };
+  $("btnText").onclick = function(){
+    try {
+      var t = $("textIn").value;
+      if (!t.trim()) return;
+      var c = ensureSafeClient();
+      if (c.sendText(t)) $("textIn").value = "";
+    } catch(e) {
+      $("status").textContent = "文字送出失敗：" + (e.message || e);
+    }
+  };
+
+  var avatar = null;
+  try {
+    avatar = new AIVAULTDarkStarAvatar($("stage"));
+    avatar.start();
+  } catch(e) {
+    $("status").textContent = "數字人畫面初始化失敗，但語音控制仍可使用。";
+  }
+
+  var client = null;
+  try {
+    client = ensureSafeClient();
+  } catch(e) {
+    log("Live client deferred: " + (e.message || e));
+  }
+  var clientForEvents = client || safeClient;
+  client = client || safeClient;
+  if (avatar) avatar.start();
+  var userCap = null, aiCap = null;
+  function log(msg){
+    var el = $("log");
+    el.textContent += "[" + new Date().toLocaleTimeString("zh-TW",{hour12:false}) + "] " + msg + "\n";
+    el.scrollTop = el.scrollHeight;
+  }
+  function setStatus(s){ $("status").textContent = s; }
+  function setSpeak(on){
+    $("speakBadge").textContent = on ? "暗星說話中" : "等待／聆聽";
+    $("speakBadge").className = "badge" + (on ? " on" : "");
+  }
+  function cap(role, text, replace){
+    var box = $("caps");
+    if(replace && role === "user" && userCap){ userCap.textContent = text; return; }
+    if(replace && role === "ai" && aiCap){ aiCap.textContent = text; return; }
+    var d = document.createElement("div");
+    d.className = "cap " + (role === "user" ? "user" : "ai");
+    d.innerHTML = "<b>" + (role === "user" ? "你" : "暗星") + "</b><div></div>";
+    d.lastChild.textContent = text;
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+    if(role === "user") userCap = d.lastChild; else aiCap = d.lastChild;
+  }
+  var sel = $("voiceSelect");
+  AIVAULTDarkStarLiveClient.VOICES.forEach(function(pair){
+    var o = document.createElement("option");
+    o.value = pair[0];
+    o.textContent = pair[0] + " — " + pair[1];
+    sel.appendChild(o);
+  });
+  sel.value = client.voice;
+  sel.onchange = function(){ client.setVoice(sel.value); log("voice=" + sel.value); };
+  var engines = $("engines");
+  AIVAULTEngineBus.list().forEach(function(e){
+    var d = document.createElement("div");
+    d.className = "eng";
+    d.innerHTML = "<b>" + e.id + "</b><span class='" + (e.status==="LIVE"?"live":"res") + "'>" + e.status + "</span>";
+    engines.appendChild(d);
+  });
+  client.on("log", function(d){ log(d.message); });
+  client.on("open", function(d){
+    setStatus("已連上 technical-dark-star-live-voice｜session " + d.sessionId + "｜brain=" + d.brain);
+    log("WS OPEN brain=" + d.brain);
+  });
+  client.on("live_open", function(d){ log("Gemini Live via Dark Star " + (d.model||"")); setStatus("暗星即時通道已啟動 " + (d.model||"")); });
+  client.on("close", function(d){ log("CLOSE " + d.code + " " + d.reason); setStatus("已斷線 " + d.code); });
+  client.on("error", function(d){ log("ERR " + d.message); setStatus("錯誤：" + d.message); });
+  client.on("speaking", function(d){
+    avatar.setSpeaking(d.speaking, d.energy);
+    setSpeak(d.speaking);
+  });
+  client.on("interrupted", function(d){
+    avatar.setSpeaking(false, 0);
+    setSpeak(false);
+    log("interrupt " + d.reason + " sessionKept=" + d.sessionKept);
+  });
+  client.on("inputTranscription", function(d){ cap("user", d.buffer, true); });
+  client.on("outputTranscription", function(d){
+    cap("ai", d.buffer, true);
+    avatar.setEmotionFromText(d.buffer);
+  });
+  var photoPcm = [];
+  var photoBusy = false;
+  function localValue(name){
+    try { return String(localStorage.getItem(name) || "").trim(); } catch(e){ return ""; }
+  }
+  function findLocalId(pattern, preferred){
+    var v = localValue(preferred);
+    if(v) return v;
+    try {
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i)||"";
+        if(pattern.test(k)){
+          var x=String(localStorage.getItem(k)||"").trim();
+          if(x) return x;
+        }
+      }
+    } catch(e){}
+    return "";
+  }
+  function selectedImageId(){
+    var v=findLocalId(/selected[_-]?image[_-]?id/i,"selected_image_id");
+    if(v) return v;
+    var q=new URLSearchParams(location.search);
+    return String(q.get("selected_image_id")||q.get("image_id")||"").trim();
+  }
+  function digitalHumanId(){
+    var v=findLocalId(/digital[_-]?human[_-]?id/i,"digital_human_id");
+    if(v) return v;
+    var q=new URLSearchParams(location.search);
+    return String(q.get("digital_human_id")||"").trim();
+  }
+  function wavFromPcm(chunks, sampleRate){
+    var total=0;
+    for(var i=0;i<chunks.length;i++) total += chunks[i].length;
+    var pcm=new Int16Array(total), off=0;
+    for(var j=0;j<chunks.length;j++){ pcm.set(chunks[j],off); off+=chunks[j].length; }
+    var buf=new ArrayBuffer(44+pcm.length*2), view=new DataView(buf);
+    function w32(p,n){view.setUint32(p,n,true)} function w16(p,n){view.setUint16(p,n,true)}
+    w32(0,0x46464952); w32(4,36+pcm.length*2); w32(8,0x45564157);
+    w32(12,0x20746d66); w32(16,16); w16(20,1); w16(22,1);
+    w32(24,sampleRate); w32(28,sampleRate*2); w16(32,2); w16(34,16);
+    w32(36,0x61746164); w32(40,pcm.length*2);
+    for(var k=0;k<pcm.length;k++) view.setInt16(44+k*2,pcm[k],true);
+    return new Blob([buf],{type:"audio/wav"});
+  }
+  function findVideoUrl(x){
+    if(!x) return "";
+    if(typeof x==="string" && x.indexOf("http")===0) return x;
+    if(typeof x!=="object") return "";
+    if(x.video && x.video.url) return x.video.url;
+    if(x.data && x.data.video && x.data.video.url) return x.data.video.url;
+    if(x.result) return findVideoUrl(x.result);
+    return "";
+  }
+  async function loadSelectedPhoto(){
+    var imageId=selectedImageId(), humanId=digitalHumanId(), img=$("photoAvatarImage"), ps=$("photoAvatarStatus");
+    if(!imageId) return;
+    var tok="";
+    try{
+      var raw=localStorage.getItem("sb-svtkpdmqemidlasowqew-auth-token");
+      var j=raw?JSON.parse(raw):null; tok=String(j&&j.access_token||"").trim();
+    }catch(e){}
+    if(!tok) return;
+    try{
+      var u="https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-photo-avatar?action=image&image_id="+encodeURIComponent(imageId);
+      if(humanId) u+="&digital_human_id="+encodeURIComponent(humanId);
+      var r=await fetch(u,{headers:{Authorization:"Bearer "+tok}});
+      var j=await r.json().catch(function(){return {};});
+      if(r.ok && j.image_url){
+        img.src=j.image_url; img.style.display="block";
+        ps.textContent="CONFIRMED：目前使用中的照片已接入數字人層。";
+      }
+    }catch(e){}
+  }
+  async function generatePhotoAvatar(){
+    if(photoBusy || !photoPcm.length) return;
+    var imageId=selectedImageId(), humanId=digitalHumanId();
+    var vs=$("photoAvatarVideo"), ps=$("photoAvatarStatus");
+    if(!imageId){
+      ps.textContent="NOT VERIFIED：找不到 selected_image_id，照片尚未接入數字人引擎。";
+      return;
+    }
+    var tok="";
+    try{
+      var raw=localStorage.getItem("sb-svtkpdmqemidlasowqew-auth-token");
+      var j=raw?JSON.parse(raw):null; tok=String(j&&j.access_token||"").trim();
+    }catch(e){}
+    if(!tok){ ps.textContent="NOT VERIFIED：目前頁面沒有可用登入 token，無法安全呼叫照片數字人後端。"; return; }
+    photoBusy=true;
+    ps.textContent="照片數字人生成中：正在把暗星本次語音交給照片動畫引擎。";
+    try{
+      var fd=new FormData();
+      fd.append("image_id",imageId);
+      if(humanId) fd.append("digital_human_id",humanId);
+      fd.append("audio",wavFromPcm(photoPcm,24000),"dark-star-turn.wav");
+      var rr=await fetch("https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-photo-avatar",{
+        method:"POST",headers:{Authorization:"Bearer "+tok},body:fd
+      });
+      var jj=await rr.json().catch(function(){return {};});
+      if(!rr.ok || !jj.success) throw new Error(jj.message||jj.error||("HTTP "+rr.status));
+      var id=jj.request_id;
+      if(!id) throw new Error("PHOTO_AVATAR_REQUEST_ID_MISSING");
+      ps.textContent="照片數字人正在生成……";
+      for(var p=0;p<60;p++){
+        await new Promise(function(res){setTimeout(res,2000);});
+        var sr=await fetch("https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-photo-avatar?request_id="+encodeURIComponent(id),{
+          headers:{Authorization:"Bearer "+tok}
+        });
+        var sj=await sr.json().catch(function(){return {};});
+        if(sj.status==="COMPLETED"){
+          var url=findVideoUrl(sj.result);
+          if(!url) throw new Error("PHOTO_AVATAR_VIDEO_URL_MISSING");
+          vs.src=url; vs.style.display="block"; $("photoAvatarImage").style.display="none"; vs.load();
+          ps.textContent="CONFIRMED：照片已交給照片數字人引擎並取得動畫影片。";
+          try{await vs.play();}catch(e){}
+          break;
+        }
+        if(sj.status==="FAILED" || sj.status==="ERROR") throw new Error("PHOTO_AVATAR_PROVIDER_FAILED");
+      }
+    }catch(e){
+      ps.textContent="照片數字人失敗："+(e.message||e);
+    }finally{
+      photoBusy=false; photoPcm=[];
+    }
+  }
+  loadSelectedPhoto();
+  client.on("audioPcm", function(d){
+    if(d && d.pcm && d.pcm.length) photoPcm.push(d.pcm);
+  });
+  client.on("interrupted", function(){
+    photoPcm=[];
+    $("photoAvatarStatus").textContent="暗星被打斷；本次照片動畫取消，連線保留。";
+  });
+  client.on("turnComplete", function(){
+    userCap = null; aiCap = null;
+    log("turnComplete");
+    setTimeout(generatePhotoAvatar, 250);
+    avatar.setEmotion("neutral");
+  });
+  client.on("textSent", function(d){ cap("user", d.text, false); userCap = null; });
+  client.on("started", function(){
+    $("btnStart").disabled = true;
+    $("btnStop").disabled = false;
+    $("btnInterrupt").disabled = false;
+    avatar.setEmotion("listening");
+    log("mic 16k PCM -> Dark Star -> 24k PCM");
+  });
+  client.on("stopped", function(){
+    $("btnStart").disabled = false;
+    $("btnStop").disabled = true;
+    $("btnInterrupt").disabled = true;
+    avatar.setSpeaking(false, 0);
+    setSpeak(false);
+  });
+  // Button handlers are installed by the safety layer above and are intentionally not replaced here.
+  $("textIn").addEventListener("keydown", function(e){
+    if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("btnText").click(); }
+  });
+  var FN = "https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-digital-human-session";
+  fetch(FN + "?action=config").then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+    .then(function(x){
+      if(x.ok && x.j && x.j.brain === "technical-dark-star"){
+        $("sessionHint").textContent = "session function 已回應 brain=technical-dark-star";
+      } else {
+        $("sessionHint").textContent = "NOT VERIFIED：session function 尚未部署。前端已直連 live-voice。";
+      }
+    }).catch(function(){
+      $("sessionHint").textContent = "NOT VERIFIED：無法讀取 aivault-digital-human-session。前端已直連 live-voice。";
+    });
+})();
+</script>
+</body>
+</html>

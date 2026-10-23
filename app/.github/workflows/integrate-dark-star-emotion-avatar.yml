@@ -1,0 +1,23 @@
+name: Integrate Dark Star Emotion Avatar
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  integrate:
+    if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[emotion-avatar]') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Append emotion avatar to realtime voice loader
+        shell: bash
+        run: |
+          python3 -B .github/scripts/integrate_dark_star_emotion_avatar.py
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add technical-dark-star-realtime-voice-v2.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'feat: add Dark Star emotion avatar [emotion-avatar]' || exit 0
+          git push

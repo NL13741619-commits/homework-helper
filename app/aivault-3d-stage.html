@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1" />
+  <title>AIVAULT 3D 舞台</title>
+  <style>
+    *{box-sizing:border-box} html,body{margin:0;height:100%;overflow:hidden;background:#050711;color:#fff;
+      font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}
+    canvas{position:absolute;inset:0;width:100%;height:100%}
+    .top{position:absolute;z-index:5;top:0;left:0;right:0;display:flex;gap:8px;
+      padding:calc(env(safe-area-inset-top)+12px) 14px}
+    .icon{width:40px;height:40px;border-radius:12px;border:1px solid #ffffff22;background:#ffffff14;color:#fff}
+    .chat{position:absolute;z-index:5;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom)+72px);
+      max-height:22vh;overflow:auto;display:flex;flex-direction:column;gap:6px}
+    .bubble{max-width:84%;padding:8px 12px;border-radius:14px;background:#ffffff14;font-size:13px}
+    .ai{align-self:flex-start}.me{align-self:flex-end;background:#637cff33}
+    .bar{position:absolute;z-index:5;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom)+12px);
+      display:flex;gap:8px;padding:8px;border-radius:22px;background:#090d18ee;border:1px solid #ffffff18}
+    input{flex:1;min-width:0;border:0;background:transparent;color:#fff;font-size:16px;outline:0}
+    .send,.mic{width:40px;height:40px;border:0;border-radius:50%;background:#ffffff14;color:#fff}
+    .send{background:#6078ff}
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="top">
+    <button class="icon" id="btnBack" type="button">←</button>
+    <button class="icon" id="btnHome" type="button">Home</button>
+  </div>
+  <div id="chat" class="chat"></div>
+  <div class="bar">
+    <button class="mic" id="mic" type="button">🎙</button>
+    <input id="input" />
+    <button class="send" id="send" type="button">➤</button>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://svtkpdmqemidlasowqew.supabase.co';
+    const KEY = 'sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf';
+
+    const canvas = document.getElementById('c');
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setClearColor(0x050711, 1);
+
+    const scene = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 50);
+    cam.position.set(0, 1.2, 5.2);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 1.15));
+    const key = new THREE.DirectionalLight(0xfff3e2, 1.3);
+    key.position.set(2, 4, 3);
+    scene.add(key);
+
+    const floor = new THREE.Mesh(
+      new THREE.CircleGeometry(3.2, 48),
+      new THREE.MeshStandardMaterial({ color: 0x0b1020, roughness: 0.9 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -1.05;
+    scene.add(floor);
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(1.05, 1.14, 48),
+      new THREE.MeshBasicMaterial({ color: 0x627bff, side: THREE.DoubleSide })
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = -1.03;
+    scene.add(ring);
+
+    const puppet = new THREE.Group();
+    scene.add(puppet);
+
+    const fur = new THREE.MeshStandardMaterial({ color: 0x1a1d22, roughness: 0.7 });
+    const blue = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.35, metalness: 0.15 });
+    const skin = new THREE.MeshStandardMaterial({ color: 0x2a2422, roughness: 0.55 });
+
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.95, 32, 24), blue);
+    body.scale.set(1.05, 1.15, 0.85);
+    body.position.y = 0.05;
+    puppet.add(body);
+
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.72, 32, 24), fur);
+    head.position.y = 1.22;
+    puppet.add(head);
+
+    function ear(x) {
+      const e = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 12), fur);
+      e.position.set(x, 1.78, -0.05);
+      puppet.add(e);
+    }
+    ear(-0.48); ear(0.48);
+
+    const snout = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 12), skin);
+    snout.position.set(0, 1.08, 0.58);
+    puppet.add(snout);
+
+    const photoMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+    const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.85, 1.9), photoMat);
+    plate.position.set(0, 1.15, 0.78);
+    puppet.add(plate);
+
+    const loader = new THREE.TextureLoader();
+    loader.load('aivault-judge-bear.jpg', function (tex) {
+      photoMat.map = tex;
+      photoMat.needsUpdate = true;
+    });
+
+    let talking = false, t = 0, rotY = 0, rotX = 0.08, dragging = false, lx = 0, ly = 0;
+
+    function loop() {
+      requestAnimationFrame(loop);
+      t += 0.016;
+      ring.rotation.z += 0.01;
+      const bob = Math.sin(t * (talking ? 8 : 1.4)) * (talking ? 0.06 : 0.03);
+      puppet.position.y = bob;
+      puppet.rotation.y = rotY + Math.sin(t * 0.6) * (talking ? 0.12 : 0.08);
+      puppet.rotation.x = rotX;
+      if (talking) plate.scale.y = 1 + Math.abs(Math.sin(t * 10)) * 0.03;
+      else plate.scale.y = 1;
+      renderer.render(scene, cam);
+    }
+    loop();
+
+    canvas.addEventListener('pointerdown', function (e) { dragging = true; lx = e.clientX; ly = e.clientY; });
+    addEventListener('pointerup', function () { dragging = false; });
+    addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      rotY += (e.clientX - lx) * 0.008;
+      rotX = Math.max(-0.35, Math.min(0.45, rotX + (e.clientY - ly) * 0.005));
+      lx = e.clientX; ly = e.clientY;
+    });
+    addEventListener('resize', function () {
+      cam.aspect = innerWidth / innerHeight;
+      cam.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    const chat = document.getElementById('chat');
+    function add(text, me) {
+      const b = document.createElement('div');
+      b.className = 'bubble ' + (me ? 'me' : 'ai');
+      b.textContent = text;
+      chat.appendChild(b);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    function speak(text) {
+      talking = true;
+      const stop = function () { talking = false; };
+      fetch(SUPABASE_URL + '/functions/v1/aivault-tts', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', Authorization:'Bearer '+KEY, apikey:KEY },
+        body: JSON.stringify({ action:'tts', text:text, language:'zh-TW' })
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        var b64 = (j.result && j.result.audio_base64) || j.audio_base64;
+        var mime = (j.result && j.result.mime) || 'audio/mpeg';
+        if (!b64) throw new Error('no audio');
+        var a = new Audio('data:' + mime + ';base64,' + b64);
+        a.onended = stop;
+        return a.play();
+      }).catch(function () {
+        if (!('speechSynthesis' in window)) return stop();
+        speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = 'zh-TW';
+        u.onend = stop;
+        speechSynthesis.speak(u);
+      });
+    }
+    function ask(text) {
+      add(text, true);
+      talking = true;
+      fetch(SUPABASE_URL + '/functions/v1/ai-gateway', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', Authorization:'Bearer '+KEY, apikey:KEY },
+        body: JSON.stringify({
+          provider:'groq', model:'openai/gpt-oss-120b',
+          messages:[
+            { role:'system', content:'你是東吳法官熊。繁體中文口語，2到4句，像在3D舞台上說話。' },
+            { role:'user', content:text }
+          ]
+        })
+      }).then(function (r) { return r.json(); }).then(function (data) {
+        var reply = data.content || data.response || data.text || (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '本席在聽。';
+        add(reply, false);
+        speak(reply);
+      }).catch(function (e) {
+        add(String(e.message || e), false);
+        talking = false;
+      });
+    }
+    document.getElementById('btnBack').onclick = function () { location.href = 'aivault-digital-human.html#/'; };
+    document.getElementById('btnHome').onclick = function () { location.href = 'aivault-home.html'; };
+    document.getElementById('send').onclick = function () {
+      var v = document.getElementById('input').value.trim();
+      if (!v) return;
+      document.getElementById('input').value = '';
+      ask(v);
+    };
+    document.getElementById('input').onkeydown = function (e) { if (e.key === 'Enter') document.getElementById('send').click(); };
+    document.getElementById('mic').onclick = function () {
+      var Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!Rec) return add('此裝置不支援語音輸入', false);
+      var r = new Rec(); r.lang = 'zh-TW';
+      r.onresult = function (ev) { ask(ev.results[0][0].transcript); };
+      r.start();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+/** Server-side approval adapter v0.1 — NOT DEPLOYED.
+ * Guards the v0.2 runtime by requiring an immutable server-issued challenge.
+ * Production must provide durable, atomic IssuedApprovalStore and
+ * ApprovalDecisionStore, and must never expose the raw runtime object.
+ */
+import type { ApprovalDecision, ApprovalRequest } from "./approval-authority-v0.1.ts";
+import type { RuntimeSnapshot } from "./agent-runtime-v0.1.ts";
+import { AutonomousAgentRuntimeV2 } from "./agent-runtime-v0.2.ts";
+import { digestToolInput, issueApproval, requireIssuedApproval, type IssuedApprovalStore } from "./trusted-approval-issuer-v0.1.ts";
+
+export class IssuedApprovalRuntime {
+  constructor(
+    private readonly runtime: AutonomousAgentRuntimeV2,
+    private readonly agentId: string,
+    private readonly ownerId: string,
+    private readonly issued: IssuedApprovalStore
+  ) {}
+  async issue(): Promise<ApprovalRequest> {
+    const snapshot = this.runtime.snapshot();
+    if (snapshot.state !== "APPROVAL_REQUIRED" || !snapshot.pending) throw new Error("NO_PENDING_APPROVAL");
+    const previous = await this.issued.get(snapshot.pending.id);
+    if (previous) {
+      const digest = await digestToolInput(snapshot.pending.input);
+      if (previous.agentId !== this.agentId ||
+          previous.ownerId !== this.ownerId ||
+          previous.toolName !== snapshot.pending.name ||
+          previous.kind !== snapshot.pending.kind ||
+          previous.inputDigest !== digest) {
+        throw new Error("APPROVAL_CHALLENGE_COLLISION");
+      }
+      if (!Number.isFinite(Date.parse(previous.expiresAt)) || Date.parse(previous.expiresAt) <= Date.now()) throw new Error("APPROVAL_EXPIRED");
+      return previous;
+    }
+    try {
+      return await issueApproval(this.agentId, this.ownerId, snapshot.pending, this.issued);
+    } catch (error) {
+      // A concurrent issuer may have inserted the challenge first.
+      // Only recover the known unique-key collision; never swallow DB outages.
+      if (!(error instanceof Error) || error.message !== "APPROVAL_ALREADY_ISSUED") throw error;
+      const winner = await this.issued.get(snapshot.pending.id);
+      const digest = await digestToolInput(snapshot.pending.input);
+      if (!winner || winner.agentId !== this.agentId || winner.ownerId !== this.ownerId ||
+          winner.toolName !== snapshot.pending.name || winner.kind !== snapshot.pending.kind ||
+          winner.inputDigest !== digest) throw new Error("APPROVAL_CHALLENGE_COLLISION");
+      if (!Number.isFinite(Date.parse(winner.expiresAt)) || Date.parse(winner.expiresAt) <= Date.now()) throw new Error("APPROVAL_EXPIRED");
+      return winner;
+    }
+  }
+  async decide(presented: ApprovalRequest, decision: ApprovalDecision): Promise<RuntimeSnapshot> {
+    // Do not use user-supplied expiry or identity as authority.
+    const original = await requireIssuedApproval(presented, this.issued);
+    if (original.agentId !== this.agentId || original.ownerId !== this.ownerId) throw new Error("APPROVAL_SCOPE_MISMATCH");
+    return this.runtime.decide(original, decision);
+  }
+  snapshot(): RuntimeSnapshot { return this.runtime.snapshot(); }
+}

@@ -1,0 +1,4445 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<meta name="theme-color" content="#ffffff" />
+<title>暗星｜AIVAULT Video Studio</title>
+
+<style>
+:root{
+  --bg:#f4f6f8;
+  --panel:#ffffff;
+  --panel2:#f7f8fa;
+  --panel3:#eef1f4;
+  --line:#e2e6ec;
+  --text:#12151a;
+  --muted:#667085;
+  --red:#ff334d;
+  --red2:#e11d3a;
+  --green:#0f9d58;
+  --yellow:#b45309;
+  --blue:#2563eb;
+  --shadow:0 10px 28px rgba(16,24,40,.08);
+  --radius:16px;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "PingFang TC",
+    "Noto Sans TC",
+    "Microsoft JhengHei",
+    sans-serif;
+  overflow-x:hidden;
+  touch-action:pan-y;
+}
+
+body{
+  font-size:17px;
+  line-height:1.65;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+  padding:
+    max(14px,env(safe-area-inset-top))
+    max(14px,env(safe-area-inset-right))
+    max(30px,env(safe-area-inset-bottom))
+    max(14px,env(safe-area-inset-left));
+}
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 0;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.star{
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  display:block;
+  border-radius:11px;
+  object-fit:cover;
+  background:#111;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+.brand-text{
+  min-width:0;
+}
+
+.brand-title{
+  font-weight:900;
+  font-size:19px;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+
+.brand-sub{
+  color:var(--muted);
+  font-size:13px;
+  white-space:nowrap;
+}
+
+.header-actions{
+  display:flex;
+  gap:8px;
+}
+
+.small-btn{
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--text);
+  border-radius:10px;
+  min-height:42px;
+  padding:7px 12px;
+  font-weight:700;
+}
+
+.small-btn:active,
+.primary-btn:active,
+.secondary-btn:active,
+.copy-btn:active,
+.option-chip:active,
+.tab-btn:active{
+  transform:scale(.98);
+}
+
+.hero{
+  padding:28px 0 18px;
+}
+
+.hero h1{
+  margin:0;
+  font-size:clamp(30px,7vw,48px);
+  line-height:1.15;
+  font-weight:950;
+  letter-spacing:-.04em;
+}
+
+.hero h1 span{
+  color:var(--red);
+  text-shadow:0 0 18px rgba(255,51,77,.18);
+}
+
+.hero p{
+  margin:12px 0 0;
+  color:var(--muted);
+  font-size:18px;
+}
+
+.panel{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.9),transparent 45%),
+    var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:18px;
+  margin-bottom:16px;
+}
+
+.panel-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.panel-title h2{
+  margin:0;
+  font-size:23px;
+  font-weight:900;
+}
+
+.panel-title p{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.section-title{
+  margin:22px 0 10px;
+  font-size:19px;
+  font-weight:900;
+}
+
+.field-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.field.full{
+  grid-column:1/-1;
+}
+
+label{
+  display:block;
+  margin-bottom:7px;
+  font-weight:800;
+  font-size:16px;
+}
+
+input,
+textarea,
+select{
+  width:100%;
+  border:1px solid var(--line);
+  outline:none;
+  color:var(--text);
+  background:#ffffff;
+  border-radius:12px;
+  padding:13px 14px;
+  font-size:17px;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:rgba(255,51,77,.75);
+  box-shadow:0 0 0 3px rgba(255,51,77,.10);
+}
+
+textarea{
+  min-height:125px;
+  resize:vertical;
+}
+
+.option-group{
+  margin-bottom:18px;
+}
+
+.option-group-title{
+  font-weight:900;
+  font-size:17px;
+  margin-bottom:9px;
+  color:var(--text);
+}
+
+.option-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+}
+
+.option-chip{
+  border:1px solid var(--line);
+  background:#ffffff;
+  color:var(--text);
+  border-radius:999px;
+  padding:9px 14px;
+  min-height:44px;
+  font-weight:800;
+  transition:.15s ease;
+}
+
+.option-chip:hover{
+  border-color:#c5ccd6;
+}
+
+.option-chip.on{
+  color:var(--red);
+  border-color:var(--red);
+  background:
+    linear-gradient(135deg,rgba(255,51,77,.12),rgba(255,51,77,.05));
+  box-shadow:
+    0 0 0 1px rgba(255,51,77,.12),
+    0 6px 16px rgba(255,51,77,.08);
+}
+
+.duration-grid .option-chip{
+  min-width:78px;
+  text-align:center;
+}
+
+.info-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:32px;
+  padding:4px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--muted);
+  background:#ffffff;
+  font-size:14px;
+  font-weight:700;
+}
+
+.badge.red{
+  color:var(--red);
+  border-color:rgba(255,51,77,.35);
+  background:rgba(255,51,77,.08);
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:16px;
+}
+
+.primary-btn,
+.secondary-btn,
+.copy-btn{
+  border-radius:12px;
+  min-height:50px;
+  padding:10px 17px;
+  font-weight:900;
+  border:1px solid transparent;
+}
+
+.primary-btn{
+  background:linear-gradient(135deg,#ff334d,#c91732);
+  color:#fff;
+  box-shadow:0 8px 22px rgba(255,51,77,.18);
+}
+
+.secondary-btn{
+  background:#ffffff;
+  color:var(--text);
+  border-color:var(--line);
+}
+
+.copy-btn{
+  background:#ffffff;
+  color:var(--text);
+  border-color:var(--line);
+}
+
+.copy-btn.success{
+  border-color:var(--green);
+  color:var(--green);
+}
+
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.status{
+  margin-top:12px;
+  padding:11px 13px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#ffffff;
+  color:var(--muted);
+  min-height:45px;
+}
+
+.status.ok{
+  border-color:rgba(15,157,88,.35);
+  color:var(--green);
+}
+
+.status.error{
+  border-color:rgba(255,51,77,.4);
+  color:#c81e3a;
+}
+
+.workspace-tabs{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding-bottom:5px;
+  scrollbar-width:none;
+  touch-action:pan-x;
+}
+
+.workspace-tabs::-webkit-scrollbar{
+  display:none;
+}
+
+.tab-btn{
+  flex:0 0 auto;
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#ffffff;
+  color:var(--muted);
+  padding:8px 15px;
+  font-weight:900;
+}
+
+.tab-btn.on{
+  color:var(--red);
+  border-color:var(--red);
+  background:rgba(255,51,77,.08);
+}
+
+.tab-content{
+  display:none;
+}
+
+.tab-content.on{
+  display:block;
+}
+
+.editor-box{
+  margin-top:12px;
+}
+
+.editor-box textarea{
+  min-height:240px;
+  font-size:17px;
+  line-height:1.75;
+}
+
+.director-group{
+  padding:14px 0;
+  border-top:1px solid var(--line);
+}
+
+.director-group:first-child{
+  border-top:0;
+}
+
+.continuity-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.toggle-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:48px;
+  padding:10px 12px;
+  background:#ffffff;
+  border:1px solid var(--line);
+  border-radius:11px;
+}
+
+.toggle-row input{
+  width:21px;
+  height:21px;
+  accent-color:var(--red);
+}
+
+.toggle-row span{
+  font-weight:800;
+}
+
+.prompt-box{
+  position:relative;
+  margin-top:14px;
+}
+
+.prompt-box-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.prompt-box-header strong{
+  font-size:18px;
+}
+
+.prompt-box textarea{
+  min-height:250px;
+  font-size:16px;
+  line-height:1.7;
+}
+
+.timeline-wrap{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  border:1px solid var(--line);
+  border-radius:12px;
+  touch-action:pan-x;
+}
+
+.timeline{
+  width:max-content;
+  min-width:100%;
+  border-collapse:collapse;
+}
+
+.timeline th,
+.timeline td{
+  padding:11px 12px;
+  border-bottom:1px solid var(--line);
+  border-right:1px solid var(--line);
+  vertical-align:top;
+  text-align:left;
+  min-width:130px;
+}
+
+.timeline th{
+  background:#f7f8fa;
+  position:sticky;
+  top:0;
+  z-index:2;
+  font-weight:900;
+}
+
+.timeline td{
+  color:var(--text);
+  font-size:15px;
+}
+
+.timeline tr:last-child td{
+  border-bottom:0;
+}
+
+.keyframe-list{
+  display:grid;
+  gap:9px;
+}
+
+.keyframe{
+  display:grid;
+  grid-template-columns:90px 1fr;
+  gap:12px;
+  padding:12px;
+  background:#ffffff;
+  border:1px solid var(--line);
+  border-radius:11px;
+}
+
+.keyframe-time{
+  color:var(--red2);
+  font-weight:900;
+}
+
+.keyframe-text{
+  color:var(--text);
+}
+
+.empty{
+  padding:30px 10px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.loading{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--red);
+  animation:pulse 1s infinite alternate;
+}
+
+@keyframes pulse{
+  from{opacity:.3;transform:scale(.75)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.image-video-grid{display:grid;grid-template-columns:minmax(260px,1fr) minmax(320px,1.4fr);gap:18px;align-items:start;}
+.upload-drop{min-height:170px;border:2px dashed var(--line);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;text-align:center;padding:18px;background:#fafafa;}
+.upload-drop span{color:var(--muted);font-size:13px;}
+.image-video-preview{width:100%;max-height:360px;object-fit:contain;border-radius:14px;margin-top:12px;background:#000;}
+@media(max-width:720px){.image-video-grid{grid-template-columns:1fr;}}
+ .image-video-workspace{display:grid;grid-template-columns:minmax(240px,1fr) minmax(320px,1.5fr);gap:18px;align-items:stretch;} .image-video-workspace .media-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fafafa;} .image-video-workspace img{width:100%;height:300px;object-fit:contain;background:#111;border-radius:10px;} .generation-screen{min-height:300px;border-radius:14px;background:#111;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;position:relative;overflow:hidden;} .generation-screen .pulse{width:74px;height:74px;border:3px solid currentColor;border-radius:50%;animation:videoPulse 1.4s infinite ease-in-out;margin-bottom:18px;} .generation-screen.is-done{justify-content:flex-start;align-items:stretch;padding:0;background:#000;} .generation-screen.is-done video{width:100%;height:100%;min-height:300px;object-fit:contain;background:#000;} @keyframes videoPulse{0%,100%{transform:scale(.75);opacity:.45}50%{transform:scale(1);opacity:1}} @media(max-width:720px){.image-video-workspace{grid-template-columns:1fr;}} .video-result{display:none;}
+.video-result.on{display:block;}
+.video-preview{width:100%;max-height:70vh;background:#000;border-radius:14px;display:block;}
+.video-player-wrap{margin-top:14px;}
+.video-player-actions{margin-top:10px;}
+.video-player-actions .secondary-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;}
+.result-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px;}
+.result-meta div{border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:#fff;}
+.result-meta strong{display:block;font-size:13px;color:var(--muted);}
+.result-meta span{display:block;margin-top:2px;font-weight:800;word-break:break-word;}
+@media(max-width:720px){.result-meta{grid-template-columns:1fr;}}
+
+.footer{
+  padding:20px 0 10px;
+  color:var(--muted);
+  text-align:center;
+  font-size:13px;
+}
+
+.notice{
+  padding:12px 14px;
+  background:rgba(180,83,9,.06);
+  border:1px solid rgba(180,83,9,.22);
+  border-radius:11px;
+  color:#8a4b08;
+  font-size:14px;
+  margin-top:12px;
+}
+
+
+.frame-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:12px;
+}
+.frame-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  gap:10px;
+}
+.frame-card{
+  position:relative;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  background:#fff;
+}
+.frame-card img{
+  width:100%;
+  height:110px;
+  object-fit:cover;
+  display:block;
+}
+.frame-del{
+  position:absolute;
+  top:6px;
+  right:6px;
+  border:0;
+  border-radius:999px;
+  min-height:28px;
+  padding:0 8px;
+  background:rgba(0,0,0,.72);
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+}
+
+
+.pace-row{
+  margin-bottom:14px;
+}
+.pace-row input[type="range"]{
+  width:100%;
+  accent-color:var(--red);
+  height:28px;
+}
+.pace-row label span{
+  color:var(--red);
+}
+
+@media(max-width:720px){
+  .app{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .field-grid{
+    grid-template-columns:1fr;
+  }
+
+  .field.full{
+    grid-column:auto;
+  }
+
+  .continuity-list{
+    grid-template-columns:1fr;
+  }
+
+  .hero{
+    padding-top:22px;
+  }
+
+  .hero p{
+    font-size:17px;
+  }
+
+  .panel{
+    padding:14px;
+    border-radius:14px;
+  }
+
+  .panel-title h2{
+    font-size:21px;
+  }
+
+  .option-chip{
+    font-size:16px;
+    padding:9px 13px;
+  }
+
+  .actions > button{
+    flex:1 1 100%;
+  }
+
+  .keyframe{
+    grid-template-columns:78px 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <header class="header">
+    <div class="brand">
+      <img class="star" src="data:image/png;base64,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" alt="暗星" />
+      <div class="brand-text">
+        <div class="brand-title">暗星 Dark Star</div>
+        <div class="brand-sub">AIVAULT Video Studio</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+  <button class="small-btn" id="backBtn" type="button">
+    ← 回上一頁
+  </button>
+
+  <button class="small-btn" id="clearBtn" type="button">
+    清除
+  </button>
+</div>
+  </header>
+
+  <section class="hero">
+    <h1>把故事變成<span>電影級提示詞</span></h1>
+    <p>
+      從主題、劇情、角色、分鏡到導演拍攝手法，
+      建立可直接交給影片模型使用的結構化提示詞。
+    </p>
+  </section>
+
+  <!-- 專案設定 -->
+  <!-- 新版 Imagine 式快速生成區：只新增於最上方；下方舊提示詞製作區完整保留、不改動。 -->
+  <section class="panel" id="imagineQuickStudio">
+    <div class="panel-title">
+      <div>
+        <h2>✨ AIVAULT Imagine｜快速生成影片</h2>
+        <p>簡單輸入提示詞，或放入一張圖片；這個新版入口獨立運作，不會改變下面原有的專業提示詞工作流。</p>
+      </div>
+      <span class="badge red">新版</span>
+    </div>
+
+    <div class="workspace-tabs">
+      <button type="button" class="tab-btn on" data-imagine-tab="text">✍️ 文字→影片</button>
+      <button type="button" class="tab-btn" data-imagine-tab="image">🖼️ 圖片→影片</button>
+    </div>
+
+    <div id="imagineTextPanel" class="tab-content on">
+      <div class="field full">
+        <label for="imagineTextPrompt">你想生成什麼影片？</label>
+        <textarea id="imagineTextPrompt" placeholder="例如：雨夜的台北街頭，一名女子撐傘慢慢走過霓虹燈，鏡頭平穩跟拍，電影感。"></textarea>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>影片秒數</label>
+          <div class="option-grid duration-grid" id="imagineTextDuration">
+            <button type="button" class="option-chip on" data-imagine-text-duration="5">5 秒</button>
+            <button type="button" class="option-chip" data-imagine-text-duration="10">10 秒</button>
+            <button type="button" class="option-chip" data-imagine-text-duration="15">15 秒</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="imagineTextAspect">畫面比例</label>
+          <select id="imagineTextAspect">
+            <option value="16:9">16:9</option>
+            <option value="9:16">9:16</option>
+            <option value="1:1">1:1</option>
+                <option value="2:3">2:3</option>
+                <option value="3:2">3:2</option>
+            <option value="2:3">2:3</option>
+            <option value="3:2">3:2</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary-btn" id="generateImagineTextBtn" type="button">✦ 生成影片</button>
+      </div>
+    </div>
+
+    <div id="imagineImagePanel" class="tab-content">
+      <div class="image-video-grid">
+        <div>
+          <label class="upload-drop" for="imageToVideoFile" id="imageToVideoDrop">
+            <input id="imageToVideoFile" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+            <strong>＋ 選擇照片／圖像</strong>
+            <span>JPG / PNG / WebP，最大 12 MB</span>
+          </label>
+          <img id="imageToVideoPreview" class="image-video-preview" alt="來源圖片預覽" hidden />
+        </div>
+        <div>
+          <div class="field full">
+            <label for="imageVideoPrompt">圖片要怎麼動？</label>
+            <textarea id="imageVideoPrompt" placeholder="例如：人物自然眨眼、頭髮被微風吹動，鏡頭緩慢向前推進。"></textarea>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label>影片秒數</label>
+              <div class="option-grid duration-grid image-video-duration">
+                <button type="button" data-image-video-duration="5" class="option-chip on">5 秒</button>
+                <button type="button" data-image-video-duration="10" class="option-chip">10 秒</button>
+                <button type="button" data-image-video-duration="15" class="option-chip">15 秒</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="imageVideoAspect">畫面比例</label>
+              <select id="imageVideoAspect">
+                <option value="16:9">16:9</option>
+                <option value="9:16">9:16</option>
+                <option value="1:1">1:1</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="primary-btn" id="generateImageVideoBtn" type="button">🖼️→🎬 生成影片</button>
+          </div>
+          <div class="info-row">
+            <span class="badge" id="imageVideoStatus">尚未選擇圖片</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>🎬 影片專案</h2>
+        <p>先設定影片方向，再生成故事與提示詞。</p>
+      </div>
+    </div>
+
+    <div class="field-grid">
+
+      <div class="field">
+        <label for="videoTitle">影片名稱</label>
+        <input
+          id="videoTitle"
+          type="text"
+          placeholder="例如：暗星最後的舞者"
+        />
+      </div>
+
+      <div class="field">
+        <label for="characters">主要角色</label>
+        <input
+          id="characters"
+          type="text"
+          placeholder="例如：年輕舞者、老攝影師、機器人"
+        />
+      </div>
+
+      <div class="field full">
+        <label for="customTheme">自訂主題</label>
+        <input
+          id="customTheme"
+          type="text"
+          placeholder="可與下面的主題複選，例如：末日城市中的重逢"
+        />
+      </div>
+
+      <div class="field full">
+        <label for="creativeRequest">創作需求</label>
+        <textarea
+          id="creativeRequest"
+          placeholder="描述你想要的故事、畫面、角色關係、情緒、結局等。"
+        ></textarea>
+      </div>
+
+    </div>
+
+    <div class="section-title">🎭 主題分類（可複選）</div>
+
+    <div class="option-group">
+      <div class="option-group-title">🎬 電影／劇情</div>
+      <div class="option-grid">
+        <button type="button" class="option-chip" data-theme="電影劇情">電影劇情</button>
+        <button type="button" class="option-chip" data-theme="動作">動作</button>
+        <button type="button" class="option-chip" data-theme="愛情">愛情</button>
+        <button type="button" class="option-chip" data-theme="懸疑">懸疑</button>
+        <button type="button" class="option-chip" data-theme="驚悚">驚悚</button>
+        <button type="button" class="option-chip" data-theme="犯罪">犯罪</button>
+        <button type="button" class="option-chip" data-theme="戰爭">戰爭</button>
+        <button type="button" class="option-chip" data-theme="歷史劇">歷史劇</button>
+        <button type="button" class="option-chip" data-theme="穿越">穿越</button>
+        <button type="button" class="option-chip" data-theme="古裝">古裝</button>
+        <button type="button" class="option-chip" data-theme="喜劇">喜劇</button>
+        <button type="button" class="option-chip" data-theme="悲劇">悲劇</button>
+        <button type="button" class="option-chip" data-theme="舞蹈">舞蹈</button>
+        <button type="button" class="option-chip" data-theme="音樂">音樂</button>
+        <button type="button" class="option-chip" data-theme="勾心鬥角">勾心鬥角</button>
+        <button type="button" class="option-chip" data-theme="眾叛親離">眾叛親離</button>
+        <button type="button" class="option-chip" data-theme="邊緣人">邊緣人</button>
+        <button type="button" class="option-chip" data-theme="犯罪心理學">犯罪心理學</button>
+        <button type="button" class="option-chip" data-theme="英雄主義">英雄主義</button>
+        <button type="button" class="option-chip" data-theme="社會底層">社會底層</button>
+        <button type="button" class="option-chip" data-theme="宮廷爭鬥">宮廷爭鬥</button>
+        <button type="button" class="option-chip" data-theme="福爾摩斯偵探">福爾摩斯偵探</button>
+        <button type="button" class="option-chip" data-theme="精神分裂">精神分裂</button>
+        <button type="button" class="option-chip" data-theme="警探系列">警探系列</button>
+        <button type="button" class="option-chip" data-theme="黑社會">黑社會</button>
+        <button type="button" class="option-chip" data-theme="兇殺案">兇殺案</button>
+        <button type="button" class="option-chip" data-theme="恐怖片">恐怖片</button>
+        <button type="button" class="option-chip" data-theme="靈媒陰魂">靈媒陰魂</button>
+        <button type="button" class="option-chip" data-theme="陰間判官">陰間判官</button>
+      </div>
+    </div>
+
+    <div class="option-group">
+      <div class="option-group-title">🐉 奇幻／世界觀</div>
+      <div class="option-grid">
+        <button type="button" class="option-chip" data-theme="奇幻">奇幻</button>
+        <button type="button" class="option-chip" data-theme="魔法">魔法</button>
+        <button type="button" class="option-chip" data-theme="神話">神話</button>
+        <button type="button" class="option-chip" data-theme="冒險">冒險</button>
+        <button type="button" class="option-chip" data-theme="超自然">超自然</button>
+        <button type="button" class="option-chip" data-theme="平行世界">平行世界</button>
+      </div>
+    </div>
+
+    <div class="option-group">
+      <div class="option-group-title">🚀 科幻／未來</div>
+      <div class="option-grid">
+        <button type="button" class="option-chip" data-theme="科幻">科幻</button>
+        <button type="button" class="option-chip" data-theme="未來世界">未來世界</button>
+        <button type="button" class="option-chip" data-theme="人工智慧">人工智慧</button>
+        <button type="button" class="option-chip" data-theme="機器人">機器人</button>
+        <button type="button" class="option-chip" data-theme="太空">太空</button>
+        <button type="button" class="option-chip" data-theme="賽博龐克">賽博龐克</button>
+      </div>
+    </div>
+
+    <div class="option-group">
+      <div class="option-group-title">🎨 動畫／動漫／兒童</div>
+      <div class="option-grid">
+        <button type="button" class="option-chip" data-theme="動畫">動畫</button>
+        <button type="button" class="option-chip" data-theme="日本動漫">日本動漫</button>
+        <button type="button" class="option-chip" data-theme="動漫">動漫</button>
+        <button type="button" class="option-chip" data-theme="兒童故事">兒童故事</button>
+        <button type="button" class="option-chip" data-theme="奇幻動畫">奇幻動畫</button>
+        <button type="button" class="option-chip" data-theme="角色冒險">角色冒險</button>
+      </div>
+    </div>
+
+    <div class="option-group">
+      <div class="option-group-title">🌏 社會／人文</div>
+      <div class="option-grid">
+        <button type="button" class="option-chip" data-theme="社會">社會</button>
+        <button type="button" class="option-chip" data-theme="人文">人文</button>
+        <button type="button" class="option-chip" data-theme="家庭">家庭</button>
+        <button type="button" class="option-chip" data-theme="友情">友情</button>
+        <button type="button" class="option-chip" data-theme="成長">成長</button>
+        <button type="button" class="option-chip" data-theme="人生">人生</button>
+      </div>
+    </div>
+
+    <div class="option-group">
+      <div class="option-group-title">🎤 娛樂／生活</div>
+      <div class="option-grid">
+        <button type="button" class="option-chip" data-theme="娛樂">娛樂</button>
+        <button type="button" class="option-chip" data-theme="綜藝">綜藝</button>
+        <button type="button" class="option-chip" data-theme="旅遊">旅遊</button>
+        <button type="button" class="option-chip" data-theme="美食">美食</button>
+        <button type="button" class="option-chip" data-theme="生活">生活</button>
+        <button type="button" class="option-chip" data-theme="時尚">時尚</button>
+      </div>
+    </div>
+
+    <div class="section-title">🎞️ 影片模式（可複選）</div>
+
+    <div class="option-grid" id="modeOptions">
+      <button type="button" class="option-chip on" data-mode="電影敘事">電影敘事</button>
+      <button type="button" class="option-chip" data-mode="故事短片">故事短片</button>
+      <button type="button" class="option-chip" data-mode="動漫動畫">動漫動畫</button>
+      <button type="button" class="option-chip" data-mode="音樂舞蹈">音樂舞蹈</button>
+      <button type="button" class="option-chip" data-mode="宣傳影片">宣傳影片</button>
+      <button type="button" class="option-chip" data-mode="字幕">字幕</button>
+      <button type="button" class="option-chip" data-mode="旁白字幕">旁白字幕</button>
+    </div>
+
+    <div class="section-title">⏱️ 影片時間（單選）</div>
+
+    <div class="option-grid duration-grid" id="durationOptions">
+      <button type="button" class="option-chip" data-duration="5">5 秒</button>
+      <button type="button" class="option-chip" data-duration="10">10 秒</button>
+      <button type="button" class="option-chip on" data-duration="15">15 秒</button>
+    </div>
+
+
+    <div class="section-title">🗣️ 語速</div>
+
+    <div class="pace-row">
+      <label for="narrationPace">旁白語速 <span id="narrationPaceValue">100%</span></label>
+      <input id="narrationPace" type="range" min="50" max="150" step="1" value="100" />
+    </div>
+
+    <div class="pace-row">
+      <label for="characterPace">角色語速 <span id="characterPaceValue">100%</span></label>
+      <input id="characterPace" type="range" min="50" max="150" step="1" value="100" />
+    </div>
+
+    <div class="section-title">🌐 語言</div>
+
+    <select id="language">
+      <option value="繁體中文">繁體中文</option>
+      <option value="简体中文">简体中文</option>
+      <option value="英文">英文</option>
+    </select>
+
+    <div class="info-row">
+      <span class="badge red" id="selectedThemeBadge">尚未選擇主題</span>
+      <span class="badge" id="selectedDurationBadge">15 秒</span>
+    </div>
+
+    <div class="actions">
+      <button class="primary-btn" id="generateStoryBtn" type="button">
+        ✨ 生成故事與分鏡
+      </button>
+    </div>
+
+    <div class="status" id="aiStatus">
+      等待開始。
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>📝 創作工作區</h2>
+        <p>AI 生成後，你仍然可以直接修改內容。</p>
+      </div>
+    </div>
+
+    <div class="workspace-tabs">
+      <button type="button" class="tab-btn on" data-tab="story">故事</button>
+      <button type="button" class="tab-btn" data-tab="script">劇本</button>
+      <button type="button" class="tab-btn" data-tab="narration">旁白</button>
+      <button type="button" class="tab-btn" data-tab="storyboard">分鏡</button>
+      <button type="button" class="tab-btn" data-tab="review">審查</button>
+    </div>
+
+    <div class="tab-content on" id="tab-story">
+      <div class="editor-box">
+        <div class="prompt-box-header">
+          <strong>故事</strong>
+          <span>
+            <button class="copy-btn" id="speakStoryBtn" type="button">🔊 播放</button>
+            <button class="copy-btn" id="copyStoryBtn" type="button">📋 複製故事</button>
+          </span>
+        </div>
+        <textarea id="storyText" placeholder="故事內容會顯示在這裡，也可以手動修改。"></textarea>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-script">
+      <div class="editor-box">
+        <div class="prompt-box-header">
+          <strong>劇本</strong>
+          <span>
+            <button class="copy-btn" id="speakScriptBtn" type="button">🔊 播放</button>
+            <button class="copy-btn" id="copyScriptBtn" type="button">📋 複製劇本</button>
+          </span>
+        </div>
+        <textarea id="scriptText" placeholder="劇本內容。"></textarea>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-narration">
+      <div class="editor-box">
+        <div class="prompt-box-header">
+          <strong>旁白</strong>
+          <span>
+            <button class="copy-btn" id="speakNarrationBtn" type="button">🔊 播放</button>
+            <button class="copy-btn" id="copyNarrationBtn" type="button">📋 複製旁白</button>
+          </span>
+        </div>
+        <textarea id="narrationText" placeholder="旁白內容。"></textarea>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-storyboard">
+      <div class="editor-box">
+        <div class="prompt-box-header">
+          <strong>分鏡</strong>
+          <button class="copy-btn" id="copyStoryboardBtn" type="button">📋 複製分鏡</button>
+        </div>
+        <textarea id="storyboardText" placeholder="分鏡內容。"></textarea>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-review">
+      <div class="editor-box">
+        <textarea id="reviewText" placeholder="最終審查內容。"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>🎥 導演拍攝手法</h2>
+        <p>以下全部可以複選，會一起寫入影片提示詞。</p>
+      </div>
+    </div>
+
+    <div id="directorOptions">
+
+      <div class="director-group">
+        <div class="option-group-title">👁️ 視角</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="第一人稱視角">第一人稱視角</button>
+          <button type="button" class="option-chip" data-technique="第三人稱視角">第三人稱視角</button>
+          <button type="button" class="option-chip" data-technique="主觀視角">主觀視角</button>
+          <button type="button" class="option-chip" data-technique="客觀視角">客觀視角</button>
+          <button type="button" class="option-chip" data-technique="上帝視角">上帝視角</button>
+          <button type="button" class="option-chip" data-technique="角色肩後視角">角色肩後視角</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">🔭 景別</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="超遠景">超遠景</button>
+          <button type="button" class="option-chip" data-technique="遠景">遠景</button>
+          <button type="button" class="option-chip" data-technique="全景">全景</button>
+          <button type="button" class="option-chip" data-technique="中景">中景</button>
+          <button type="button" class="option-chip" data-technique="近景">近景</button>
+          <button type="button" class="option-chip" data-technique="特寫">特寫</button>
+          <button type="button" class="option-chip" data-technique="大特寫">大特寫</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">📐 拍攝角度</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="平視">平視</button>
+          <button type="button" class="option-chip" data-technique="低角度">低角度</button>
+          <button type="button" class="option-chip" data-technique="高角度">高角度</button>
+          <button type="button" class="option-chip" data-technique="鳥瞰">鳥瞰</button>
+          <button type="button" class="option-chip" data-technique="蟲瞰">蟲瞰</button>
+          <button type="button" class="option-chip" data-technique="荷蘭角">荷蘭角</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">🎥 運鏡</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="固定鏡頭">固定鏡頭</button>
+          <button type="button" class="option-chip" data-technique="推鏡">推鏡</button>
+          <button type="button" class="option-chip" data-technique="拉鏡">拉鏡</button>
+          <button type="button" class="option-chip" data-technique="橫向移動">橫向移動</button>
+          <button type="button" class="option-chip" data-technique="垂直升降">垂直升降</button>
+          <button type="button" class="option-chip" data-technique="環繞運鏡">環繞運鏡</button>
+          <button type="button" class="option-chip" data-technique="跟拍">跟拍</button>
+          <button type="button" class="option-chip" data-technique="手持攝影">手持攝影</button>
+          <button type="button" class="option-chip" data-technique="穩定器攝影">穩定器攝影</button>
+          <button type="button" class="option-chip" data-technique="無人機航拍">無人機航拍</button>
+          <button type="button" class="option-chip" data-technique="快速運鏡">快速運鏡</button>
+          <button type="button" class="option-chip" data-technique="慢速運鏡">慢速運鏡</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">🎯 對焦</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="淺景深">淺景深</button>
+          <button type="button" class="option-chip" data-technique="深景深">深景深</button>
+          <button type="button" class="option-chip" data-technique="焦點轉移">焦點轉移</button>
+          <button type="button" class="option-chip" data-technique="人物眼睛對焦">人物眼睛對焦</button>
+          <button type="button" class="option-chip" data-technique="背景虛化">背景虛化</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">🕺 人物調度</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="前後景人物層次">前後景人物層次</button>
+          <button type="button" class="option-chip" data-technique="人物走位">人物走位</button>
+          <button type="button" class="option-chip" data-technique="群體調度">群體調度</button>
+          <button type="button" class="option-chip" data-technique="對話站位">對話站位</button>
+          <button type="button" class="option-chip" data-technique="舞蹈隊形">舞蹈隊形</button>
+          <button type="button" class="option-chip" data-technique="角色追逐">角色追逐</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">🖼️ 構圖</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="中心構圖">中心構圖</button>
+          <button type="button" class="option-chip" data-technique="三分法構圖">三分法構圖</button>
+          <button type="button" class="option-chip" data-technique="對稱構圖">對稱構圖</button>
+          <button type="button" class="option-chip" data-technique="引導線構圖">引導線構圖</button>
+          <button type="button" class="option-chip" data-technique="框中框構圖">框中框構圖</button>
+          <button type="button" class="option-chip" data-technique="負空間構圖">負空間構圖</button>
+          <button type="button" class="option-chip" data-technique="電影寬銀幕構圖">電影寬銀幕構圖</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">💡 光線</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="自然光">自然光</button>
+          <button type="button" class="option-chip" data-technique="柔光">柔光</button>
+          <button type="button" class="option-chip" data-technique="硬光">硬光</button>
+          <button type="button" class="option-chip" data-technique="逆光">逆光</button>
+          <button type="button" class="option-chip" data-technique="側光">側光</button>
+          <button type="button" class="option-chip" data-technique="輪廓光">輪廓光</button>
+          <button type="button" class="option-chip" data-technique="霓虹燈光">霓虹燈光</button>
+          <button type="button" class="option-chip" data-technique="低調暗黑光線">低調暗黑光線</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">🎨 視覺風格</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="電影級寫實">電影級寫實</button>
+          <button type="button" class="option-chip" data-technique="超寫實">超寫實</button>
+          <button type="button" class="option-chip" data-technique="日本動畫電影風格">日本動畫電影風格</button>
+          <button type="button" class="option-chip" data-technique="動漫視覺風格">動漫視覺風格</button>
+          <button type="button" class="option-chip" data-technique="奇幻電影風格">奇幻電影風格</button>
+          <button type="button" class="option-chip" data-technique="賽博龐克風格">賽博龐克風格</button>
+          <button type="button" class="option-chip" data-technique="復古電影風格">復古電影風格</button>
+          <button type="button" class="option-chip" data-technique="黑色電影風格">黑色電影風格</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">✂️ 轉場</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="直接剪接">直接剪接</button>
+          <button type="button" class="option-chip" data-technique="淡入淡出">淡入淡出</button>
+          <button type="button" class="option-chip" data-technique="溶接">溶接</button>
+          <button type="button" class="option-chip" data-technique="匹配剪接">匹配剪接</button>
+          <button type="button" class="option-chip" data-technique="快速蒙太奇">快速蒙太奇</button>
+          <button type="button" class="option-chip" data-technique="動作連接轉場">動作連接轉場</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">⚡ 節奏</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="慢節奏">慢節奏</button>
+          <button type="button" class="option-chip" data-technique="中等節奏">中等節奏</button>
+          <button type="button" class="option-chip" data-technique="快速節奏">快速節奏</button>
+          <button type="button" class="option-chip" data-technique="動作高峰節奏">動作高峰節奏</button>
+          <button type="button" class="option-chip" data-technique="舞蹈節奏同步">舞蹈節奏同步</button>
+        </div>
+      </div>
+
+      <div class="director-group">
+        <div class="option-group-title">🔊 聲音</div>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-technique="電影環境音">電影環境音</button>
+          <button type="button" class="option-chip" data-technique="角色對話">角色對話</button>
+          <button type="button" class="option-chip" data-technique="旁白">旁白</button>
+          <button type="button" class="option-chip" data-technique="背景音樂">背景音樂</button>
+          <button type="button" class="option-chip" data-technique="舞蹈音樂">舞蹈音樂</button>
+          <button type="button" class="option-chip" data-technique="音效同步">音效同步</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>🔒 影片一致性</h2>
+        <p>確保多鏡頭生成時維持角色與場景一致。</p>
+      </div>
+    </div>
+
+    <div class="continuity-list">
+
+      <label class="toggle-row">
+        <input type="checkbox" data-continuity="人物外貌一致" checked />
+        <span>人物外貌一致</span>
+      </label>
+
+      <label class="toggle-row">
+        <input type="checkbox" data-continuity="人物服裝一致" checked />
+        <span>人物服裝一致</span>
+      </label>
+
+      <label class="toggle-row">
+        <input type="checkbox" data-continuity="場景空間一致" checked />
+        <span>場景空間一致</span>
+      </label>
+
+      <label class="toggle-row">
+        <input type="checkbox" data-continuity="光線與色調一致" checked />
+        <span>光線與色調一致</span>
+      </label>
+
+      <label class="toggle-row">
+        <input type="checkbox" data-continuity="攝影風格一致" checked />
+        <span>攝影風格一致</span>
+      </label>
+
+      <label class="toggle-row">
+        <input type="checkbox" data-continuity="重要道具一致" checked />
+        <span>重要道具一致</span>
+      </label>
+
+    </div>
+  </section>
+
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>🖼️ 上一段最後一幀</h2>
+        <p>上傳上一段結尾畫面，可新增多張、刪除，並自動存檔。生成時 AI 依畫面接續。</p>
+      </div>
+    </div>
+    <div class="frame-actions">
+      <button class="secondary-btn" id="addFrameBtn" type="button">＋ 新增畫面</button>
+      <input id="frameFile" type="file" accept="image/*" multiple hidden />
+    </div>
+    <div class="frame-list" id="frameList">
+      <div class="empty">尚未上傳最後一幀。</div>
+    </div>
+  </section>
+
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>🎬 生成提示詞</h2>
+        <p>輸出結構化影片生成提示詞，不直接呼叫影片模型。</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary-btn" id="generatePromptBtn" type="button">
+        🎬 生成影片提示詞
+      </button>
+      <button class="primary-btn" id="generateVideoBtn" type="button">
+        ▶️ 生成影片
+      </button>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <strong>劇本</strong>
+        <button class="copy-btn" id="copyPromptScriptBtn" type="button">📋 複製劇本</button>
+      </div>
+      <textarea id="promptScript" placeholder="劇本會顯示在這裡。"></textarea>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <strong>分鏡</strong>
+        <button class="copy-btn" id="copyPromptStoryboardBtn" type="button">📋 複製分鏡</button>
+      </div>
+      <textarea id="promptStoryboard" placeholder="分鏡會顯示在這裡。"></textarea>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <strong>旁白</strong>
+        <button class="copy-btn" id="copyPromptNarrationBtn" type="button">📋 複製旁白</button>
+      </div>
+      <textarea id="promptNarration" placeholder="旁白會顯示在這裡。"></textarea>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <strong>中文提示詞</strong>
+        <button class="copy-btn" id="copyZhBtn" type="button">
+          📋 複製中文提示詞
+        </button>
+      </div>
+      <textarea id="promptZh" placeholder="生成後會顯示中文提示詞。"></textarea>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <strong>🌎 English Prompt</strong>
+        <button class="copy-btn" id="copyEnBtn" type="button">
+          📋 複製英文提示詞
+        </button>
+      </div>
+      <textarea id="promptEn" placeholder="English prompt will appear here."></textarea>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <strong>⭐ 最終提示詞</strong>
+        <button class="copy-btn" id="copyFinalBtn" type="button">
+          📋 複製最終提示詞
+        </button>
+      </div>
+      <textarea id="finalPrompt" placeholder="最終提示詞。"></textarea>
+    </div>
+
+    <div class="notice">
+      提示詞格式依電影級影片生成需求輸出，包含角色一致性、時間軸、鏡頭、運鏡、光線、動作與聲音。
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>⏱️ 秒級時間軸</h2>
+        <p>依照影片秒數自動建立每秒鏡頭指令。</p>
+      </div>
+    </div>
+
+    <div class="timeline-wrap">
+      <table class="timeline">
+        <thead>
+          <tr>
+            <th>時間</th>
+            <th>鏡頭</th>
+            <th>畫面</th>
+            <th>動作</th>
+            <th>攝影指令</th>
+          </tr>
+        </thead>
+        <tbody id="timelineBody">
+          <tr>
+            <td colspan="5" class="empty">尚未生成時間軸。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>🎞️ 毫秒級 Keyframe</h2>
+        <p>用於精細描述影片節奏與鏡頭變化。</p>
+      </div>
+    </div>
+
+    <div class="keyframe-list" id="keyframeBody">
+      <div class="empty">尚未生成 Keyframe。</div>
+    </div>
+  </section>
+
+  <section class="panel video-result" id="videoResultPanel">
+    <div class="panel-title"><div><h2>🎥 生成結果</h2><p>影片完成後會在這裡預覽，並保留本次生成資訊。</p></div><span class="badge" id="videoResultStatus">尚未生成</span></div>
+    <div class="image-video-workspace" id="imageVideoWorkspace">
+      <div class="media-card">
+        <strong>🖼️ 原始照片／圖像</strong>
+        <img id="resultSourceImage" alt="生成影片使用的原始圖片" hidden />
+      </div>
+      <div class="generation-screen" id="generationScreen">
+        <div class="pulse"></div>
+        <strong id="generationScreenTitle">影片製作中</strong>
+        <span id="generationScreenText">AI 正在分析圖片、建立動作與鏡頭。</span>
+      </div>
+    </div>
+    <div class="video-player-wrap">
+      <video id="generatedVideo" class="video-preview" controls playsinline preload="metadata" autoplay hidden></video>
+      <div class="actions video-player-actions" id="videoPlayerActions" hidden>
+        <a class="secondary-btn" id="downloadGeneratedVideoBtn" href="#" download>⬇️ 下載影片</a>
+      </div>
+    </div>
+    <div class="result-meta">
+      <div><strong>Provider</strong><span id="resultProvider">—</span></div>
+      <div><strong>Model</strong><span id="resultModel">—</span></div>
+      <div><strong>秒數</strong><span id="resultDuration">—</span></div>
+      <div><strong>解析度</strong><span id="resultResolution">—</span></div>
+      <div><strong>比例</strong><span id="resultAspect">—</span></div>
+      <div><strong>Request ID</strong><span id="resultRequestId">—</span></div>
+    </div>
+    <div class="actions"><button class="secondary-btn" id="regenerateVideoBtn" type="button">↻ 重新生成</button><button class="secondary-btn" id="editPromptBtn" type="button">✎ 回到最終提示詞</button></div>
+  </section>
+
+  <footer class="footer">
+    暗星 Dark Star · AIVAULT Video Studio
+  </footer>
+
+</div>
+
+<script>
+"use strict";
+
+const CONFIG = {
+  AI_GATEWAY_URL:
+    "https://svtkpdmqemidlasowqew.supabase.co/functions/v1/ai-gateway",
+
+  VIDEO_PROMPT_URL:
+    "https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-video-prompt",
+
+  SUPABASE_ANON_KEY:
+    "YOUR_SUPABASE_ANON_KEY",
+
+  HOME_FALLBACK:
+    "./index.html"
+};
+
+const STORAGE_KEY = "aivault-video-studio-project-v4";
+
+const videoProject = {
+  theme: "",
+  title: "",
+  characters: "",
+  request: "",
+
+  mode: "電影敘事",
+  duration: 30,
+  language: "繁體中文",
+  narration_pace: 100,
+  character_pace: 100,
+
+  story: "",
+  outline: "",
+  script: "",
+  narration: "",
+  storyboard: "",
+  fact_check: "",
+  discussion: "",
+  review: "",
+
+  director_techniques: [],
+  continuity: [],
+
+  prompt_zh: "",
+  prompt_en: "",
+  final_prompt: "",
+
+  timeline: [],
+  keyframes: [],
+
+  ai_provider: "",
+  ai_model: "",
+  ai_raw: "",
+
+  last_frames: [],
+  generated_video: null
+};
+
+const $ = id => document.getElementById(id);
+
+function samePage(url){
+  try{
+    const target = new URL(url, location.href);
+    return (
+      target.origin === location.origin &&
+      target.pathname === location.pathname &&
+      target.search === location.search
+    );
+  }catch(_error){
+    return false;
+  }
+}
+
+function goBack(){
+
+  const referrer = document.referrer;
+
+  if(referrer && !samePage(referrer)){
+    location.href = referrer;
+    return;
+  }
+
+  if(window.history.length > 1){
+    window.history.back();
+    return;
+  }
+
+  location.href = CONFIG.HOME_FALLBACK;
+}
+
+
+function lastFrameText(){
+  const n = (videoProject.last_frames || []).length;
+  if(!n) return "未提供上一段最後一幀";
+  return `已提供 ${n} 張上一段最後一幀。下一段必須從這些畫面的構圖、角色外貌、服裝、場景、光線與動作結尾接續，不可重開新場景或換臉。`;
+}
+
+function renderLastFrames(){
+  const box = $("frameList");
+  const frames = videoProject.last_frames || [];
+  if(!frames.length){
+    box.innerHTML = '<div class="empty">尚未上傳最後一幀。</div>';
+    return;
+  }
+  box.innerHTML = frames.map((item, index) => `
+    <div class="frame-card">
+      <img src="${item.data}" alt="${escapeHTML(item.name || "最後一幀")}">
+      <button type="button" class="frame-del" data-frame-del="${index}">刪除</button>
+    </div>
+  `).join("");
+}
+
+function compressImageFile(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("讀取圖片失敗"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 1280;
+        let w = img.width;
+        let h = img.height;
+        if(w > max || h > max){
+          const scale = Math.min(max / w, max / h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve({
+          id: Date.now() + "-" + Math.random().toString(36).slice(2,8),
+          name: file.name || "last-frame.jpg",
+          data: canvas.toDataURL("image/jpeg", 0.72)
+        });
+      };
+      img.onerror = () => reject(new Error("圖片無法解碼"));
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function addLastFrames(fileList){
+  const files = [...fileList].filter(f => f.type.startsWith("image/"));
+  if(!files.length) return;
+  if(!Array.isArray(videoProject.last_frames)){
+    videoProject.last_frames = [];
+  }
+  for(const file of files){
+    if(videoProject.last_frames.length >= 6){
+      setStatus("最後一幀最多 6 張。", "error");
+      break;
+    }
+    const item = await compressImageFile(file);
+    videoProject.last_frames.push(item);
+  }
+  renderLastFrames();
+  saveProject();
+  setStatus("✓ 最後一幀已新增並存檔。", "ok");
+}
+
+function deleteLastFrame(index){
+  videoProject.last_frames.splice(index, 1);
+  renderLastFrames();
+  saveProject();
+}
+
+
+function normalizePace(value){
+  const map = {
+    "很慢": 60,
+    "慢": 80,
+    "正常": 100,
+    "快": 120,
+    "很快": 140
+  };
+  if(value in map) return map[value];
+  const n = Number(value);
+  if(!Number.isFinite(n)) return 100;
+  return Math.min(150, Math.max(50, Math.round(n)));
+}
+
+function updatePaceLabels(){
+  $("narrationPaceValue").textContent =
+    (videoProject.narration_pace || 100) + "%";
+  $("characterPaceValue").textContent =
+    (videoProject.character_pace || 100) + "%";
+}
+
+function saveProject(){
+
+  syncProjectFromInputs();
+
+  try{
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(videoProject)
+    );
+  }catch(error){
+    console.warn("localStorage 儲存失敗", error);
+  }
+}
+
+function restoreProject(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(STORAGE_KEY);
+
+    if(!raw) return;
+
+    const saved =
+      JSON.parse(raw);
+
+    Object.assign(
+      videoProject,
+      saved
+    );
+
+    $("videoTitle").value =
+      saved.title || "";
+
+    $("characters").value =
+      saved.characters || "";
+
+    $("customTheme").value =
+      "";
+
+    $("creativeRequest").value =
+      saved.request || "";
+
+    const lang = (
+      saved.language === "簡體中文" ||
+      saved.language === "簡體字的" ||
+      saved.language === "簡體中文的簡體字" ||
+      saved.language === "简体中文"
+    ) ? "简体中文"
+      : saved.language === "日文" ? "繁體中文"
+      : (saved.language || "繁體中文");
+
+    $("language").value = lang;
+    videoProject.language = lang;
+
+    videoProject.narration_pace =
+      normalizePace(saved.narration_pace);
+
+    videoProject.character_pace =
+      normalizePace(saved.character_pace);
+
+    $("narrationPace").value =
+      videoProject.narration_pace;
+
+    $("characterPace").value =
+      videoProject.character_pace;
+
+    updatePaceLabels();
+
+    $("storyText").value =
+      saved.story || "";
+
+    $("scriptText").value =
+      saved.script || "";
+
+    $("narrationText").value =
+      saved.narration || "";
+
+    $("storyboardText").value =
+      saved.storyboard || "";
+
+    $("reviewText").value =
+      saved.review || "";
+
+    fillPromptParts();
+
+    $("promptZh").value =
+      saved.prompt_zh || "";
+
+    $("promptEn").value =
+      saved.prompt_en || "";
+
+    $("finalPrompt").value =
+      saved.final_prompt || "";
+
+    const savedThemes =
+      String(saved.theme || "")
+        .split("、")
+        .map(x => x.trim())
+        .filter(Boolean);
+
+    document
+      .querySelectorAll("[data-theme]")
+      .forEach(btn => {
+
+        btn.classList.toggle(
+          "on",
+          savedThemes.includes(btn.dataset.theme)
+        );
+
+      });
+
+    document
+      .querySelectorAll("[data-mode]")
+      .forEach(btn => {
+
+        btn.classList.toggle(
+          "on",
+          btn.dataset.mode ===
+          (saved.mode || "電影敘事")
+        );
+
+      });
+
+    document
+      .querySelectorAll("[data-duration]")
+      .forEach(btn => {
+
+        btn.classList.toggle(
+          "on",
+          Number(btn.dataset.duration) ===
+          Number(saved.duration || 30)
+        );
+
+      });
+
+    const techniques =
+      Array.isArray(saved.director_techniques)
+        ? saved.director_techniques
+        : [];
+
+    document
+      .querySelectorAll("[data-technique]")
+      .forEach(btn => {
+
+        btn.classList.toggle(
+          "on",
+          techniques.includes(btn.dataset.technique)
+        );
+
+      });
+
+    const continuity =
+      Array.isArray(saved.continuity)
+        ? saved.continuity
+        : [];
+
+    document
+      .querySelectorAll("[data-continuity]")
+      .forEach(input => {
+
+        input.checked =
+          continuity.length === 0
+            ? true
+            : continuity.includes(
+                input.dataset.continuity
+              );
+
+      });
+
+    if(!Array.isArray(videoProject.last_frames)){
+      videoProject.last_frames = [];
+    }
+
+    renderLastFrames();
+
+    updateBadges();
+
+    renderTimeline();
+
+    renderKeyframes();
+
+  }catch(error){
+
+    console.warn(
+      "還原專案失敗",
+      error
+    );
+
+  }
+}
+
+function syncThemeSelection(){
+
+  const selected =
+    [...document.querySelectorAll(
+      "[data-theme].on"
+    )]
+      .map(btn => btn.dataset.theme)
+      .filter(Boolean);
+
+  const custom =
+    $("customTheme").value.trim();
+
+  const all = [
+    ...selected,
+    custom
+  ].filter(Boolean);
+
+  videoProject.theme =
+    [...new Set(all)].join("、");
+
+  updateBadges();
+}
+
+function collectDirectorTechniques(){
+
+  videoProject.director_techniques =
+    [...document.querySelectorAll(
+      "[data-technique].on"
+    )]
+      .map(btn => btn.dataset.technique)
+      .filter(Boolean);
+
+}
+
+function collectContinuity(){
+
+  videoProject.continuity =
+    [...document.querySelectorAll(
+      "[data-continuity]:checked"
+    )]
+      .map(input => input.dataset.continuity)
+      .filter(Boolean);
+
+}
+
+
+function selectedDuration(){
+  const on = [...document.querySelectorAll("[data-duration].on")]
+    .map(btn => Number(btn.dataset.duration))
+    .filter(n => Number.isFinite(n) && n > 0);
+  if(on.length) return Math.max(...on);
+  const allowed = [...document.querySelectorAll("[data-duration]")]
+    .map(btn => Number(btn.dataset.duration))
+    .filter(n => Number.isFinite(n) && n > 0);
+  const n = Number(videoProject.duration);
+  if(allowed.length && Number.isFinite(n) && allowed.includes(n)) return n;
+  if(allowed.length) return allowed.includes(15) ? 15 : allowed[0];
+  return Number.isFinite(n) && n > 0 ? n : 15;
+}
+
+function maxSecondInText(text){
+  let max = 0;
+  const re = /(?:第\s*)?(\d{1,4})\s*秒/g;
+  let m;
+  const raw = String(text || "");
+  while((m = re.exec(raw))){
+    max = Math.max(max, Number(m[1]));
+  }
+  return max;
+}
+
+function trimTimeCodedContent(text, duration){
+  const max = Number(duration || 15);
+  const raw = String(text || "");
+  if(!raw) return "";
+  const lines = raw.split(/\n/);
+  return lines.filter(line => {
+    const ranges = [...line.matchAll(/(?:第\s*)?(\d{1,4})\s*秒/g)].map(m => Number(m[1]));
+    return !ranges.length || Math.min(...ranges) <= max;
+  }).join("\n").trim();
+}
+
+function enforceSelectedDurationContent(){
+  const duration = selectedDuration();
+  videoProject.duration = duration;
+  videoProject.script = trimTimeCodedContent(videoProject.script, duration);
+  videoProject.storyboard = trimTimeCodedContent(videoProject.storyboard, duration);
+  videoProject.narration = trimTimeCodedContent(videoProject.narration, duration);
+  if($("scriptText")) $("scriptText").value = videoProject.script;
+  if($("storyboardText")) $("storyboardText").value = videoProject.storyboard;
+  if($("narrationText")) $("narrationText").value = videoProject.narration;
+  buildSecondTimeline();
+  buildMillisecondKeyframes();
+
+  // 同步重建本次 5／10／15 秒提示詞，避免舊的 30／60／90／120／180 秒提示詞殘留。
+  const zh = buildLocalPrompt();
+  const en = buildEnglishPrompt();
+  videoProject.prompt_zh = zh;
+  videoProject.prompt_en = en;
+  videoProject.final_prompt = zh;
+  if($("promptZh")) $("promptZh").value = zh;
+  if($("promptEn")) $("promptEn").value = en;
+  if($("finalPrompt")) $("finalPrompt").value = zh;
+  saveProject();
+}
+
+function inferredDuration(){
+  return selectedDuration();
+}
+
+
+function stripSecParens(text){
+  return String(text || "")
+    .replace(/\d{1,2}:\d{2}\s*[-~～到至]+\s*\d{1,2}:\d{2}/g, "")
+    .replace(/[（(][^）)]{0,20}秒[^）)]*[）)]/g, "")
+    .replace(/[（(]\s*[）)]/g, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
+
+
+function allSpokenLines(text){
+  const rows = [];
+  String(text || "").split("\n").forEach(line => {
+    const s = spokenLine(line);
+    if(s) rows.push(s);
+  });
+  return rows.join("\n");
+}
+function spokenLine(text){
+  const raw = stripSecParens(text);
+  const q = raw.match(/[「“"'『]([^」”"'』]+)[」”"'』]/);
+  let s = q ? q[1] : raw;
+  s = stripSecParens(s)
+    .replace(/(?:第\s*)?\d{1,4}\s*秒[：:]?/g, "")
+    .replace(/^[—\-：:\s]+/, "")
+    .trim();
+  return s;
+}
+
+function parseScriptTalks(text){
+  const map = {};
+  String(text || "").split("\n").forEach(line => {
+    const m = line.match(/(\d{1,4})\s*秒/);
+    const q = line.match(/[「“"'『]([^」”"'』]+)[」”"'』]/);
+    if(m && q){
+      const sec = Number(m[1]);
+      const line = "「" + spokenLine(q[1]) + "」";
+      if(spokenLine(q[1])){
+        map[sec] = (map[sec] ? map[sec] + " " : "") + line;
+      }
+    }
+  });
+  return map;
+}
+
+function syncProjectFromInputs(){
+
+  videoProject.title =
+    $("videoTitle").value.trim();
+
+  videoProject.characters =
+    $("characters").value.trim();
+
+  videoProject.request =
+    $("creativeRequest").value.trim();
+
+  videoProject.language =
+    $("language").value;
+
+  const activeMode =
+    document.querySelector(
+      "[data-mode].on"
+    );
+
+  if(activeMode){
+    videoProject.mode =
+      activeMode.dataset.mode;
+  }
+
+  videoProject.duration = selectedDuration();
+
+  videoProject.narration_pace =
+    Number($("narrationPace").value || 100);
+
+  videoProject.character_pace =
+    Number($("characterPace").value || 100);
+
+  syncThemeSelection();
+
+  collectDirectorTechniques();
+
+  collectContinuity();
+
+}
+
+function updateBadges(){
+
+  const theme =
+    videoProject.theme ||
+    "尚未選擇主題";
+
+  $("selectedThemeBadge").textContent =
+    theme;
+
+  $("selectedDurationBadge").textContent =
+    `${videoProject.duration || 30} 秒`;
+
+}
+
+
+function isSimplifiedChinese(){
+  return videoProject.language === "简体中文";
+}
+
+function toSimplified(text){
+  const map = "體語詞類時長鏡導演畫動攝段超須描毫關鍵幀拍視要求寫髮裝場連續對白設定題名未依軸鏡頭跟隨自然推進保持人物場景風格一致上一段最後幀附承接重開述劇情超過不要用每一秒都要描述並拍攝第段外貌服裝身材比例道具光線色調風格運平滑嘴型同步換多餘手指錯誤肢體審完整查核討論最終".split("");
+  const to = "体语词类时长镜导演画动摄段超须描毫关键帧拍视要求写发装场连续对白设定题名未依轴镜头跟随自然推进保持人物场景风格一致上一段最后帧附承接重开述剧情超过不要用每一秒都要描述并拍摄第段外貌服装身材比例道具光线色调风格运平滑嘴型同步换多余手指错误肢体审完整查核讨论最终".split("");
+  const extra = {
+    "齣":"出","麼":"么","這":"这","來":"来","個":"个","們":"们","為":"为","於":"于","與":"与","從":"从","後":"后","當":"当","將":"将","對":"对","開":"开","關":"关","門":"门","問":"问","間":"间","東":"东","車":"车","氣":"气","點":"点","電":"电","話":"话","說":"说","讓":"让","麼":"么","麼":"么","還":"还","過":"过","進":"进","運":"运","動":"动","靜":"静","麼":"么","樂":"乐","歡":"欢","愛":"爱","戀":"恋","戰":"战","爭":"争","機":"机","會":"会","發":"发","現":"现","實":"实","際":"际","麼":"么","麼":"么","麼":"么","國":"国","區":"区","廣":"广","廠":"厂","場":"场","塊":"块","聲":"声","處":"处","數":"数","學":"学","醫":"医","藥":"药","經":"经","總":"总","麼":"么","麼":"么","麼":"么","麼":"么","麼":"么"
+  };
+  let out = String(text ?? "");
+  map.forEach((ch, i) => {
+    if(ch && to[i] && ch !== to[i]) out = out.split(ch).join(to[i]);
+  });
+  Object.keys(extra).forEach(k => {
+    out = out.split(k).join(extra[k]);
+  });
+  return out;
+}
+
+function localizeZh(text){
+  return isSimplifiedChinese() ? toSimplified(text) : text;
+}
+
+
+function liveModes(){
+  return [...document.querySelectorAll("[data-mode].on")]
+    .map(btn => btn.dataset.mode);
+}
+
+function hasMode(name){
+  const list = liveModes();
+  if(list.length) return list.includes(name);
+  const saved = videoProject.modes || String(videoProject.mode || "").split("、");
+  return saved.includes(name);
+}
+
+function subtitlePromptBlock(){
+  if(hasMode("字幕") || hasMode("旁白字幕")){
+    return [
+      "【字幕規則】",
+      subtitleRuleText(),
+      "字幕必須燒進畫面並與聲音同步出現、同步消失。",
+      "畫面禁止出現時間碼與秒數。旁白字幕開頭必須是「旁白：」。",
+      "",
+      "【畫面字幕】",
+      onScreenCueText(),
+      hasMode("字幕") ? ("【對白字幕】\n" + (allSpokenLines(videoProject.script || "") || "無對白")) : "",
+      hasMode("旁白字幕") ? ("【旁白字幕】\n旁白：" + (videoProject.narration || "無")) : ""
+    ].filter(Boolean).join("\n");
+  }
+  return [
+    "【字幕規則】",
+    "使用者沒有開啟字幕或旁白字幕。",
+    "畫面禁止出現任何字幕、對白字、旁白字、時間碼、00:00、（20秒）、角色名。",
+    "對白與旁白只出聲音，不要燒進畫面。"
+  ].join("\n");
+}
+
+function characterLockText(){
+  const n = (videoProject.last_frames || []).length;
+  const who = videoProject.characters || "畫面中的人物";
+  if(n){
+    return `角色固定描述：${who}。外貌必須與上傳照片／最後一幀完全相同，包含臉、五官、髮型、膚色、年齡感、體型與服裝，不可換成其他人。`;
+  }
+  return `角色固定描述：${who}。全片同一人，臉、五官、髮型、膚色、年齡感、體型與服裝從頭到尾不可改變。`;
+}
+
+
+function charsPer10(pace){
+  const p = Number(pace || 100);
+  return Math.max(8, Math.round(25 * p / 100));
+}
+
+function dialogueBudget(){
+  const duration = Number(videoProject.duration || 30);
+  const talkPace = Number(videoProject.character_pace || 100);
+  const narrPace = Number(videoProject.narration_pace || 100);
+  const talk10 = charsPer10(talkPace);
+  const narr10 = charsPer10(narrPace);
+  return {
+    duration,
+    talkPace,
+    narrPace,
+    talk10,
+    narr10,
+    talkSolo: Math.max(talk10, Math.round(duration / 10 * talk10)),
+    narrSolo: Math.max(narr10, Math.round(duration / 10 * narr10))
+  };
+}
+
+function dialogueBudgetText(){
+  const b = dialogueBudget();
+  return [
+    `字數基準：語速 100% 時，每10秒 25 字。`,
+    `語速 150%＝每10秒 38 字；語速 50%＝每10秒 13 字。`,
+    `角色語速 ${b.talkPace}%：每10秒對白 ${b.talk10} 字，本片單人最多約 ${b.talkSolo} 字。`,
+    `旁白語速 ${b.narrPace}%：每10秒旁白 ${b.narr10} 字，本片最多約 ${b.narrSolo} 字。`,
+    `多人可聲音重疊，各說短句；單行字幕不超過該語速的每10秒字數。`,
+    `必須寫開口秒數。只剩幾秒就只能說幾字，例如100%時2秒最多5字。`,
+    `不要把10秒寫成唸不完的台詞。`
+  ].join("\n");
+}
+
+
+function narrationAtSecond(sec){
+  const raw = String(videoProject.narration || ($("narrationText") && $("narrationText").value) || "");
+  const lines = raw.split(/\n/).map(x => x.trim()).filter(Boolean);
+  for(const line of lines){
+    const m = line.match(/(\d+)\s*[-~～到至]\s*(\d+)\s*秒[：:]?\s*(.*)/);
+    if(m){
+      const a = Number(m[1]), b = Number(m[2]);
+      if(sec >= a && sec <= b) return (m[3] || "").trim();
+    }
+    const m2 = line.match(/(\d+)\s*秒[：:]?\s*(.*)/);
+    if(m2 && Number(m2[1]) === sec) return (m2[2] || "").trim();
+  }
+  if(!lines.length) return "";
+  const duration = Number(videoProject.duration || 30);
+  const size = duration > 15 ? 10 : duration;
+  const idx = Math.floor((sec - 1) / size);
+  return lines[Math.min(idx, lines.length - 1)] || "";
+}
+
+function screenNarration(sec){
+  let n = spokenLine(narrationAtSecond(sec));
+  n = n.replace(/^旁白[：:]/, "").trim();
+  return n;
+}
+
+function onScreenCueText(){
+  if(!hasMode("字幕") && !hasMode("旁白字幕")){
+    return "本片畫面不燒錄字幕。";
+  }
+  buildSecondTimeline();
+  const duration = Number(videoProject.duration || 30);
+  const rows = [];
+  for(let sec = 1; sec <= duration; sec++){
+    const item = (videoProject.timeline || []).find(x => x.second === sec) || {};
+    const talk = spokenLine(item.talk || "");
+    const narr = screenNarration(sec);
+    const shown = [];
+    if(hasMode("旁白字幕") && narr){
+      shown.push("畫面上層只准出現這句：" + "旁白：" + narr);
+    }
+    if(hasMode("字幕") && talk){
+      shown.push("畫面底部只准出現這句：" + talk);
+    }
+    if(!shown.length) continue;
+    rows.push("時間點第" + sec + "秒（時間點只給生成器用，禁止燒進畫面）\n" + shown.join("\n"));
+  }
+  return [
+    "畫面字幕禁止出現任何秒數、時間碼、00:00、20秒、00:20-00:30、（20秒）。",
+    "旁白字幕必須保留「旁白：」三個字，讓觀眾知道這是旁白，不要拿掉。",
+    "旁白字幕在上、字較大；角色對白字幕在底部、字較小，只顯示台詞。",
+    "有聲音才出現字幕，聲音停字幕消失。",
+    "",
+    rows.join("\n\n") || "本段無須字幕。"
+  ].join("\n");
+}
+
+function subtitleRuleText(){
+  const lines = [];
+  if(hasMode("字幕")){
+    lines.push("開啟字幕：畫面底部只顯示角色台詞，不要顯示秒數、時間碼、角色名、括號。");
+    lines.push("對白字數依角色語速：100%每10秒25字，150%每10秒38字，50%每10秒13字。");
+  }
+  if(hasMode("旁白字幕")){
+    lines.push("開啟旁白字幕：上層顯示「旁白：」加上旁白台詞，字級大於角色對白。禁止拿掉「旁白：」。禁止顯示秒數或時間碼。");
+    if(hasMode("字幕")){
+      lines.push("雙層字幕：上層旁白（較大），下層角色對白（較小，貼底部）。");
+    }
+  }
+  if(!lines.length){
+    return "本片不燒錄字幕。";
+  }
+  return lines.join("\n");
+}
+
+function buildStoryRequest(){
+
+  syncProjectFromInputs();
+  videoProject.duration = inferredDuration();
+
+  return {
+    action:"chat",
+
+    images:
+      (videoProject.last_frames || [])
+        .map(item => item.data)
+        .filter(Boolean),
+
+    messages:[
+
+      {
+        role:"system",
+
+        content:
+`你是 AIVAULT Video Studio 的電影編劇、導演與分鏡師。
+
+請根據使用者提供的影片設定，
+建立完整可拍攝的電影故事。
+
+必須輸出以下七個區塊，
+而且標題名稱必須完全一致：
+
+【故事大綱】
+【完整故事】
+【劇本】
+【旁白】
+【分鏡】
+【事實查核】
+【討論】
+【最終審查】
+
+輸出語言規則：
+若使用者語言是「简体中文」，故事、劇本、旁白、分鏡、對白、字幕、審查必須全部使用简体字，禁止繁體字。
+若使用者語言是「繁體中文」，則全部使用繁體字。
+
+【劇本】必須寫出完整人物對白，不可只寫動作或旁白。
+格式必須是：
+秒數 角色名（男／女／老／幼／怪）：「對白」
+每個角色第一次出現必須標性別與年紀：男、女、老、幼，鬼怪妖怪標「怪」。
+「」裡面只寫台詞，不要寫秒數，不要加（4秒）或任何括號秒數。
+對白必須標明從第幾秒開口。
+字數用「開口秒到下一句開口或該段結束」的秒數換算：
+100%＝每秒2.5字（10秒25字），150%＝每秒3.8字，50%＝每秒1.3字。
+只剩2秒就不能說超過約5字（100%）。長咒、長句必須拆到後面幾秒，或改短句。
+
+請注意：
+1. 角色要有清楚身份與行為。
+2. 故事要有開端、發展、衝突、高潮與結尾。
+3. 分鏡要能轉換成影片生成提示詞。
+3-1. 分鏡裡也要標出該秒聽見的對白。
+4. 如果主題包含舞蹈，必須真的設計舞蹈動作與隊形。
+4-1. 選到的主題必須寫進劇情，不可當擺設。
+5. 如果主題包含音樂，要描述音樂與節奏。
+6. 如果主題包含動畫或日本動漫，要真的使用動畫式畫面描述。
+7. 不要因為影片很短就把故事刪成一句話。
+8. 必須根據影片秒數與語速調整內容密度。對白用角色語速、旁白用旁白語速換算字數。
+8-1. 影片長度只能是 5 秒、10 秒或 15 秒，故事、劇本、旁白、分鏡與動作只能寫到目前選定秒數，禁止沿用舊的 30、60、90、120、180 秒內容。
+8-2. 分鏡必須逐秒輸出：第1秒、第2秒……直到選定的最後一秒；每一秒都必須有畫面、動作、鏡頭與必要的對白。
+9. 導演拍攝手法必須融入分鏡。
+12. 【劇本】不可空白。沒有人物對白的劇本視為失敗，必須重寫到有對白為止。
+13. 【旁白】不可空白。旁白必須依照影片秒數撰寫，長度要夠唸完整段影片。
+14. 旁白請依時間分段寫，超過15秒時每10秒一段，每段都要有可唸的旁白句子。
+10. 分鏡分段規則：影片超過15秒時，每10秒為一段，不可用15秒一段。
+11. 每一段必須逐秒描述，每一秒都要有畫面、動作、鏡頭。`
+      },
+
+      {
+        role:"user",
+
+        content:
+`影片名稱：${videoProject.title || "未命名影片"}
+
+主要角色：
+${videoProject.characters || "由你設計適合故事的角色"}
+
+劇本要求：
+必須寫出每位角色的完整對白，格式為 秒數 角色名（男／女／老／幼／怪）：「對白」。
+不要用「他們交談」帶過。
+${dialogueBudgetText()}
+
+旁白要求：
+【旁白】必須有內容，不可空白。
+旁白長度必須配合影片 ${videoProject.duration} 秒。
+旁白字數依旁白語速：100%每10秒25字，150%每10秒38字，50%每10秒13字，不要寫到唸不完。
+超過15秒時，旁白每10秒寫一段。
+
+主題：
+${videoProject.theme || "電影劇情"}
+
+影片模式：
+${videoProject.mode}
+
+角色固定描述：
+${characterLockText()}
+
+字幕規則：
+${subtitleRuleText()}
+
+影片長度：
+${videoProject.duration} 秒（只允許 5／10／15 秒）
+必須精確寫滿 ${videoProject.duration} 秒。
+第1秒到第${videoProject.duration}秒，每一秒都必須有畫面、動作、鏡頭；不得省略任何一秒。
+禁止輸出第${videoProject.duration + 1}秒以後的內容，禁止沿用舊的長影片提示詞。
+
+語言：
+${videoProject.language}
+
+旁白語速：
+${videoProject.narration_pace || 100}%
+
+角色語速：
+${videoProject.character_pace || 100}%
+
+創作需求：
+${videoProject.request || "請自由發揮，建立具有電影感的完整故事"}
+
+導演拍攝手法：
+${directorText()}
+
+影片一致性要求：
+${continuityText()}
+
+上一段最後一幀：
+${lastFrameText()}
+
+若有附圖，必須根據附圖畫面延續下一段，保持角色、服裝、場景、光線與鏡頭連續。`
+      }
+
+    ]
+  };
+}
+
+async function callAIGateway(payload){
+
+  const response =
+    await fetch(
+      CONFIG.AI_GATEWAY_URL,
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json",
+
+          "x-aivault-internal":
+            "YOUR_INTERNAL_SECRET",
+
+          "apikey":
+            CONFIG.SUPABASE_ANON_KEY
+        },
+
+        body:
+          JSON.stringify(payload)
+      }
+    );
+
+  if(!response.ok){
+
+    const text =
+      await response.text();
+
+    throw new Error(
+      `AI Gateway ${response.status}: ${text}`
+    );
+
+  }
+
+  return response.json();
+}
+
+function extractAIText(data){
+
+  if(!data) return "";
+
+  if(typeof data === "string"){
+    return data;
+  }
+
+  const candidates = [
+
+    data.text,
+
+    data.output,
+
+    data.content,
+
+    data.response,
+
+    data.message,
+
+    data.result?.text,
+
+    data.result?.content,
+
+    data.data?.text,
+
+    data.data?.content,
+
+    data.choices?.[0]?.message?.content,
+
+    data.choices?.[0]?.text,
+
+    data.candidates?.[0]?.content?.parts
+      ?.map(part => part.text || "")
+      .join("")
+
+  ];
+
+  for(const item of candidates){
+
+    if(typeof item === "string" &&
+       item.trim()){
+
+      return item;
+    }
+
+  }
+
+  return JSON.stringify(
+    data,
+    null,
+    2
+  );
+}
+
+function parseStoryText(text){
+
+  const raw = String(text || "");
+
+  const result = {
+    outline:"",
+    story:"",
+    script:"",
+    narration:"",
+    storyboard:"",
+    fact_check:"",
+    discussion:"",
+    review:""
+  };
+
+  const aliases = {
+    outline:["故事大綱","故事大纲"],
+    story:["完整故事"],
+    script:["劇本","剧本"],
+    narration:["旁白","旁白稿","旁白內容"],
+    storyboard:["分鏡","分镜"],
+    fact_check:["事實查核","事实查核"],
+    discussion:["討論","讨论"],
+    review:["最終審查","最终审查"]
+  };
+
+  const allTitles = Object.values(aliases).flat();
+
+  Object.keys(aliases).forEach(key => {
+    let found = -1;
+    let used = "";
+    aliases[key].forEach(title => {
+      [
+        "【" + title + "】",
+        "## " + title,
+        "# " + title,
+        title + "：",
+        title + ":"
+      ].forEach(token => {
+        const i = raw.indexOf(token);
+        if(i !== -1 && (found === -1 || i < found)){
+          found = i;
+          used = token;
+        }
+      });
+    });
+    if(found === -1) return;
+    const contentStart = found + used.length;
+    let end = raw.length;
+    allTitles.forEach(title => {
+      ["【" + title + "】", "## " + title, "# " + title].forEach(token => {
+        const n = raw.indexOf(token, contentStart);
+        if(n !== -1) end = Math.min(end, n);
+      });
+    });
+    result[key] = raw.slice(contentStart, end).trim();
+  });
+
+  if(!result.script){
+    const talks = raw.split(/\n/).filter(line =>
+      /[「“"『].+[」”"』]/.test(line)
+    );
+    if(talks.length){
+      result.script = talks.join("\n");
+    }
+  }
+
+  return result;
+}
+
+function fallbackNarration(source){
+  const duration = Number(videoProject.duration || 30);
+  const per10 = charsPer10(videoProject.narration_pace);
+  const budget = Math.max(per10, Math.round(duration / 10 * per10));
+  const base = String(source || videoProject.story || "")
+    .replace(/\s+/g, " ")
+    .trim() || ((videoProject.title || "這部影片") + "把眼前這段故事說完。");
+  let pool = base;
+  while(pool.length < budget) pool += " " + base;
+  pool = pool.slice(0, budget);
+
+  const size = duration > 15 ? 10 : duration;
+  const parts = [];
+  let cursor = 0;
+  for(let start = 0; start < duration; start += size){
+    const end = Math.min(start + size, duration);
+    const take = Math.max(8, Math.round(per10 * (end - start) / 10));
+    let piece = pool.slice(cursor, cursor + take).trim();
+    cursor += take;
+    if(!piece) piece = base.slice(0, take);
+    parts.push(`${start + 1}-${end}秒：${piece}`);
+  }
+  return parts.join("\n");
+}
+
+function fallbackScript(story){
+  const names = String(videoProject.characters || "")
+    .split(/[、,，/\s]+/)
+    .map(x => x.trim())
+    .filter(Boolean);
+  const a = names[0] || "角色A";
+  const b = names[1] || names[0] || "角色B";
+  const duration = selectedDuration();
+  const multi = names.length > 1;
+  const parts = [];
+  for(let sec = 1; sec <= duration; sec++){
+    if(multi){
+      parts.push(`${sec}秒 ${a}：「看清楚。」`);
+      parts.push(`${sec}秒 ${b}：「我跟著你。」`);
+    }else{
+      parts.push(`${sec}秒 ${a}：「繼續。」`);
+    }
+  }
+  return parts.join("\n");
+}
+
+
+function renderStory(){
+
+  $("storyText").value =
+    videoProject.story || "";
+
+  $("scriptText").value =
+    videoProject.script || "";
+
+  $("narrationText").value =
+    videoProject.narration || "";
+
+  $("storyboardText").value =
+    videoProject.storyboard || "";
+
+  $("reviewText").value =
+    videoProject.review || "";
+
+  fillPromptParts();
+}
+
+function splitStoryLines(text){
+
+  return String(text || "")
+    .split(/\n+/)
+    .map(x =>
+      x
+        .replace(/^[-•●]\s*/,"")
+        .trim()
+    )
+    .filter(Boolean);
+
+}
+
+function directorText(){
+
+  return videoProject.director_techniques.length
+    ? videoProject.director_techniques.join("、")
+    : "電影級自然攝影語言";
+}
+
+function continuityText(){
+
+  return videoProject.continuity.length
+    ? videoProject.continuity.join("、")
+    : "保持人物、場景與攝影風格一致";
+}
+
+function parseSecondBlocks(text){
+  const raw = String(text || "");
+  const blocks = {};
+  const re = /第\s*(\d+)\s*秒[：:]([\s\S]*?)(?=第\s*\d+\s*秒[：:]|$)/g;
+  let m;
+  while((m = re.exec(raw))){
+    const sec = Number(m[1]);
+    const body = m[2].trim();
+    const scene = (body.match(/畫面[：:]\s*(.+)/) || [])[1] || body.split("\n")[0] || "";
+    const action = (body.match(/動作[：:]\s*(.+)/) || [])[1] || "";
+    const camera = (body.match(/鏡頭[：:]\s*(.+)/) || [])[1] || "";
+    const talk = (body.match(/對白[：:]\s*(.+)/) || [])[1] || "";
+    blocks[sec] = {
+      scene: scene.replace(/^[-•●]\s*/, "").trim(),
+      action: action.replace(/^[-•●]\s*/, "").trim(),
+      camera: camera.replace(/^[-•●]\s*/, "").trim(),
+      talk: talk.replace(/^[-•●]\s*/, "").trim()
+    };
+  }
+  return blocks;
+}
+
+function talkCharsAllowed(seconds, pace){
+  return Math.max(1, Math.round(charsPer10(pace) * seconds / 10));
+}
+
+function buildSecondTimeline(){
+
+  videoProject.duration = selectedDuration();
+  const duration = Number(videoProject.duration || 15);
+
+  const blocks =
+    parseSecondBlocks(videoProject.storyboard);
+  const talks =
+    parseScriptTalks(videoProject.script);
+
+  const result = [];
+  const talkPace = Number(videoProject.character_pace || 100);
+  const perSec = charsPer10(talkPace) / 10;
+
+  for(let i=0;i<duration;i++){
+    const sec = i + 1;
+    const block = blocks[sec] || {};
+    const shot =
+      block.camera ||
+      videoProject.director_techniques[
+        i % Math.max(videoProject.director_techniques.length, 1)
+      ] || "電影級鏡頭";
+    const talkRaw = (block.talk && block.talk !== "無" ? block.talk : "") || talks[sec] || "";
+    const talk = spokenLine(talkRaw) ? ("「" + spokenLine(talkRaw) + "」") : "";
+
+    result.push({
+      second: sec,
+      shot: `鏡頭 ${sec}`,
+      scene: block.scene || (talks[sec] ? "對白畫面" : "承接上一秒畫面"),
+      action: block.action || (talks[sec] ? "角色開口" : "動作連續"),
+      camera: shot,
+      talk,
+      maxChars: Math.max(1, Math.round(perSec))
+    });
+  }
+
+  videoProject.timeline =
+    result;
+
+  return result;
+}
+
+function buildMillisecondKeyframes(){
+
+  const duration =
+    Number(videoProject.duration || 30);
+
+  const totalMs =
+    duration * 1000;
+
+  const result = [];
+
+  const interval =
+    duration <= 30
+      ? 500
+      : 1000;
+
+  const timeline =
+    videoProject.timeline && videoProject.timeline.length
+      ? videoProject.timeline
+      : buildSecondTimeline();
+
+  for(
+    let ms=0;
+    ms<totalMs;
+    ms+=interval
+  ){
+
+    const sec =
+      Math.min(duration, Math.floor(ms / 1000) + 1);
+
+    const item =
+      timeline.find(x => x.second === sec) || {};
+
+    const text =
+      [item.scene, item.action, item.talk]
+        .filter(Boolean)
+        .join("；") || "鏡頭持續推進";
+
+    result.push({
+      ms,
+      text:
+        `${text}；攝影語言：${directorText()}`
+    });
+
+  }
+
+  videoProject.keyframes =
+    result;
+
+  return result;
+}
+
+function renderTimeline(){
+
+  const timeline =
+    videoProject.timeline?.length
+      ? videoProject.timeline
+      : buildSecondTimeline();
+
+  const body =
+    $("timelineBody");
+
+  if(!timeline.length){
+
+    body.innerHTML =
+      `<tr>
+        <td colspan="5" class="empty">
+          尚未生成時間軸。
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  body.innerHTML =
+    timeline.map(item => `
+
+      <tr>
+
+        <td>
+          ${escapeHTML(
+            item.second
+          )} 秒
+        </td>
+
+        <td>
+          ${escapeHTML(
+            item.shot
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            item.scene
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            item.action
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            item.camera
+          )}
+        </td>
+
+      </tr>
+
+    `).join("");
+
+}
+
+function renderKeyframes(){
+
+  const keyframes =
+    videoProject.keyframes?.length
+      ? videoProject.keyframes
+      : buildMillisecondKeyframes();
+
+  const body =
+    $("keyframeBody");
+
+  if(!keyframes.length){
+
+    body.innerHTML =
+      `<div class="empty">
+        尚未生成 Keyframe。
+      </div>`;
+
+    return;
+  }
+
+  body.innerHTML =
+    keyframes.map(item => `
+
+      <div class="keyframe">
+
+        <div class="keyframe-time">
+          ${formatMs(item.ms)}
+        </div>
+
+        <div class="keyframe-text">
+          ${escapeHTML(item.text)}
+        </div>
+
+      </div>
+
+    `).join("");
+
+}
+
+function formatMs(ms){
+
+  const seconds =
+    Math.floor(ms / 1000);
+
+  const milli =
+    ms % 1000;
+
+  return `${seconds}.${String(milli).padStart(3,"0")} 秒`;
+}
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+function segmentSize(){
+  return Number(videoProject.duration || 30) > 15 ? 10 : Number(videoProject.duration || 30);
+}
+
+function formatTimelineBySegments(lang){
+  const timeline = videoProject.timeline || [];
+  const duration = Number(videoProject.duration || timeline.length || 30);
+  const size = duration > 15 ? 10 : duration;
+  const parts = [];
+
+  for(let start = 0; start < duration; start += size){
+    const end = Math.min(start + size, duration);
+    const slice = timeline.filter(item => item.second > start && item.second <= end);
+    const index = Math.floor(start / size) + 1;
+
+    if(lang === "en"){
+      const lines = slice.map(item =>
+`${item.second}s:
+Visual: ${item.scene}
+Action: ${item.action}
+Camera: ${toEnglishLabel(item.camera)}`
+      ).join("\n\n");
+      parts.push(`SEGMENT ${index} (${start + 1}-${end}s)\nEach second must be shot as written.\n\n${lines}`);
+    }else{
+      const lines = slice.map(item =>
+`${item.second}秒：
+畫面：${item.scene}
+動作：${item.action}
+攝影：${item.camera}
+對白：${item.talk || "無"}
+本秒可說字數：${item.maxChars || talkCharsAllowed(1, videoProject.character_pace)}字`
+      ).join("\n\n");
+      parts.push(localizeZh(`【第${index}段｜${start + 1}-${end}秒】\n此段每一秒都要描述並拍攝。\n\n${lines}`));
+    }
+  }
+
+  return parts.join("\n\n------------------------------\n\n");
+}
+
+
+function fillPromptParts(){
+  if($("promptScript")) $("promptScript").value = videoProject.script || $("scriptText").value || "";
+  if($("promptStoryboard")) $("promptStoryboard").value = videoProject.storyboard || $("storyboardText").value || "";
+  if($("promptNarration")) $("promptNarration").value = videoProject.narration || $("narrationText").value || "";
+}
+
+function buildLocalPrompt(){
+
+  syncProjectFromInputs();
+
+  buildSecondTimeline();
+
+  buildMillisecondKeyframes();
+
+  const timelineText =
+    formatTimelineBySegments("zh");
+
+  const keyframeText =
+    videoProject.keyframes
+      .map(item =>
+`${formatMs(item.ms)}：${item.text}`
+      )
+      .join("\n");
+
+  const zhPrompt = `
+【影片生成提示詞】
+
+片名：${videoProject.title || "未命名影片"}
+類型：${videoProject.mode}
+時長：${videoProject.duration} 秒
+語言：${videoProject.language}
+主題：${videoProject.theme || "電影劇情"}
+角色：${videoProject.characters || "依分鏡設定"}
+${characterLockText()}
+旁白語速：${videoProject.narration_pace || 100}%
+角色語速：${videoProject.character_pace || 100}%
+
+${subtitlePromptBlock()}
+
+【對白字數】
+${dialogueBudgetText()}
+
+【旁白（只出聲，沒開旁白字幕就不要燒字）】
+${videoProject.narration || ($("narrationText") && $("narrationText").value) || "無旁白"}
+
+【分鏡】
+${videoProject.storyboard || "依時間軸拍攝"}
+
+【導演手法】
+${directorText()}
+
+【一致性】
+${continuityText()}
+
+【上一段最後一幀】
+${lastFrameText()}
+若有附圖，第一秒必須承接該畫面，不要重開場景，不要重述劇情。
+
+【逐秒時間軸】
+只生成 ${videoProject.duration} 秒。
+第1秒到第${videoProject.duration}秒，每一秒都必須有獨立的畫面、動作、鏡頭與必要對白。
+不得輸出第${videoProject.duration + 1}秒以後內容，不得沿用舊的長影片提示詞。
+
+${timelineText}
+
+【毫秒關鍵幀】
+${keyframeText}
+
+【拍攝要求】
+只依分鏡與時間軸拍下去，不要再寫一次故事。
+角色外貌、髮型、服裝、身材比例保持一致。
+場景、道具、光線、色調、攝影風格保持連續。
+動作符合人體運動，鏡頭平滑。
+旁白與對白依設定語速，嘴型同步。
+${(hasMode("字幕") || hasMode("旁白字幕"))
+  ? "有開字幕才燒字。沒開字幕就禁止畫面出現任何字。"
+  : "沒有開啟字幕按鈕。畫面禁止出現任何字幕或時間碼。"}
+不要換臉、換裝、換場景、多餘手指或錯誤肢體。
+角色必須與照片人物相同。
+`;
+  return localizeZh(zhPrompt);
+}
+
+function toEnglishLabel(text){
+  const map = {
+    "電影敘事":"cinematic narrative",
+    "故事短片":"short story film",
+    "動漫動畫":"anime animation",
+    "音樂舞蹈":"music and dance",
+    "宣傳影片":"promotional film",
+    "字幕":"dialogue subtitles",
+    "旁白字幕":"narration subtitles",
+    "電影劇情":"cinematic drama",
+    "穿越":"time travel",
+    "古裝":"period costume drama",
+    "勾心鬥角":"intrigue",
+    "眾叛親離":"betrayed and isolated",
+    "邊緣人":"social outcast",
+    "犯罪心理學":"criminal psychology",
+    "英雄主義":"heroism",
+    "社會底層":"underclass",
+    "宮廷爭鬥":"palace intrigue",
+    "福爾摩斯偵探":"Holmes-style detective",
+    "精神分裂":"split personality",
+    "警探系列":"detective series",
+    "黑社會":"triad underworld",
+    "兇殺案":"homicide case",
+    "恐怖片":"horror",
+    "靈媒陰魂":"medium and lingering spirits",
+    "陰間判官":"underworld judge",
+
+    "繁體中文":"Traditional Chinese",
+    "简体中文":"Simplified Chinese",
+    "英文":"English",
+    "人物外貌一致":"consistent character appearance",
+    "人物服裝一致":"consistent costumes",
+    "場景空間一致":"consistent spatial layout",
+    "光線與色調一致":"consistent lighting and color",
+    "攝影風格一致":"consistent cinematography",
+    "重要道具一致":"consistent key props",
+    "電影級自然攝影語言":"natural cinematic camera language"
+  };
+  return String(text || "")
+    .split("、")
+    .map(x => map[x.trim()] || x.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+function lastFrameTextEn(){
+  const n = (videoProject.last_frames || []).length;
+  if(!n) return "No previous last-frame image provided.";
+  return n + " last-frame image(s) attached. The first second must continue from that image. Do not restart the scene or change faces.";
+}
+
+function buildEnglishPrompt(){
+
+  syncProjectFromInputs();
+
+  buildSecondTimeline();
+
+  const timelineText =
+    formatTimelineBySegments("en");
+
+  return `
+VIDEO GENERATION PROMPT
+
+Title: ${videoProject.title || "Untitled"}
+Type: ${toEnglishLabel(videoProject.mode)}
+Duration: ${videoProject.duration} seconds
+Language: ${toEnglishLabel(videoProject.language)}
+Theme: ${toEnglishLabel(videoProject.theme || "cinematic drama")}
+Characters: ${videoProject.characters || "as defined by the storyboard"}
+Character lock: appearance must match the uploaded photo / last frame. Same face, features, hair, skin, age, body and costume.
+Narration pace: ${videoProject.narration_pace || 100}%
+Character speech pace: ${videoProject.character_pace || 100}%
+
+${subtitlePromptBlock()}
+
+SPEECH BUDGET
+${dialogueBudgetText()}
+
+NARRATION
+${videoProject.narration || "None"}
+
+DIALOGUE SUBTITLES
+${videoProject.script || "None"}
+
+STORYBOARD
+Shoot only the shots below. Do not retell the plot.
+
+${videoProject.storyboard || "Follow the second-by-second timeline."}
+
+CINEMATOGRAPHY
+${toEnglishLabel(directorText())}
+
+CONTINUITY
+${toEnglishLabel(continuityText())}
+
+LAST FRAME
+${lastFrameTextEn()}
+
+SEGMENTED TIMELINE
+If the video is longer than 15 seconds, use 10-second segments, not 15-second segments.
+Describe every second inside each segment.
+
+${timelineText}
+
+SHOOTING RULES
+Follow the storyboard and timeline only. Do not rewrite or summarize the story.
+Keep character identity, face, hair, costume and body proportions consistent.
+Keep space, props, lighting, color and camera style continuous.
+Use physically believable motion and smooth camera moves.
+Match lip sync. Use the set speech pace for narration and dialogue.
+If subtitles are on, burn them on screen in sync with speech. No hanging captions.
+No face swap, costume swap, scene jump, extra fingers or broken anatomy.
+`;
+}
+
+async function generatePrompt(){
+
+  syncProjectFromInputs();
+  videoProject.duration = inferredDuration();
+
+  if(!videoProject.story &&
+     !videoProject.storyboard){
+
+    setStatus(
+      "請先生成故事與分鏡，或直接填寫故事內容。",
+      "error"
+    );
+
+    return;
+  }
+
+  setStatus(
+    "正在建立影片提示詞……"
+  );
+
+  try{
+
+    let remotePrompt = null;
+
+    try{
+
+      const response =
+        await fetch(
+          CONFIG.VIDEO_PROMPT_URL,
+          {
+            method:"POST",
+
+            headers:{
+              "Content-Type":
+                "application/json",
+
+              "apikey":
+                CONFIG.SUPABASE_ANON_KEY
+            },
+
+            body:
+              JSON.stringify({
+                project:videoProject
+              })
+          }
+        );
+
+      if(response.ok){
+
+        const data =
+          await response.json();
+
+        remotePrompt =
+          extractAIText(data);
+
+      }
+
+    }catch(error){
+
+      console.warn(
+        "遠端 Video Prompt API 無法使用，改用本地編譯。",
+        error
+      );
+
+    }
+
+    const zh =
+      buildLocalPrompt();
+
+    const en =
+      buildEnglishPrompt();
+
+    videoProject.prompt_zh =
+      zh;
+
+    videoProject.prompt_en =
+      en;
+
+    videoProject.final_prompt =
+`${zh}
+
+------------------------------
+
+${en}`;
+
+    fillPromptParts();
+
+    $("promptZh").value =
+      zh;
+
+    $("promptEn").value =
+      en;
+
+    $("finalPrompt").value =
+      videoProject.final_prompt;
+
+    buildSecondTimeline();
+
+    buildMillisecondKeyframes();
+
+    renderTimeline();
+
+    renderKeyframes();
+
+    saveProject();
+
+    setStatus(
+      "✓ 影片提示詞已生成。",
+      "ok"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      "提示詞生成失敗：" +
+      error.message,
+      "error"
+    );
+
+  }
+}
+
+async function generateStory(){
+
+  syncProjectFromInputs();
+
+  if(
+    !videoProject.title &&
+    !videoProject.request &&
+    !videoProject.theme
+  ){
+
+    setStatus(
+      "請至少輸入影片名稱、主題或創作需求。",
+      "error"
+    );
+
+    return;
+  }
+
+  setStatus(
+    "AI 正在編劇、設計劇情與分鏡……"
+  );
+
+  $("generateStoryBtn").disabled =
+    true;
+
+  try{
+
+    const payload =
+      buildStoryRequest();
+
+    const data =
+      await callAIGateway(
+        payload
+      );
+
+    const text =
+      extractAIText(data);
+
+    videoProject.ai_raw =
+      text;
+
+    const parsed =
+      parseStoryText(text);
+
+    const pack = (s) => isSimplifiedChinese() ? toSimplified(s || "") : (s || "");
+
+    videoProject.outline =
+      pack(parsed.outline);
+
+    videoProject.story =
+      pack(parsed.story || text);
+
+    videoProject.script =
+      pack(stripSecParens(parsed.script || fallbackScript(parsed.story || text)));
+
+    videoProject.narration =
+      pack(stripSecParens(parsed.narration || fallbackNarration(parsed.story || text)));
+
+    videoProject.storyboard =
+      pack(parsed.storyboard);
+
+    videoProject.fact_check =
+      pack(parsed.fact_check);
+
+    videoProject.discussion =
+      pack(parsed.discussion);
+
+    videoProject.review =
+      pack(parsed.review);
+
+    renderStory();
+
+    buildSecondTimeline();
+
+    buildMillisecondKeyframes();
+
+    renderTimeline();
+
+    renderKeyframes();
+
+    saveProject();
+
+    setStatus(
+      "✓ 故事、劇本、旁白與分鏡已生成。",
+      "ok"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    const fallback =
+      buildFallbackStory();
+
+    videoProject.story =
+      fallback.story;
+
+    videoProject.script =
+      fallback.script;
+
+    videoProject.narration =
+      fallback.narration;
+
+    videoProject.storyboard =
+      fallback.storyboard;
+
+    videoProject.review =
+      fallback.review;
+
+    renderStory();
+
+    buildSecondTimeline();
+
+    buildMillisecondKeyframes();
+
+    renderTimeline();
+
+    renderKeyframes();
+
+    saveProject();
+
+    setStatus(
+      "AI Gateway 暫時無法連線，已建立本地故事草稿。原因：" +
+      error.message,
+      "error"
+    );
+
+  }finally{
+
+    $("generateStoryBtn").disabled =
+      false;
+
+  }
+}
+
+function buildFallbackStory(){
+
+  const title =
+    videoProject.title ||
+    "未命名電影";
+
+  const theme =
+    videoProject.theme ||
+    "電影劇情";
+
+  const character =
+    videoProject.characters ||
+    "主角";
+
+  const duration =
+    videoProject.duration;
+
+  const story =
+`${title}是一部以「${theme}」為核心的電影式短片。
+
+主角${character}在故事開始時處於一個看似平靜的環境，
+但一個意外事件改變了原本的生活。
+
+隨著事件發展，主角必須面對內心的恐懼與外在的衝突。
+在${duration}秒的敘事中，畫面逐步提高情緒強度，
+最後讓主角完成一次關鍵選擇，留下具有電影感的結尾。`;
+
+  const script =
+`場景一：建立環境與角色。
+
+場景二：事件突然發生。
+
+場景三：角色面對衝突。
+
+場景四：情緒與動作進入高潮。
+
+場景五：主角完成關鍵選擇並留下電影式結尾。`;
+
+  const narration =
+    fallbackNarration(story);
+
+  const storyboard =
+`遠景建立環境，介紹${character}與故事世界。
+
+中景跟隨${character}移動，逐步發現異常。
+
+近景捕捉角色表情與情緒變化。
+
+特寫呈現關鍵道具與角色眼神。
+
+運鏡逐漸加快，衝突進入高潮。
+
+最後使用慢速鏡頭與電影級構圖收尾。`;
+
+  return {
+    story,
+    script,
+    narration,
+    storyboard,
+    review:
+      "已完成基本故事結構。建議確認角色一致性、動作連續性、場景連續性與最終鏡頭。"
+  };
+}
+
+function setStatus(text,type=""){
+
+  const el =
+    $("aiStatus");
+
+  el.className =
+    "status";
+
+  if(type){
+    el.classList.add(type);
+  }
+
+  el.textContent =
+    text;
+}
+
+async function copyText(text){
+
+  if(!text){
+
+    throw new Error(
+      "目前沒有可複製的提示詞。"
+    );
+
+  }
+
+  if(
+    navigator.clipboard &&
+    window.isSecureContext
+  ){
+
+    try{
+
+      await navigator.clipboard.writeText(
+        text
+      );
+
+      return true;
+
+    }catch(error){
+
+      console.warn(
+        "Clipboard API 失敗，使用備援。",
+        error
+      );
+
+    }
+
+  }
+
+  const textarea =
+    document.createElement("textarea");
+
+  textarea.value =
+    text;
+
+  textarea.setAttribute(
+    "readonly",
+    ""
+  );
+
+  textarea.style.position =
+    "fixed";
+
+  textarea.style.top =
+    "0";
+
+  textarea.style.left =
+    "-9999px";
+
+  textarea.style.opacity =
+    "0";
+
+  document.body.appendChild(
+    textarea
+  );
+
+  textarea.focus();
+
+  textarea.select();
+
+  textarea.setSelectionRange(
+    0,
+    textarea.value.length
+  );
+
+  let copied = false;
+
+  try{
+
+    copied =
+      document.execCommand(
+        "copy"
+      );
+
+  }catch(error){
+
+    console.warn(
+      "execCommand copy 失敗",
+      error
+    );
+
+  }
+
+  document.body.removeChild(
+    textarea
+  );
+
+  if(copied){
+    return true;
+  }
+
+  const fallback =
+    document.createElement("textarea");
+
+  fallback.value =
+    text;
+
+  fallback.style.position =
+    "fixed";
+
+  fallback.style.top =
+    "0";
+
+  fallback.style.left =
+    "0";
+
+  fallback.style.width =
+    "1px";
+
+  fallback.style.height =
+    "1px";
+
+  fallback.style.opacity =
+    "0.01";
+
+  document.body.appendChild(
+    fallback
+  );
+
+  fallback.focus();
+
+  fallback.select();
+
+  fallback.setSelectionRange(
+    0,
+    fallback.value.length
+  );
+
+  throw new Error(
+    "瀏覽器禁止自動複製，文字已選取，請按住文字後選擇「拷貝」。"
+  );
+}
+
+
+let speakingField = "";
+
+function speakLang(){
+  const lang = videoProject.language || ($("language") && $("language").value) || "繁體中文";
+  if(lang === "英文") return "en-US";
+  if(lang === "简体中文") return "zh-CN";
+  return "zh-TW";
+}
+
+function pickVoice(kind){
+  const lang = speakLang();
+  const voices = speechSynthesis.getVoices() || [];
+  const same = voices.filter(v => (v.lang || "").toLowerCase().startsWith(lang.slice(0,2).toLowerCase()));
+  const pool = same.length ? same : voices;
+  const wantFemale = kind === "女" || kind === "幼";
+  const hit = pool.find(v => {
+    const n = (v.name || "").toLowerCase();
+    if(wantFemale) return /female|woman|girl|女/.test(n);
+    if(kind === "男" || kind === "老" || kind === "怪") return /male|man|boy|男/.test(n);
+    return false;
+  });
+  return hit || pool.find(v => (v.lang || "").toLowerCase().startsWith(lang.toLowerCase())) || pool[0] || null;
+}
+
+function voiceStyle(kind){
+  if(kind === "女") return { pitch: 1.2, rateMul: 1 };
+  if(kind === "老") return { pitch: 0.72, rateMul: 0.85 };
+  if(kind === "幼") return { pitch: 1.45, rateMul: 1.08 };
+  if(kind === "怪") return { pitch: 0.45, rateMul: 0.72 };
+  if(kind === "男") return { pitch: 0.88, rateMul: 0.98 };
+  return { pitch: 1, rateMul: 1 };
+}
+
+function scriptSpeechCues(text){
+  const cues = [];
+  String(text || "").split("\n").forEach(line => {
+    const clean = line.replace(/^\s*\d+\s*[-~到至]?\s*\d*\s*秒[：:]?\s*/, "").trim();
+    if(!clean) return;
+    if(/^(場次|場景|第\s*\d+\s*秒|影片總長度|分段規則)/.test(clean)) return;
+    const kindM = clean.match(/[（(](男|女|老|幼|怪)[）)]/);
+    const kind = kindM ? kindM[1] : "";
+    const qm = clean.match(/[「“"'『]([^」”"'』]+)[」”"'』]/);
+    if(qm){
+      cues.push({ talk: qm[1].trim(), kind });
+      return;
+    }
+  });
+  return cues;
+}
+
+function speakText(fieldId, btnId, label){
+  const raw = ($(fieldId) && $(fieldId).value || "").trim();
+  const btn = $(btnId);
+  if(!window.speechSynthesis){
+    setStatus("此裝置不能朗讀。", "error");
+    return;
+  }
+  if(!raw){
+    setStatus("沒有可播放的文字。", "error");
+    return;
+  }
+  if(speechSynthesis.speaking && speakingField === fieldId){
+    speechSynthesis.cancel();
+    speakingField = "";
+    if(btn) btn.textContent = label;
+    return;
+  }
+  speechSynthesis.cancel();
+
+  const basePace = fieldId === "narrationText"
+    ? Number(videoProject.narration_pace || 100)
+    : Number(videoProject.character_pace || 100);
+  const baseRate = Math.max(0.5, Math.min(1.5, basePace / 100));
+  const lang = speakLang();
+
+  let parts;
+  if(fieldId === "scriptText"){
+    const cues = scriptSpeechCues(raw);
+    parts = cues.length
+      ? cues
+      : [{ talk: raw, kind: "" }];
+  }else{
+    parts = [{ talk: raw, kind: "" }];
+  }
+
+  const queue = parts.filter(p => p.talk);
+  if(!queue.length){
+    setStatus("劇本裡沒抓到對白。", "error");
+    return;
+  }
+
+  speakingField = fieldId;
+  if(btn) btn.textContent = "⏹ 停止";
+
+  const speakNext = (i) => {
+    if(i >= queue.length || speakingField !== fieldId){
+      speakingField = "";
+      if(btn) btn.textContent = label;
+      return;
+    }
+    const item = queue[i];
+    const style = voiceStyle(item.kind);
+    const u = new SpeechSynthesisUtterance(item.talk);
+    u.lang = lang;
+    u.rate = Math.max(0.4, Math.min(1.6, baseRate * style.rateMul));
+    u.pitch = style.pitch;
+    const voice = pickVoice(item.kind);
+    if(voice) u.voice = voice;
+    u.onend = () => speakNext(i + 1);
+    u.onerror = () => speakNext(i + 1);
+    speechSynthesis.speak(u);
+  };
+
+  const start = () => speakNext(0);
+  if(!(speechSynthesis.getVoices() || []).length){
+    speechSynthesis.onvoiceschanged = start;
+    speechSynthesis.getVoices();
+    setTimeout(start, 250);
+  }else{
+    start();
+  }
+  return;
+  const u = new SpeechSynthesisUtterance(raw);
+  u.lang = speakLang();
+  const pace = basePace;
+  u.rate = baseRate;
+  u.onend = () => {
+    speakingField = "";
+    if(btn) btn.textContent = label;
+  };
+  u.onerror = () => {
+    speakingField = "";
+    if(btn) btn.textContent = label;
+  };
+  speakingField = fieldId;
+  if(btn) btn.textContent = "⏹ 停止";
+  speechSynthesis.speak(u);
+}
+
+async function handleCopy(
+  textareaId,
+  buttonId,
+  defaultText
+){
+
+  const textarea =
+    $(textareaId);
+
+  const button =
+    $(buttonId);
+
+  const text =
+    textarea.value.trim();
+
+  try{
+
+    await copyText(text);
+
+    button.textContent =
+      "✓ 已複製";
+
+    button.classList.add(
+      "success"
+    );
+
+    setTimeout(() => {
+
+      button.textContent =
+        defaultText;
+
+      button.classList.remove(
+        "success"
+      );
+
+    },1800);
+
+  }catch(error){
+
+    selectPromptText(textarea);
+
+    button.textContent =
+      "請長按拷貝";
+
+    setTimeout(() => {
+
+      button.textContent =
+        defaultText;
+
+    },2200);
+
+    setStatus(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+function selectPromptText(textarea){
+
+  textarea.focus();
+
+  textarea.select();
+
+  textarea.setSelectionRange(
+    0,
+    textarea.value.length
+  );
+
+}
+
+function clearProject(){
+
+  const ok =
+    confirm(
+      "確定要清除目前影片專案嗎？"
+    );
+
+  if(!ok) return;
+
+  localStorage.removeItem(
+    STORAGE_KEY
+  );
+
+  location.reload();
+
+}
+
+function switchTab(tab){
+
+  document
+    .querySelectorAll(".tab-btn")
+    .forEach(btn => {
+
+      btn.classList.toggle(
+        "on",
+        btn.dataset.tab === tab
+      );
+
+    });
+
+  document
+    .querySelectorAll(".tab-content")
+    .forEach(content => {
+
+      content.classList.toggle(
+        "on",
+        content.id ===
+        `tab-${tab}`
+      );
+
+    });
+
+}
+
+let imageVideoPollTimer=null;
+let imageVideoPollStartedAt=0;
+
+function setImageVideoProgress(percent,text){
+  const p=Math.max(0,Math.min(100,Math.round(Number(percent)||0)));
+  $("imageVideoStatus").textContent="已完成 "+p+"%";
+  const title=$("generationScreenTitle");
+  const msg=$("generationScreenText");
+  if(title) title.textContent="影片製作中";
+  if(msg) msg.textContent=(text||"AI 正在製作影片")+"　已完成 "+p+"%";
+}
+
+async function pollImageVideoJob(jobId){
+  if(imageVideoPollTimer){clearTimeout(imageVideoPollTimer);imageVideoPollTimer=null;}
+  const elapsed=Date.now()-imageVideoPollStartedAt;
+  if(elapsed>10*60*1000){
+    $("imageVideoStatus").textContent="製作逾時";
+    setStatus("影片製作超過 10 分鐘仍未完成，請稍後再試。","error");
+    return;
+  }
+  try{
+    const response=await fetch("https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-video-generate?job_id="+encodeURIComponent(jobId));
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.success){
+      setStatus("影片進度查詢失敗："+(data.error||data.message||"未知錯誤"),"error");
+      $("imageVideoStatus").textContent="查詢失敗";
+      return;
+    }
+    if(data.video_url){
+      videoProject.generated_video=data;
+      showVideoResultFromProject();
+      $("videoResultPanel").scrollIntoView({behavior:"smooth",block:"start"});
+      $("imageVideoStatus").textContent="已完成 100%";
+      setStatus("✓ 照片→影片生成完成。","ok");
+      saveProject();
+      return;
+    }
+    const p=Number(data.progress_percent ?? data.progress ?? 0);
+    setImageVideoProgress(p,data.status_text||"影片製作中");
+    imageVideoPollTimer=setTimeout(()=>pollImageVideoJob(jobId),4000);
+  }catch(error){
+    setStatus("影片進度查詢失敗："+error.message,"error");
+    $("imageVideoStatus").textContent="查詢失敗";
+  }
+}
+
+async function generateImageVideo(){
+  const file=$("imageToVideoFile").files?.[0];
+  if(!file){setStatus("請先選擇照片／圖像。","error");return;}
+  if(imageVideoPollTimer){clearTimeout(imageVideoPollTimer);imageVideoPollTimer=null;}
+  const form=new FormData();
+  form.append("image",file);
+  form.append("prompt",($("imageVideoPrompt").value||"").trim());
+  form.append("duration",String(Number(document.querySelector("[data-image-video-duration].on")?.dataset.imageVideoDuration||5)));
+  form.append("aspect_ratio",$("imageVideoAspect").value||"16:9");
+  setStatus("已按下生成，正在送出影片任務……");
+  $("imageVideoStatus").textContent="已完成 0%";
+  const btn=$("generateImageVideoBtn");
+  if(btn){btn.disabled=true;btn.textContent="⏳ 影片生成中…";}
+  $("videoResultPanel").style.display="block";
+  showVideoResultFromProject();
+  imageVideoPollStartedAt=Date.now();
+  try{
+    const response=await fetch("https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-video-generate",{method:"POST",body:form});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.success){
+      setStatus("照片→影片尚未生成："+(data.error||data.message||"未知錯誤"),"error");
+      $("imageVideoStatus").textContent="失敗";
+      return;
+    }
+    if(data.video_url){
+      videoProject.generated_video=data;
+      showVideoResultFromProject();
+      $("videoResultPanel").scrollIntoView({behavior:"smooth",block:"start"});
+      setStatus("✓ 照片→影片生成完成。","ok");
+      $("imageVideoStatus").textContent="完成 100%";
+      saveProject();
+    }else if(data.job_id){
+      videoProject.generated_video=data;
+      showVideoResultFromProject();
+      setImageVideoProgress(data.progress_percent||0,"影片製作中");
+      await pollImageVideoJob(data.job_id);
+    }else{
+      setStatus("Provider 沒有回傳影片網址或任務 ID。","error");
+      $("imageVideoStatus").textContent="失敗";
+    }
+  }catch(error){
+    setStatus("照片→影片請求失敗："+error.message,"error");
+    $("imageVideoStatus").textContent="失敗";
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent="🖼️→🎬 生成影片";}
+  }
+}
+
+async function generateImagineTextVideo(){
+  const prompt=($("imagineTextPrompt").value||"").trim();
+  if(!prompt){setStatus("請先輸入影片描述。","error");return;}
+  const duration=Number(document.querySelector("[data-imagine-text-duration].on")?.dataset.imagineTextDuration||5);
+  const aspect=$("imagineTextAspect").value||"16:9";
+  const btn=$("generateImagineTextBtn");
+  if(btn){btn.disabled=true;btn.textContent="⏳ 影片生成中…";}
+  setStatus("正在生成影片……");
+  try{
+    const response=await fetch("https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-video-generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt,director_prompt:prompt,duration_seconds:duration,aspect_ratio:aspect,resolution:"720p"})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.success){setStatus("文字→影片尚未生成："+(data.error||data.message||"目前沒有可用的免費影片 Provider。"),"error");return;}
+    videoProject.generated_video=data;
+    showVideoResultFromProject();
+    if($("videoResultPanel")) $("videoResultPanel").scrollIntoView({behavior:"smooth",block:"start"});
+    setStatus(data.video_url?"✓ 文字→影片生成完成。":"✓ 影片任務已送出，正在製作。",data.video_url?"ok":"");
+    if(data.job_id) await pollImageVideoJob(data.job_id);
+    saveProject();
+  }catch(error){setStatus("文字→影片請求失敗："+error.message,"error");}
+  finally{if(btn){btn.disabled=false;btn.textContent="✦ 生成影片";}}
+}
+
+async function generateVideo(){
+  syncEditorFields();
+  syncProjectFromInputs();
+  const prompt = ($("finalPrompt").value || videoProject.final_prompt || "").trim();
+  if(!prompt){ setStatus("請先生成最終影片提示詞。","error"); return; }
+  setStatus("正在檢查免費影片 Provider……");
+  try{
+    const response = await fetch("https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-video-generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt,director_prompt:videoProject.final_prompt||prompt,duration_seconds:selectedDuration(),aspect_ratio:"16:9",resolution:"720p"})});
+    const data = await response.json().catch(()=>({}));
+    if(!response.ok || !data.success){ setStatus("影片尚未生成："+(data.error||data.message||"目前沒有可用的免費影片 Provider。"),"error"); return; }
+    videoProject.generated_video=data;
+    showVideoResultFromProject();
+    setStatus("✓ 影片生成完成。","ok");
+    $("videoResultPanel").scrollIntoView({behavior:"smooth",block:"start"});
+    saveProject();
+  }catch(error){ setStatus("影片生成請求失敗："+error.message,"error"); }
+}
+
+function showVideoResultFromProject(){
+  const data=videoProject.generated_video||{};
+  $("videoResultPanel").style.display="block";
+  $("videoResultStatus").textContent=data.video_url?"完成":"處理中";
+  $("resultProvider").textContent=data.provider||"—";
+  $("resultModel").textContent=data.model||"—";
+  $("resultDuration").textContent=data.duration_seconds?data.duration_seconds+" 秒":"—";
+  $("resultResolution").textContent=data.resolution||"720p";
+  $("resultAspect").textContent=data.aspect_ratio||"16:9";
+  $("resultRequestId").textContent=data.request_id||data.job_id||"—";
+  const src=$("resultSourceImage");
+  const selected=$("imageToVideoFile")?.files?.[0];
+  if(selected){const reader=new FileReader();reader.onload=()=>{src.src=reader.result;src.hidden=false;};reader.readAsDataURL(selected);}
+  const screen=$("generationScreen");
+  const video=$("generatedVideo");
+  if(data.video_url){
+    screen.classList.add("is-done");
+    const title=$("generationScreenTitle");
+    const text=$("generationScreenText");
+    if(title) title.textContent="影片製作完成";
+    if(text) text.textContent="影片已生成，正在直接播放。";
+    video.hidden=false;
+    video.src=data.video_url;
+    video.load();
+    const downloadBtn=$("downloadGeneratedVideoBtn");
+    const playerActions=$("videoPlayerActions");
+    if(downloadBtn){ downloadBtn.href=data.video_url; downloadBtn.download="aivault-generated-video.mp4"; }
+    if(playerActions) playerActions.hidden=false;
+    video.play().catch(()=>{});
+  }else{
+    screen.classList.remove("is-done");
+    $("generationScreenTitle").textContent="影片製作中";
+    $("generationScreenText").textContent="AI 正在製作影片，完成後會直接在這個頁面播放。";
+    video.hidden=true;
+    const playerActions=$("videoPlayerActions");
+    if(playerActions) playerActions.hidden=true;
+    const downloadBtn=$("downloadGeneratedVideoBtn");
+    if(downloadBtn) downloadBtn.removeAttribute("href");
+  }
+}
+
+function bindEvents(){
+
+  $("backBtn").addEventListener(
+    "click",
+    goBack
+  );
+
+  $("addFrameBtn").addEventListener(
+    "click",
+    () => $("frameFile").click()
+  );
+
+  $("frameFile").addEventListener(
+    "change",
+    async (event) => {
+      try{
+        await addLastFrames(event.target.files || []);
+      }catch(error){
+        setStatus("畫面新增失敗：" + error.message, "error");
+      }
+      event.target.value = "";
+    }
+  );
+
+  $("frameList").addEventListener(
+    "click",
+    (event) => {
+      const btn = event.target.closest("[data-frame-del]");
+      if(!btn) return;
+      deleteLastFrame(Number(btn.dataset.frameDel));
+    }
+  );
+
+  document
+    .querySelectorAll("[data-theme]")
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          btn.classList.toggle(
+            "on"
+          );
+
+          syncThemeSelection();
+
+          saveProject();
+
+        }
+      );
+
+    });
+
+  $("customTheme")
+    .addEventListener(
+      "input",
+      () => {
+
+        syncThemeSelection();
+
+        saveProject();
+
+      }
+    );
+
+  document
+    .querySelectorAll("[data-mode]")
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          btn.classList.toggle("on");
+
+          videoProject.modes =
+            [...document.querySelectorAll("[data-mode].on")]
+              .map(item => item.dataset.mode);
+
+          if(!videoProject.modes.length){
+            btn.classList.add("on");
+            videoProject.modes = [btn.dataset.mode];
+          }
+
+          videoProject.mode = videoProject.modes.join("、");
+
+          saveProject();
+
+        }
+      );
+
+    });
+
+
+  ["narrationPace","characterPace"].forEach(id => {
+    $(id).addEventListener("input", () => {
+      videoProject.narration_pace = Number($("narrationPace").value);
+      videoProject.character_pace = Number($("characterPace").value);
+      updatePaceLabels();
+      saveProject();
+    });
+  });
+
+  document
+    .querySelectorAll("[data-duration]")
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(
+              "[data-duration]"
+            )
+            .forEach(
+              other =>
+                other.classList.remove(
+                  "on"
+                )
+            );
+
+          btn.classList.add(
+            "on"
+          );
+
+          videoProject.duration = Number(btn.dataset.duration);
+          enforceSelectedDurationContent();
+          fillPromptParts();
+          updateBadges();
+
+          saveProject();
+
+          if(
+            videoProject.story ||
+            videoProject.storyboard
+          ){
+
+            buildSecondTimeline();
+
+            buildMillisecondKeyframes();
+
+            renderTimeline();
+
+            renderKeyframes();
+
+          }
+
+        }
+      );
+
+    });
+
+  document
+    .querySelectorAll("[data-technique]")
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          btn.classList.toggle(
+            "on"
+          );
+
+          collectDirectorTechniques();
+
+          saveProject();
+
+        }
+      );
+
+    });
+
+  document
+    .querySelectorAll("[data-continuity]")
+    .forEach(input => {
+
+      input.addEventListener(
+        "change",
+        () => {
+
+          collectContinuity();
+
+          saveProject();
+
+        }
+      );
+
+    });
+
+  [
+    "videoTitle",
+    "characters",
+    "creativeRequest",
+    "language",
+    "storyText",
+    "scriptText",
+    "narrationText",
+    "storyboardText",
+    "reviewText"
+  ].forEach(id => {
+
+    $(id).addEventListener(
+      "input",
+      () => {
+
+        syncEditorFields();
+
+        saveProject();
+
+      }
+    );
+
+  });
+
+  $("generateStoryBtn")
+    .addEventListener(
+      "click",
+      generateStory
+    );
+
+  $("generatePromptBtn")
+    .addEventListener(
+      "click",
+      generatePrompt
+    );
+
+  $("generateVideoBtn").addEventListener("click", generateVideo);
+  $("generateImageVideoBtn").addEventListener("click", generateImageVideo);
+  $("generateImagineTextBtn").addEventListener("click", generateImagineTextVideo);
+  document.querySelectorAll("[data-imagine-tab]").forEach(btn=>btn.addEventListener("click",()=>{
+    document.querySelectorAll("[data-imagine-tab]").forEach(b=>b.classList.remove("on"));
+    btn.classList.add("on");
+    $("imagineTextPanel").classList.toggle("on",btn.dataset.imagineTab==="text");
+    $("imagineImagePanel").classList.toggle("on",btn.dataset.imagineTab==="image");
+  }));
+  document.querySelectorAll("[data-imagine-text-duration]").forEach(btn=>btn.addEventListener("click",()=>{
+    document.querySelectorAll("[data-imagine-text-duration]").forEach(b=>b.classList.remove("on"));
+    btn.classList.add("on");
+  }));
+  $("imageToVideoFile").addEventListener("change",()=>{
+    const file=$("imageToVideoFile").files?.[0]; if(!file)return;
+    $("imageVideoStatus").textContent=file.name;
+    const reader=new FileReader(); reader.onload=()=>{$("imageToVideoPreview").src=reader.result;$("imageToVideoPreview").hidden=false;}; reader.readAsDataURL(file);
+  });
+  document.querySelectorAll("[data-image-video-duration]").forEach(btn=>btn.addEventListener("click",()=>{
+    document.querySelectorAll("[data-image-video-duration]").forEach(b=>b.classList.remove("on"));btn.classList.add("on");
+  }));
+  $("regenerateVideoBtn").addEventListener("click", generateVideo);
+  $("editPromptBtn").addEventListener("click", () => {
+    $("finalPrompt").scrollIntoView({behavior:"smooth",block:"center"});
+    $("finalPrompt").focus();
+  });
+
+  [
+    ["speakStoryBtn","storyText","🔊 播放"],
+    ["speakScriptBtn","scriptText","🔊 播放"],
+    ["speakNarrationBtn","narrationText","🔊 播放"]
+  ].forEach(([btn, field, label]) => {
+    $(btn).addEventListener("click", () => speakText(field, btn, label));
+  });
+
+  const copyPairs = [
+    ["copyStoryBtn","storyText","📋 複製故事"],
+    ["copyScriptBtn","scriptText","📋 複製劇本"],
+    ["copyNarrationBtn","narrationText","📋 複製旁白"],
+    ["copyStoryboardBtn","storyboardText","📋 複製分鏡"],
+    ["copyPromptScriptBtn","promptScript","📋 複製劇本"],
+    ["copyPromptStoryboardBtn","promptStoryboard","📋 複製分鏡"],
+    ["copyPromptNarrationBtn","promptNarration","📋 複製旁白"]
+  ];
+
+  copyPairs.forEach(([btn, field, label]) => {
+    $(btn).addEventListener(
+      "click",
+      () => handleCopy(field, btn, label)
+    );
+  });
+
+  $("copyZhBtn")
+    .addEventListener(
+      "click",
+      () =>
+        handleCopy(
+          "promptZh",
+          "copyZhBtn",
+          "📋 複製中文提示詞"
+        )
+    );
+
+  $("copyEnBtn")
+    .addEventListener(
+      "click",
+      () =>
+        handleCopy(
+          "promptEn",
+          "copyEnBtn",
+          "📋 複製英文提示詞"
+        )
+    );
+
+  $("copyFinalBtn")
+    .addEventListener(
+      "click",
+      () =>
+        handleCopy(
+          "finalPrompt",
+          "copyFinalBtn",
+          "📋 複製最終提示詞"
+        )
+    );
+
+  $("clearBtn")
+    .addEventListener(
+      "click",
+      clearProject
+    );
+
+  document
+    .querySelectorAll(".tab-btn")
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          switchTab(
+            btn.dataset.tab
+          );
+
+        }
+      );
+
+    });
+
+}
+
+function syncEditorFields(){
+
+  videoProject.story =
+    $("storyText").value;
+
+  videoProject.script =
+    $("scriptText").value;
+
+  videoProject.narration =
+    $("narrationText").value;
+
+  videoProject.storyboard =
+    $("storyboardText").value;
+
+  videoProject.review =
+    $("reviewText").value;
+
+}
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    bindEvents();
+
+    restoreProject();
+
+    if(!document.querySelector("[data-duration].on")){
+      const defaultDuration = document.querySelector('[data-duration="15"]');
+      if(defaultDuration) defaultDuration.classList.add("on");
+    }
+    videoProject.duration = selectedDuration();
+    enforceSelectedDurationContent();
+    syncProjectFromInputs();
+    fillPromptParts();
+    renderTimeline();
+    renderKeyframes();
+    updateBadges();
+
+  }
+);
+</script>
+
+<script src="aivault-presence.js?v=20261017-pr2" defer></script></body>
+</html>

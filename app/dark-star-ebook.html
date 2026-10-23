@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f8fc">
+<title>AIVAULT｜書架與閱讀</title>
+<link rel="stylesheet" href="ebook/aivault-flipbook.css?v=20260928-fourbooks1">
+<style>
+.reader-top,.reader-bottom,.shelf-top{position:relative;z-index:40}
+.drawer{z-index:45}
+.mask{top:48px;bottom:96px;pointer-events:none}
+#btnAsk.ask-star{padding:0;background:transparent}
+.ask-star-icon{
+  width:32px;height:32px;border-radius:9px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:800;color:#fff;line-height:1;
+  text-shadow:0 1px 2px rgba(0,0,0,.28);
+  background:linear-gradient(135deg,#ff3b30,#ff9500,#ffcc00,#34c759,#0a84ff,#5856d6,#af52de,#ff2d55);
+  background-size:300% 300%;
+  animation:aivaultLogoColorShift 6s ease-in-out infinite;
+}
+.ask-star-icon.sm{width:22px;height:22px;font-size:13px;border-radius:7px;vertical-align:middle;margin-right:6px}
+#drawerTitle{display:inline-flex;align-items:center;gap:6px}
+.bubble.ai{position:relative;padding-left:40px}
+.bubble.ai::before{
+  content:"\2726";
+  position:absolute;left:0;top:2px;
+  width:28px;height:28px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;color:#fff;line-height:1;
+  text-shadow:0 1px 2px rgba(0,0,0,.28);
+  background:linear-gradient(135deg,#ff3b30,#ff9500,#ffcc00,#34c759,#0a84ff,#5856d6,#af52de,#ff2d55);
+  background-size:300% 300%;
+  animation:aivaultLogoColorShift 6s ease-in-out infinite;
+}
+.ask-mic-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ask-mic{
+  width:39px;height:39px;min-width:39px;border:0;border-radius:50%;
+  background:transparent;color:#ddd;display:flex;align-items:center;justify-content:center;padding:0;
+}
+.ask-mic:hover{background:#2a2d33}
+.ask-mic.recording{background:#f0f0f0;color:#111}
+.ask-mic-icon{width:22px;height:22px;display:block}
+@keyframes aivaultLogoColorShift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+</style>
+<link rel="stylesheet" href="ebook/aivault-reader-20261013.css?v=20261015-fit1">
+</head>
+<body>
+<div id="app">
+<section id="shelfView" class="view">
+  <header class="shelf-top">
+    <a class="ib" href="aivault-home.html">‹ 首頁</a>
+    <div class="brand">AIVAULT 閱讀</div>
+    <div class="spacer"></div>
+    <a class="ib" href="dark-star-ebook-classic.html">原閱讀器</a>
+    <a class="ib" href="dark-star-ebook-editor.html">匯入</a>
+  </header>
+  <nav class="shelf-tabs" id="shelfTabs">
+    <button data-tab="mine" class="on">📚 我的書架</button>
+    <button data-tab="recent">🕐 最近閱讀</button>
+    <button data-tab="fav">⭐ 我的收藏</button>
+    <button data-tab="new">📖 最近新增</button>
+    <button data-tab="cats">📂 我的分類</button>
+    <button data-tab="search">🔍 搜尋</button>
+  </nav>
+  <div class="shelf-tools">
+    <input id="shelfQ" placeholder="搜尋書名、作者">
+    <label class="filebtn">＋ 匯入文件
+      <input id="shelfFile" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.jpg,.jpeg,.png,.webp,application/pdf,image/*">
+    </label>
+    <span id="importStatus" class="muted"></span>
+  </div>
+  <div id="catBar" class="catbar" hidden></div>
+  <div id="shelfGrid" class="shelf-grid"></div>
+</section>
+<section id="readerView" class="view" hidden>
+  <header class="reader-top">
+    <button class="ib" id="btnBackShelf" aria-label="返回書架">‹</button>
+    <div class="meta-line">
+      <div id="readerTitle" class="brand">書名</div>
+      <div id="readerAuthor" class="sub">作者</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="ib qq-listen-shortcut" id="qqListenShortcut" aria-label="開啟聽書">聽書</button>
+    <button class="ib hide-sm" id="btnClassic">原閱讀器</button>
+  </header>
+  <div id="stage" class="stage">
+    <div id="bookStage" class="book-stage">
+      <div id="flipBook" class="flip-book single">
+        <div class="leaf left" id="leafLeft"><div class="paper" id="paperLeft"></div><div class="pageno" id="noLeft"></div></div>
+        <div class="leaf right" id="leafRight"><div class="paper" id="paperRight"></div><div class="pageno" id="noRight"></div></div>
+        <div class="flipper" id="flipper" hidden><div class="face front" id="flipFront"></div><div class="face back" id="flipBack"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="qq-footer"><span class="qq-device"><span id="qqClock"></span></span><div id="pageLabel" aria-live="polite">1 / 1</div></div>
+  <div class="reader-bottom">
+    <div class="pagerow">
+      <button class="ib" id="prevBtn" aria-label="上一頁">‹</button>
+      <input id="jumpRange" type="range" min="1" max="1" value="1">
+      <span class="qq-pager-caption">閱讀進度</span>
+      <button class="ib" id="nextBtn" aria-label="下一頁">›</button>
+    </div>
+    <div class="toolbar" id="toolbar">
+      <button class="tb" id="btnToc" aria-label="目錄" title="目錄">☰</button>
+      <button class="tb" id="btnMark" aria-label="書籤" title="書籤">🔖</button>
+      <button class="tb" id="btnSearch" aria-label="搜尋" title="搜尋">🔍</button>
+      <button class="tb" id="btnNote" aria-label="筆記" title="筆記">📝</button>
+      <button class="tb" id="btnSpeak" aria-label="朗讀" title="朗讀">🔊</button>
+      <button class="tb ask-star" id="btnAsk" aria-label="問暗星" title="問暗星"><span class="ask-star-icon">✦</span></button>
+      <button class="tb hide-sm" id="btnSettings" aria-label="設定" title="設定">⚙</button>
+      <button class="tb" id="btnMore" aria-label="更多" title="更多">⋯</button>
+      <button class="tb" id="btnFull" aria-label="全螢幕" title="全螢幕">⛶</button>
+    </div>
+  </div>
+</section>
+<section id="listenView" class="view listen-view" hidden aria-label="聽書播放器">
+  <header class="listen-top"><button id="listenBack" class="ib" aria-label="返回原文">‹</button><h1>AI 聽書</h1><span id="listenEngineBadge">裝置語音</span></header>
+  <main class="listen-main">
+    <div class="listen-cover" id="listenCover"><img id="listenCoverImg" alt="書籍封面" hidden><div class="listen-cover-art" id="listenCoverArt"><span>AIVAULT</span><strong id="listenCoverTitle"></strong><small>閱讀，讓知識有聲音。</small></div><div class="listen-cover-caption" id="listenChapter"></div></div>
+    <h2 id="listenTitle"></h2><p class="listen-location" id="listenLocation"></p>
+    <p id="listenExcerpt" class="listen-excerpt">按播放，從目前閱讀位置開始。</p>
+    <label class="listen-progress-label" for="listenProgress">本頁朗讀進度</label><input id="listenProgress" type="range" min="0" max="1" value="0" aria-label="本頁朗讀進度"><div class="listen-progress-meta"><span id="listenSegmentLabel"></span><span id="listenStatus" role="status">準備播放</span></div>
+    <div class="listen-transport"><button id="listenPrev" aria-label="上一段">│◀</button><button id="listenPlay" class="listen-play" aria-label="播放聽書">▶</button><button id="listenNext" aria-label="下一段">▶│</button></div>
+    <div class="listen-options"><label>朗讀聲音<select id="listenVoice" aria-label="朗讀聲音"></select></label><label>倍速<select id="listenRate" aria-label="朗讀倍速"><option value="0.8">0.8 倍</option><option value="1">1 倍</option><option value="1.2">1.2 倍</option><option value="1.5">1.5 倍</option><option value="2">2 倍</option></select></label><label>定時關閉<select id="listenTimer" aria-label="定時關閉"><option value="0">不定時</option><option value="15">15 分鐘</option><option value="30">30 分鐘</option><option value="60">60 分鐘</option></select></label></div>
+    <div class="listen-actions"><button id="listenRead">查看原文 · 邊看邊聽</button><button id="listenStop">停止</button></div>
+    <details class="listen-natural"><summary>其他自然朗讀聲音</summary><p>Gemini 聲音可直接在上方選擇。設定已建立的自然聲音 ID 後，可選擇自然朗讀。只調整語氣與停頓，保留教材原文。</p><label>聲音 ID<input id="listenNaturalVoice" placeholder="已建立的聲音 ID" autocomplete="off"></label><button id="listenSaveVoice">儲存聲音</button><small>使用既有語音服務；播放自然聲音時會產生語音用量。</small></details>
+  </main>
+</section>
+<aside class="drawer" id="drawer">
+  <div class="drawer-h"><b id="drawerTitle">面板</b><button class="ib" id="btnCloseDrawer">關閉</button></div>
+  <div class="drawer-b" id="drawerBody"></div>
+</aside>
+<div class="mask" id="mask" hidden></div>
+<div id="toast" class="toast" hidden></div>
+</div>
+<script>
+(function () {
+  var KEY = "aivault_ebook_catalog";
+  var books = [
+    {
+      ebook_id: "9a3a2a12-66c6-4864-9ee3-753c1b1a329a",
+      title: "食品安全管理措施限制食品業者基本權利之正當性探討——德國司法實務之觀察",
+      author: "林昱梅",
+      page_count: 76,
+      source: "remote",
+      category: "教材",
+      saved_at: "2026-09-25T20:10:00+08:00"
+    },
+    {
+      ebook_id: "2837c534-3cc4-4e3d-bc12-4b770c196b30",
+      title: "當行政遇上科學：從風險評估談起——以美國法為例",
+      author: "宮文祥",
+      page_count: 38,
+      source: "remote",
+      category: "教材",
+      saved_at: "2026-09-25T20:10:00+08:00"
+    },
+    {
+      ebook_id: "65d955cf-9dce-402c-a938-5a762acafdf1",
+      title: "第八章　国家机构体系",
+      author: "宪法学讲义",
+      page_count: 26,
+      source: "remote",
+      category: "教材",
+      saved_at: "2026-09-25T19:13:00+08:00"
+    }
+  ];
+  try {
+    var rows = JSON.parse(localStorage.getItem(KEY) || "[]");
+    var removed = [];
+    try { removed = JSON.parse(localStorage.getItem("aivault_ebook_shelf_removed") || "[]"); } catch (e) {}
+    books.forEach(function (book) {
+      if (removed.indexOf(String(book.ebook_id)) >= 0) return;
+      if (!rows.some(function (r) { return r.ebook_id === book.ebook_id; })) {
+        rows.unshift(book);
+      }
+    });
+    rows = rows.filter(function (r) { return removed.indexOf(String(r.ebook_id)) < 0; });
+    localStorage.setItem(KEY, JSON.stringify(rows.slice(0, 80)));
+  } catch (e) {}
+})();
+</script>
+<script src="ebook/aivault-ebook-lib.js?v=20261017-own1"></script>
+<script src="ebook/aivault-ebook-pagecount-fix.js?v=20260930-pagefix2"></script>
+<script src="ebook/aivault-toc-overrides.js?v=20261017-xzf1"></script>
+<script src="ebook/aivault-epub-convert.js?v=20261014-epub1"></script>
+<script src="ebook/aivault-ios-tts.js?v=20260925-speak4"></script>
+<script src="ebook/vendor/page-flip-2.0.7.js"></script>
+<script src="ebook/aivault-page-curl.js?v=20261015-curl2"></script>
+<script src="ebook/aivault-reader-20261013.js?v=13-pimg1"></script>
+<script src="ebook/aivault-audiobook-20261013.js?v=6-gapless"></script>
+<script src="ebook/aivault-fish-tts.js?v=20260925-hide2"></script>
+<script src="ebook/aivault-precise-select-tts.js?v=20261013b"></script>
+<script src="ebook/aivault-speak-unfreeze.js?v=20261013"></script>
+<script src="ebook/aivault-ask-mic.js?v=20260925-mic1"></script>
+<script src="ebook/aivault-ask-research.js?v=20260925-research1"></script>
+<script src="darkstar-study-books.js?v=20261017-sb9"></script>
+<script src="darkstar-book-qa.js?v=20261019-reading2"></script>
+<script>
+(function () {
+  function paintAskStar() {
+    var t = document.getElementById("drawerTitle");
+    if (!t) return;
+    var s = String(t.textContent || "");
+    if (s.indexOf("🤖") >= 0 || s.indexOf("問暗星") >= 0) {
+      if (t.querySelector(".ask-star-icon")) return;
+      t.innerHTML = '<span class="ask-star-icon sm">\u2726</span>問暗星';
+    }
+  }
+  var drawer = document.getElementById("drawer");
+  if (drawer && window.MutationObserver) {
+    new MutationObserver(paintAskStar).observe(drawer, { childList: true, subtree: true, characterData: true });
+  }
+  paintAskStar();
+})();
+</script>
+<script src="ebook/aivault-pool-shelf.js?v=20261018-pb8"></script>
+<script src="aivault-presence.js?v=20261017-pr2" defer></script></body>
+</html>

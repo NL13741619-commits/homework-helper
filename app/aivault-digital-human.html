@@ -1,0 +1,2911 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>AIVAULT Digital Human</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --card-hover: #334155;
+      --border: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --violet: #a855f7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      line-height: 1.5;
+    }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    img, video, audio { max-width: 100%; }
+    .header {
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(15,23,42,.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .header h1 { font-size: 16px; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .header p { font-size: 11px; color: var(--text-muted); }
+    .header .grow { flex: 1; min-width: 0; }
+    .icon-btn, .pill {
+      border: none; cursor: pointer; flex-shrink: 0;
+      border-radius: 10px; font-weight: 700;
+    }
+    .icon-btn {
+      width: 36px; height: 36px; background: #1e293b; border: 1px solid var(--border); color: #e2e8f0;
+    }
+    .icon-btn.mic-ios { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); color: #e5e7eb; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .icon-btn.mic-ios.on { background: rgba(168,85,247,.35); border-color: #a855f7; color: #fff; }
+    .msg-wrap { display: flex; flex-direction: column; }
+    .msg-wrap.me { align-items: flex-end; } .msg-wrap.bot { align-items: flex-start; }
+    .msg-acts { display: flex; gap: 10px; margin: 3px 4px 8px; }
+    .msg-acts button { background: none; border: none; color: #94a3b8; font-size: 11px; display: inline-flex; align-items: center; gap: 3px; padding: 2px 0; cursor: pointer; }
+    .msg-acts button svg { width: 13px; height: 13px; }
+    .msg-clear { text-align: center; margin: 4px 0 6px; } .msg-clear button { background: none; border: 1px solid var(--border); color: #94a3b8; font-size: 11px; border-radius: 10px; padding: 3px 10px; }
+    .pill {
+      padding: 8px 12px; font-size: 12px;
+      background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff;
+    }
+    .pill.ghost { background: #334155; }
+    .pill.danger { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 14px 14px 110px; }
+    .hero {
+      border: 1px solid rgba(168,85,247,.35);
+      background:
+        radial-gradient(circle at 12% 20%, #4c1d95 0%, transparent 42%),
+        radial-gradient(circle at 88% 0%, #1e3a8a 0%, transparent 40%),
+        #0f172a;
+      border-radius: 16px; padding: 16px; margin-bottom: 14px;
+    }
+    .preview {
+      width: 100%; aspect-ratio: 3/4; max-height: 420px;
+      object-fit: cover; border-radius: 16px; background: #020617;
+      border: 1px solid var(--border); display: block;
+    }
+    .preview-ph {
+      width: 100%; min-height: 220px; border-radius: 16px;
+      border: 1px dashed #475569; display: grid; place-items: center;
+      color: var(--text-muted); text-align: center; padding: 24px; background: #0f172a;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px; margin-bottom: 10px;
+    }
+    .card h3 { font-size: 15px; margin-bottom: 4px; }
+    .muted { color: var(--text-muted); font-size: 12px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .row > .pill, .row > .icon-btn { flex: 1 1 auto; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 520px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+    label { display: block; font-size: 12px; color: var(--text-muted); margin: 10px 0 6px; }
+    input, select, textarea {
+      width: 100%; background: #020617; border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px; color: var(--text);
+    }
+    textarea { min-height: 140px; resize: vertical; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+      background: #0f172a; border: 1px solid var(--border); color: #cbd5e1;
+    }
+    .chip.on { border-color: #22c55e; color: #86efac; }
+    .asset {
+      background: #0f172a; border: 1px solid var(--border); border-radius: 14px; padding: 10px;
+    }
+    .asset.selected { border-color: #22c55e; box-shadow: 0 0 0 1px #22c55e inset; }
+    .thumb { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; background: #020617; }
+    .toast {
+      position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(80px);
+      background: #1e293b; border: 1px solid var(--border); color: #fff;
+      padding: 12px 16px; border-radius: 12px; z-index: 80; max-width: 90%; text-align: center;
+      transition: transform .25s ease; font-size: 13px;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .steps { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; }
+    .steps span {
+      flex: 0 0 auto; font-size: 11px; padding: 6px 10px; border-radius: 999px;
+      border: 1px solid var(--border); color: var(--text-muted);
+    }
+    .steps span.on { background: rgba(168,85,247,.2); border-color: #a855f7; color: #e9d5ff; }
+    .chat-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      display: flex; flex-direction: column; height: min(42vh, 360px); overflow: hidden;
+    }
+    .composer-dock {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+      padding: 8px 16px calc(env(safe-area-inset-bottom) + 10px);
+      background: linear-gradient(transparent, #0b1120 28%);
+    }
+    body.chat-on .wrap { padding-bottom: 92px; }
+    .msgs { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .bubble { max-width: 88%; padding: 10px 12px; border-radius: 14px; font-size: 14px; white-space: pre-wrap; word-break: break-word; }
+    .me { align-self: flex-end; background: var(--primary); }
+    .bot { align-self: flex-start; background: #334155; }
+    .composer { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--border); align-items: center; }
+    .composer input { flex: 1; border-radius: 999px; }
+    .empty { text-align: center; padding: 36px 10px; color: var(--text-muted); }
+    .danger-zone { border-color: rgba(239,68,68,.4); }
+    video { width: 100%; border-radius: 12px; background: #000; }
+    .hidden { display: none !important; }
+    .dh-avatar { display:grid; place-items:center; padding:18px 10px 8px; margin-bottom:8px;
+      border:1px solid var(--border); border-radius:16px; background:#020617; }
+    .dh-head { width:168px; height:168px; border-radius:50%; background:radial-gradient(circle at 40% 30%,#334155,#0f172a);
+      display:grid; place-items:center; position:relative; overflow:hidden; }
+    .dh-head .face-svg { position:relative; left:auto; top:auto; width:86%; transform:none; }
+    .dh-mouth { position:absolute; bottom:18px; font-size:40px; transform-origin:center; }
+    .dh-mouth.on { animation: talk .28s infinite; }
+    .dh-head.real { width:220px; height:280px; border-radius:20px; background:#0f172a; }
+    .dh-head.real .face-svg, .dh-head.real .dh-mouth, .dh-head.real > img:not(.dh-real) { display:none; }
+    .dh-head .dh-real { display:none; position:absolute; left:-210px; top:-30px; width:auto; height:672px; max-width:none; transform-origin:50% 70%; }
+    .dh-head.real .dh-real { display:block; }
+    .dh-head.vid { width:min(100%,360px); height:auto; aspect-ratio:480/432; background:#020617 var(--dh-poster, url(digital-human-real/video/idle.jpg)) center/cover no-repeat; }
+    .dh-head.vid > *:not(.dh-vid) { visibility:hidden; }
+    .dh-vid { position:absolute; inset:0; }
+    .dh-vid video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .25s linear; }
+    .dh-vid video.on { opacity:1; }
+    .dh-vid .dh-cup { position:absolute; right:8px; bottom:8px; width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,.3);
+      background:rgba(15,23,42,.7); color:#fff; font-size:18px; display:grid; place-items:center; cursor:pointer; z-index:2; }
+    .face-stage {
+      position: relative; overflow: hidden; border-radius: 16px;
+      border: 1px solid var(--border); background: #020617; margin-bottom: 10px;
+    }
+    .face-stage img { width: 100%; aspect-ratio: 3/4; max-height: 360px; object-fit: cover; display: block; }
+    .face-layer {
+      position: absolute; left: 0; right: 0; bottom: 0; top: 42%;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(2,6,23,.35), transparent);
+    }
+    .face-svg { position: absolute; left: 50%; top: 38%; width: 58%; transform: translate(-50%,-20%); }
+    .emo-tag {
+      position: absolute; left: 10px; bottom: 10px;
+      padding: 6px 10px; border-radius: 999px; font-size: 11px; font-weight: 800;
+      background: rgba(15,23,42,.82); border: 1px solid #334155;
+    }
+    .face-stage.emo-happy .face-svg { filter: saturate(1.2); }
+    .face-stage.emo-angry { box-shadow: inset 0 0 40px rgba(239,68,68,.25); }
+    .face-stage.emo-sad { box-shadow: inset 0 0 40px rgba(59,130,246,.2); }
+    .face-stage.emo-think { box-shadow: inset 0 0 40px rgba(168,85,247,.2); }
+    .face-stage.emo-wow { box-shadow: inset 0 0 40px rgba(245,158,11,.25); }
+    .face-stage.talking img { animation: faceTalk 0.28s infinite; }
+    @keyframes faceTalk {
+      0%,100% { transform: scale(1) translateY(0); filter: brightness(1); }
+      50% { transform: scale(1.015) translateY(1px); filter: brightness(1.08); }
+    }
+    @keyframes blink { 0%, 88%, 100% { transform: scaleY(1); } 92% { transform: scaleY(.12); } }
+    @keyframes talk { 0%,100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+    .eye { transform-origin: center; animation: blink 3.4s infinite; }
+    .mouth.talking { transform-origin: center; animation: talk .28s infinite; }
+    body.showcase .dh-avatar { margin-top: 4px; }
+    body.showcase .dh-head.vid { width: 100%; max-width: 420px; border-radius: 22px; box-shadow: 0 10px 40px rgba(99,102,241,.25), 0 0 0 1px rgba(148,163,184,.15); }
+    .sc-hero { text-align: center; padding: 6px 4px 10px; }
+    .sc-badge { display: inline-block; font-size: 11px; letter-spacing: .08em; padding: 3px 10px; border-radius: 999px; background: rgba(99,102,241,.15); color: #a5b4fc; border: 1px solid rgba(129,140,248,.3); }
+    .sc-title { margin: 8px 0 2px; font-size: 28px; font-weight: 800; background: linear-gradient(90deg,#e0e7ff,#a5b4fc 50%,#f0abfc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .sc-tag { margin: 0; color: #cbd5e1; font-size: 15px; }
+    .sc-feats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 12px 0; }
+    .sc-f { background: rgba(15,23,42,.7); border: 1px solid rgba(148,163,184,.18); border-radius: 14px; padding: 8px 4px; text-align: center; font-size: 11px; color: #cbd5e1; line-height: 1.3; }
+    .sc-f b { display: block; font-size: 20px; margin-bottom: 2px; }
+    .sc-live { background: linear-gradient(90deg,#6366f1,#a855f7) !important; color: #fff !important; box-shadow: 0 6px 20px rgba(139,92,246,.4); }
+    .sc-manage { text-align: center; margin: 18px 0 110px; font-size: 13px; }
+    .sc-manage a { color: #94a3b8; text-decoration: none; border: 1px solid rgba(148,163,184,.25); padding: 6px 14px; border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="icon-btn" id="btnBack" type="button">←</button>
+    <button class="pill ghost" id="btnHome" type="button">Home</button>
+    <div class="grow">
+      <h1 id="hdrTitle">AIVAULT Digital Human</h1>
+      <p id="hdrSub">建立、管理與使用你的 AI 數位人。</p>
+    </div>
+    <button class="pill" id="btnPrimary" type="button">＋ 建立數位人</button>
+  </header>
+
+  <main class="wrap" id="app"></main>
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    const SUPABASE_URL = 'https://svtkpdmqemidlasowqew.supabase.co';
+    const SUPABASE_ANON_KEY = window.__dhAnon = 'sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf';
+    const FN = (name) => `${SUPABASE_URL}/functions/v1/${name}`;
+
+    const FALLBACK_PROVIDERS = [
+      { code: 'groq', name: 'Groq', models: ['openai/gpt-oss-120b', 'llama-3.3-70b-versatile'] },
+      { code: 'gemini', name: 'AIVAULT AI', models: ['gemini-2.5-flash'] },
+      { code: 'gemini3', name: 'AIVAULT AI 3', models: ['gemini-2.5-flash'] },
+      { code: 'gemini2', name: 'AIVAULT AI 2', models: ['gemini-2.5-flash'] },
+      { code: 'openai', name: 'OpenAI', models: ['gpt-4o-mini'] }
+    ];
+    const DEFAULT_MODELS = {
+      groq: ['openai/gpt-oss-120b', 'llama-3.3-70b-versatile'],
+      gemini: ['gemini-2.5-flash'],
+      gemini2: ['gemini-2.5-flash'],
+      gemini3: ['gemini-2.5-flash'],
+      openai: ['gpt-4o-mini']
+    };
+    const TONES = ['自然', '專業', '親切', '正式', '活潑'];
+    const LANGS = [
+      { v: 'zh-Hant', l: '繁體中文' },
+      { v: 'zh-Hans', l: '簡體中文' },
+      { v: 'en', l: 'English' },
+      { v: 'auto', l: '自動' }
+    ];
+    const VIDEO_PROVIDERS = [
+      { code: 'magic-hour', name: 'Magic Hour', test: 'magic-hour-test', result: 'magic-hour-result' }
+    ];
+
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    // ===== 數字人外觀設定（資料驅動）：digital-human-real/avatars.json，?avatar=id 選擇，預設第一個（暗星）=====
+    const AVATAR = await (async () => {
+      const want = new URLSearchParams(location.search).get('avatar');
+      try { const j = await (await fetch('digital-human-real/avatars.json?v=202610161623&t=' + Date.now(), { cache: 'no-store' })).json(); const L = (j && j.avatars) || []; return L.find(a => a.id === want) || L[0] || null; }
+      catch { return null; }
+    })() || { id: 'darkstar', name: '暗星', title: 'Technical Dark Star 暗星', tagline: '你的 AI 夥伴，會聽、會看、會聊天', lang: 'zh-Hant', liveVoice: 'Aoede', brain: { provider: 'groq', model: 'openai/gpt-oss-120b' } };
+    window.__dhAvatar = AVATAR;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, storage: window.localStorage }
+    });
+
+    let session = null;
+    let humans = [];
+    let current = null;
+    let assets = { image: [], voice: [], video: [] };
+    let providers = FALLBACK_PROVIDERS.slice();
+    let draft = blankDraft();
+    let chatLog = [];
+    let lastSpoken = -1;
+    let voiceChatOn = true;
+    let isSpeaking = false;
+    let voiceMode = sessionStorage.getItem('dh_voice_mode') || 'device';
+    let mineAudio = null;
+    let currentEmotion = 'calm';
+    let singing = false;
+    let scriptDraft = '';
+    let chatClip = null;
+    let recordingVideo = false;
+    const SCRIPT_PRESETS = [
+      { t: '打招呼', s: '你好，我是你的數位人，今天過得怎麼樣？' },
+      { t: '自我介紹', s: '我是你專屬的 AI 數位人。我可以陪你聊天、回答問題，也可以唱歌給你聽。' },
+      { t: '安慰', s: '沒關係，慢慢來。我在這裡陪你，你想說什麼都可以。' },
+      { t: '鼓勵', s: '你已經做得很好了。先休息一下，我們再一起想下一步。' },
+      { t: '道晚安', s: '今天也辛苦了。好好睡覺，明天再繼續。晚安。' },
+      { t: '唱歌', s: '唱一首溫柔的短歌給我聽' }
+    ];
+
+    function blankDraft() {
+      return {
+        name: '',
+        description: '',
+        human_id: null,
+        selected_image_id: null,
+        selected_voice_id: null,
+        brain_provider: 'groq',
+        brain_model: 'openai/gpt-oss-120b',
+        video_provider: 'magic-hour',
+        persona_role: 'AIVAULT AI Assistant',
+        persona_tone: '自然',
+        persona_lang: 'zh-Hant',
+        video_enabled: true,
+        voice_enabled: true
+      };
+    }
+    function persistDraft() {
+      try {
+        localStorage.setItem('dh_draft', JSON.stringify(draft));
+        if (draft.human_id) localStorage.setItem('dh_human_id', draft.human_id);
+        const step = sessionStorage.getItem('dh_step');
+        if (step) localStorage.setItem('dh_step', step);
+      } catch {}
+    }
+    function restoreDraft() {
+      try {
+        const raw = localStorage.getItem('dh_draft');
+        if (raw) draft = { ...blankDraft(), ...JSON.parse(raw) };
+        const hid = localStorage.getItem('dh_human_id') || sessionStorage.getItem('dh_human_id');
+        if (hid) { draft.human_id = hid; sessionStorage.setItem('dh_human_id', hid); }
+        const step = localStorage.getItem('dh_step') || sessionStorage.getItem('dh_step');
+        if (step) sessionStorage.setItem('dh_step', step);
+      } catch {}
+    }
+    restoreDraft();
+
+    function toast(text) {
+      const el = document.getElementById('toast');
+      el.textContent = text;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2400);
+    }
+    function esc(v) {
+      return String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+    }
+    function route() {
+      const hash = (location.hash || '#/').replace(/^#/, '');
+      const parts = hash.split('/').filter(Boolean);
+      if (!parts.length) return { name: 'showcase' };
+      if (parts[0] === 'manage') return { name: 'list' };
+      const segs = parts[0] === 'digital-human' || parts[0] === 'dh' ? parts.slice(1) : parts;
+      if (!segs.length) return { name: 'showcase' };
+      if (segs[0] === 'create') return { name: 'create', step: Number(new URLSearchParams(location.search).get('step') || 1) };
+      const id = segs[0];
+      const sub = segs[1] || 'dash';
+      return { name: sub, id };
+    }
+    function go(path) {
+      location.hash = path.startsWith('#') ? path : '#' + path;
+    }
+
+    async function authHeader() {
+      const { data } = await sb.auth.getSession();
+      session = data.session;
+      const token = session?.access_token || SUPABASE_ANON_KEY;
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'apikey': SUPABASE_ANON_KEY
+      };
+    }
+
+    function errText(data, fallback) {
+      return data?.error || data?.message || data?.msg || data?.code || data?.detail || fallback;
+    }
+
+    async function callFn(name, body) {
+      const res = await fetch(FN(name), {
+        method: 'POST',
+        headers: await authHeader(),
+        body: JSON.stringify(body || {})
+      });
+      let data = {};
+      try { data = await res.json(); } catch {}
+      if (!res.ok) throw new Error(errText(data, `${name} HTTP ${res.status}`));
+      if (data && data.ok === false && (data.error || data.code)) throw new Error(errText(data, 'request failed'));
+      return data;
+    }
+
+    async function callFnForm(name, form) {
+      const { data } = await sb.auth.getSession();
+      session = data.session;
+      const token = session?.access_token || SUPABASE_ANON_KEY;
+      const res = await fetch(FN(name), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'apikey': SUPABASE_ANON_KEY
+        },
+        body: form
+      });
+      let data2 = {};
+      try { data2 = await res.json(); } catch {}
+      if (!res.ok) throw new Error(errText(data2, `${name} HTTP ${res.status}`));
+      if (data2 && data2.ok === false && (data2.error || data2.code)) throw new Error(errText(data2, 'request failed'));
+      return data2;
+    }
+
+    function unwrapList(data, keys = ['items', 'data', 'records', 'humans', 'assets', 'videos', 'images', 'voices']) {
+      if (Array.isArray(data)) return data;
+      for (const k of keys) if (Array.isArray(data?.[k])) return data[k];
+      if (Array.isArray(data?.result)) return data.result;
+      return [];
+    }
+    function unwrapOne(data) {
+      return data?.asset || data?.result || data?.human || data?.item || data?.record || data?.data || data?.digital_human || data;
+    }
+
+    async function saveHuman(payload) {
+      const attempts = [
+        payload,
+        { action: payload.action || (payload.id ? 'update' : 'create'), ...payload },
+        { op: payload.action || (payload.id ? 'update' : 'create'), ...payload }
+      ];
+      let lastErr;
+      for (const body of attempts) {
+        try { return unwrapOne(await callFn('digital-human-save', body)); }
+        catch (e) { lastErr = e; }
+      }
+      throw lastErr;
+    }
+
+    async function listHumans() {
+      let list = [];
+      try {
+        const { data, error } = await sb.from('digital_humans').select('*').order('created_at', { ascending: false });
+        if (!error && Array.isArray(data)) list = data;
+      } catch {}
+      if (!list.length) {
+        const attempts = [{ action: 'list' }, { op: 'list' }, { type: 'list' }];
+        for (const body of attempts) {
+          try {
+            const data = await callFn('digital-human-save', body);
+            const rows = unwrapList(data);
+            if (rows.length) { list = rows; break; }
+          } catch {}
+        }
+      }
+      const imgs = await listAssets('image');
+      const voices = await listAssets('voice');
+      assets.image = imgs;
+      assets.voice = voices;
+      const out = [];
+      for (const h of list) {
+        const img = imgs.find(x => String(x.id) === String(h.selected_image_id))
+          || imgs.find(x => String(x.digital_human_id) === String(h.id))
+          || imgs[0];
+        const voice = voices.find(x => String(x.id) === String(h.selected_voice_id))
+          || voices.find(x => String(x.digital_human_id) === String(h.id))
+          || voices[0];
+        const row = {
+          ...h,
+          preview_url: imageUrl(img) || h.preview_url || '',
+          selected_image_id: h.selected_image_id || img?.id || null,
+          selected_voice_id: h.selected_voice_id || voice?.id || null
+        };
+        if (row.id && img?.id && !h.selected_image_id) {
+          try { await callFn('digital-human-asset', { action:'select_image', digital_human_id: row.id, image_id: img.id }); } catch {}
+        }
+        if (row.id && voice?.id && !h.selected_voice_id) {
+          try { await callFn('digital-human-asset', { action:'select_voice', digital_human_id: row.id, voice_id: voice.id }); } catch {}
+        }
+        out.push(row);
+      }
+      return out;
+    }
+
+    async function getHuman(id) {
+      try {
+        const data = await callFn('digital-human-asset', { action: 'get_human', digital_human_id: id, id });
+        const one = unwrapOne(data);
+        if (one && (one.id || one.name)) return one;
+      } catch {}
+      const attempts = [
+        { action: 'get', id },
+        { action: 'get_human', digital_human_id: id },
+        { id }
+      ];
+      for (const body of attempts) {
+        try {
+          const one = unwrapOne(await callFn('digital-human-save', body));
+          if (one && (one.id || one.name)) return one;
+        } catch {}
+      }
+      return humans.find(h => String(h.id) === String(id)) || { id };
+    }
+
+    async function listAssets(kind, humanId) {
+      const table = kind === 'voice' ? 'digital_human_voices' : kind === 'video' ? 'ai_videos' : 'digital_human_images';
+      let rows = [];
+      try {
+        let q = sb.from(table).select('*').order('created_at', { ascending: false });
+        if (humanId) q = q.eq('digital_human_id', humanId);
+        const { data, error } = await q;
+        if (!error && Array.isArray(data)) rows = data;
+        if (!rows.length && humanId) {
+          const all = await sb.from(table).select('*').order('created_at', { ascending: false });
+          if (!all.error && Array.isArray(all.data)) rows = all.data;
+        }
+      } catch {}
+      if (!rows.length) {
+        try {
+          const data = await callFn('digital-human-asset', { action: 'list_assets', digital_human_id: humanId });
+          const pack = data.result || data;
+          rows = kind === 'voice' ? (pack.voices || []) : kind === 'video' ? (pack.videos || []) : (pack.images || []);
+        } catch {}
+      }
+      if (rows.length) return await hydrateAssets(kind === 'voice' ? 'voice' : 'image', rows);
+      try {
+        const key = kind === 'voice' ? 'dh_last_voices' : kind === 'image' ? 'dh_last_images' : '';
+        if (key) return JSON.parse(sessionStorage.getItem(key) || '[]');
+      } catch {}
+      return [];
+    }
+
+    function rememberHumanId(id) {
+      if (!id) return;
+      draft.human_id = id;
+      try { sessionStorage.setItem('dh_human_id', id); } catch {}
+    }
+
+    async function updateBrain(id) {
+      const payload = {
+        action: 'update_human',
+        id,
+        digital_human_id: id,
+        brain_provider: draft.brain_provider,
+        provider: draft.brain_provider,
+        brain_model: draft.brain_model,
+        model: draft.brain_model,
+        personality: {
+          role: draft.persona_role || 'AIVAULT AI Assistant',
+          style: draft.persona_tone || '自然',
+          language: draft.persona_lang || 'zh-Hant'
+        }
+      };
+      try {
+        return unwrapOne(await callFn('digital-human-asset', payload));
+      } catch {
+        return unwrapOne(await callFn('digital-human-save', { ...payload, action: 'update' }));
+      }
+    }
+
+    async function ensureHumanId() {
+      if (current?.id) { rememberHumanId(current.id); return current.id; }
+      if (draft.human_id) return draft.human_id;
+      try {
+        const sid = sessionStorage.getItem('dh_human_id');
+        if (sid) { draft.human_id = sid; return sid; }
+      } catch {}
+      const existing = await listHumans();
+      if (existing[0]?.id) {
+        rememberHumanId(existing[0].id);
+        current = existing[0];
+        return existing[0].id;
+      }
+      if (!draft.name?.trim()) throw new Error('請先填寫數位人名稱');
+      const created = unwrapOne(await callFn('digital-human-asset', {
+        action: 'create_human',
+        name: draft.name.trim(),
+        description: draft.description || 'AIVAULT 數位人',
+        brain_provider: draft.brain_provider,
+        brain_model: draft.brain_model,
+        personality: {
+          role: draft.persona_role || 'AIVAULT AI Assistant',
+          style: draft.persona_tone || '自然',
+          language: draft.persona_lang || 'zh-Hant'
+        },
+        settings: { video_enabled: true, voice_enabled: true }
+      }));
+      const id = created?.id;
+      if (!id) throw new Error('無法建立數位人，缺少 id');
+      rememberHumanId(id);
+      current = { ...(current || {}), ...created, id };
+      return id;
+    }
+
+    async function uploadAsset(kind, file, humanId) {
+      const id = humanId || await ensureHumanId();
+      const action = kind === 'voice' ? 'upload_voice' : 'upload_image';
+      const form = new FormData();
+      form.append('action', action);
+      form.append('digital_human_id', id);
+      form.append('name', file.name || (kind === 'voice' ? 'Digital Human Voice' : 'Digital Human Image'));
+      form.append('description', draft.description || '');
+      form.append('file', file, file.name);
+      const data = await callFnForm('digital-human-asset', form);
+      const one = unwrapOne(data);
+      if (!one || (!one.id && !one.storage_path)) throw new Error('上傳成功但沒有回傳資產');
+      const local = URL.createObjectURL(file);
+      const item = { ...one, preview_url: pickUrl(one) || pickUrl(data) || local, local_url: local };
+      try {
+        const key = kind === 'voice' ? 'dh_last_voices' : 'dh_last_images';
+        const prev = JSON.parse(sessionStorage.getItem(key) || '[]');
+        prev.unshift({ id: item.id, name: item.name, preview_url: item.preview_url, digital_human_id: id });
+        sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 12)));
+      } catch {}
+      return item;
+    }
+
+    async function deleteAsset(id, kind) {
+      const hid = current?.id || draft.human_id;
+      const action = kind === 'voice' ? 'delete_voice' : 'delete_image';
+      const table = kind === 'voice' ? 'digital_human_voices' : 'digital_human_images';
+      const body = { action, digital_human_id: hid, id };
+      if (kind === 'voice') body.voice_id = id; else body.image_id = id;
+      try {
+        return await callFn('digital-human-delete', body);
+      } catch (e) {
+        const { error } = await sb.from(table).delete().eq('id', id);
+        if (!error) return { success: true, deleted: true };
+        throw new Error('刪除服務還沒部署：Supabase 建立 Function 名稱 digital-human-delete');
+      }
+    }
+
+
+    async function startVideo(human, prompt, settings) {
+      const provider = VIDEO_PROVIDERS.find(p => p.code === (human.video_provider || draft.video_provider)) || VIDEO_PROVIDERS[0];
+      const body = {
+        prompt,
+        digital_human_id: human.id,
+        selected_image_id: human.selected_image_id,
+        selected_voice_id: human.selected_voice_id,
+        duration: settings.duration,
+        aspect_ratio: settings.ratio,
+        resolution: settings.resolution,
+        voice_enabled: !!human.voice_enabled,
+        provider: provider.code
+      };
+      return callFn(provider.test, body);
+    }
+
+    async function pollVideo(job) {
+      const provider = VIDEO_PROVIDERS[0];
+      const id = job.job_id || job.id || job.request_id || job.video_id;
+      return callFn(provider.result, { job_id: id, id, request_id: id });
+    }
+
+    function modelsOf(code) {
+      const p = providers.find(x => x.code === code);
+      const list = (p?.models && p.models.length) ? p.models : (DEFAULT_MODELS[code] || DEFAULT_MODELS.groq);
+      return list.filter(Boolean);
+    }
+
+    async function loadProviders() {
+      const attempts = [
+        { action: 'providers' },
+        { action: 'list_providers' },
+        { op: 'providers' },
+        { type: 'providers' }
+      ];
+      for (const body of attempts) {
+        try {
+          const data = await callFn('ai-gateway', body);
+          const list = unwrapList(data, ['providers', 'items', 'data']);
+          if (!list.length) continue;
+          const mapped = list.map(p => ({
+            code: p.code || p.id || p.provider,
+            name: p.name || p.code || p.provider,
+            models: p.models || p.model_list || DEFAULT_MODELS[p.code || p.id || p.provider] || []
+          })).filter(p => p.code);
+          if (mapped.length) {
+            providers = mapped.map(p => ({
+              ...p,
+              models: (p.models && p.models.length) ? p.models : (DEFAULT_MODELS[p.code] || [])
+            }));
+            return;
+          }
+        } catch {}
+      }
+      providers = FALLBACK_PROVIDERS.slice();
+    }
+
+    function pickUrl(item) {
+      if (!item || typeof item !== 'object') return '';
+      const meta = item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
+      const raw = item.local_url || item.preview_url || item.public_url || item.signed_url || item.url || item.image_url || item.audio_url
+        || meta.preview_url || meta.public_url || meta.signed_url || meta.url || '';
+      return normalizeMediaUrl(raw);
+    }
+    function normalizeMediaUrl(u) {
+      if (!u || typeof u !== 'string') return '';
+      let s = u.trim();
+      s = s.replace(SUPABASE_URL + '/storage/v1' + SUPABASE_URL, SUPABASE_URL);
+      s = s.replace('/storage/v1https://', 'https://');
+      if (s.startsWith('/storage/v1')) s = SUPABASE_URL + s;
+      else if (s.startsWith('/object/')) s = SUPABASE_URL + '/storage/v1' + s;
+      if (!/^https?:\/\//i.test(s) && !s.startsWith('blob:')) return '';
+      return s;
+    }
+    async function signPath(kind, path) {
+      if (!path) return '';
+      const buckets = kind === 'voice'
+        ? ['aivault-digital-human-voices', 'digital-human-voices']
+        : ['aivault-digital-human-images', 'digital-human-images'];
+      for (const bucket of buckets) {
+        try {
+          const { data } = await sb.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24);
+          if (data?.signedUrl) return data.signedUrl;
+        } catch {}
+      }
+      try {
+        const data = await callFn('digital-human-asset', {
+          action: 'list_assets',
+          storage_path: path,
+          kind
+        });
+        const pack = data.result || data;
+        const rows = kind === 'voice' ? (pack.voices || []) : (pack.images || pack.assets || []);
+        const hit = (rows || []).find(r => r.storage_path === path) || pack;
+        return pickUrl(hit);
+      } catch {}
+      return '';
+    }
+    function isExpiredSigned(u) {
+      if (!u || typeof u !== 'string') return true;
+      if (u.startsWith('blob:')) return false;
+      try {
+        const q = new URL(u);
+        const tokenTime = q.searchParams.get('token');
+        void tokenTime;
+      } catch {}
+      return false;
+    }
+    async function hydrateAssets(kind, list) {
+      const out = [];
+      for (const x of list || []) {
+        const item = { ...x };
+        item.preview_url = '';
+        if (x.storage_path) item.preview_url = await signPath(kind, x.storage_path);
+        if (!item.preview_url) {
+          const old = pickUrl(x);
+          item.preview_url = old.startsWith('blob:') ? old : (await signPath(kind, x.storage_path)) || old;
+        }
+        item.signed_at = Date.now();
+        out.push(item);
+      }
+      return out;
+    }
+    function imageUrl(item) {
+      if (!item) return '';
+      return item.preview_url || item.local_url || pickUrl(item);
+    }
+    window.__resignImg = async function (el) {
+      if (!el || el.dataset.tried === '1') {
+        el.style.display = 'none';
+        if (el.nextElementSibling) el.nextElementSibling.style.display = 'grid';
+        return;
+      }
+      el.dataset.tried = '1';
+      const path = el.dataset.path;
+      const fresh = path ? await signPath('image', path) : '';
+      if (fresh) el.src = fresh;
+      else {
+        el.style.display = 'none';
+        if (el.nextElementSibling) el.nextElementSibling.style.display = 'grid';
+      }
+    };
+    function voiceUrl(item) { return pickUrl(item); }
+    function videoUrl(item) {
+      return item?.mp4_url || item?.video_url || item?.public_url || item?.url || item?.download_url || '';
+    }
+    function statusLabel(h) {
+      return h.status || (h.selected_image_id ? '就緒' : '草稿');
+    }
+
+    function setHeader(title, sub, primaryLabel, onPrimary) {
+      document.getElementById('hdrTitle').textContent = title;
+      document.getElementById('hdrSub').textContent = sub || '';
+      const btn = document.getElementById('btnPrimary');
+      if (!primaryLabel) { btn.classList.add('hidden'); btn.onclick = null; return; }
+      btn.classList.remove('hidden');
+      btn.textContent = primaryLabel;
+      btn.onclick = onPrimary;
+    }
+
+    async function deleteHuman(id) {
+      if (!id) return;
+      try {
+        await callFn('digital-human-delete', { action: 'delete_human', digital_human_id: id, id });
+      } catch (e) {
+        const msg = String(e.message || e);
+        if (/404|NOT_FOUND/i.test(msg)) throw new Error('刪除服務尚未部署。請在 Supabase 新增 Function：digital-human-delete');
+        throw e;
+      }
+      if (draft.human_id === id) {
+        draft.human_id = null;
+        localStorage.removeItem('dh_human_id');
+        sessionStorage.removeItem('dh_human_id');
+      }
+      humans = humans.filter(h => String(h.id) !== String(id));
+    }
+
+    function homeBar(id) {
+      const hid = id || humans[0]?.id || '';
+      return `
+        <div class="card" style="margin-bottom:12px;">
+          <h3 style="margin:0 0 8px;">數位人首頁</h3>
+          <div class="row">
+            <button class="pill" type="button" onclick="location.href='aivault-home.html'">工作中心</button>
+            <button class="pill ghost" type="button" onclick="location.href='aivault-3d-stage.html'">3D 舞台</button>
+            <button class="pill ghost" type="button" onclick="location.href='aivault-voice-studio.html'">聲音克隆室</button>
+            <button class="pill" type="button" onclick="location.href='digital-human-real/digital-human-real.html'">🎭 真人表情包測試</button>
+            <button class="pill ghost" type="button" onclick="location.href='aivault-home.html'">Home</button>
+            ${hid ? `<button class="pill" data-go="/${hid}/chat">對話</button>
+            <button class="pill ghost" data-go="/${hid}/video">影片</button>
+            <button class="pill ghost" data-go="/${hid}/images">照片</button>
+            <button class="pill ghost" data-go="/${hid}/voices">聲音</button>` : ''}
+          </div>
+        </div>`;
+    }
+
+    function renderList() {
+      setHeader('AIVAULT 數位人首頁', `已上傳 ${humans.length} 位`, '＋ 建立數位人', () => go('/create'));
+      if (!humans.length) {
+        document.getElementById('app').innerHTML = `
+          <div class="hero">
+            <div class="empty">
+              <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:8px;">還沒有建立數位人</div>
+              <p class="muted">自訂外觀、聲音與 AI 大腦，讓不同 Provider 成為智慧核心。</p>
+              <div class="row" style="margin-top:16px;">
+                <button class="pill" id="btnFirst">建立我的第一個數位人</button>
+              </div>
+            </div>
+          </div>`;
+        document.getElementById('btnFirst').onclick = () => go('/create');
+        document.getElementById('app').insertAdjacentHTML('afterbegin', homeBar(''));
+        return;
+      }
+      document.getElementById('app').innerHTML = homeBar(humans[0].id) + humans.map(h => `
+        <article class="card">
+          ${imageUrl(h) || h.preview_url ? `<img class="thumb" alt="" src="${esc(imageUrl(h) || h.preview_url)}"/>` : `<div class="preview-ph">尚未設定外觀</div>`}
+          
+          <div class="row" style="margin:8px 0;">
+            <span class="chip on">${esc(statusLabel(h))}</span>
+            <span class="chip">${esc(h.brain_provider || h.provider || '—')}</span>
+            <span class="chip">${esc(h.brain_model || h.model || '—')}</span>
+            <span class="chip">${h.selected_voice_id ? '聲音已設定' : '尚無聲音'}</span>
+            <span class="chip">${h.video_enabled === false ? '影片關閉' : '影片開啟'}</span>
+          </div>
+          <div class="row">
+            <button class="pill ghost" data-go="/${esc(h.id)}/images">補照片</button>
+            <button class="pill ghost" data-go="/${esc(h.id)}/voices">補聲音</button>
+            <button class="pill ghost" data-go="/${esc(h.id)}">管理</button>
+            <button class="pill" data-go="/${esc(h.id)}/chat">開始 AI 對話</button>
+            <button class="pill ghost" data-go-stage="${esc(h.id)}">3D 舞台</button>
+            <button class="pill ghost" data-go="/${esc(h.id)}/video">產生影片</button>
+            <button class="pill danger" data-del-human="${esc(h.id)}">刪除</button>
+          </div>
+        </article>
+      `).join('');
+      document.getElementById('app').insertAdjacentHTML('afterbegin', `<p class="muted">管理：目前 ${humans.length} 位數位人。刪除會連同該筆圖片與聲音。</p>`);
+    }
+
+    function renderCreate() {
+      const step = Number(sessionStorage.getItem('dh_step') || '1');
+      setHeader('建立數位人', `步驟 ${step} / 4 · 已有 ${humans.length} 位`, step === 4 ? '建立數位人' : '下一步', onCreatePrimary);
+      const stepHtml = [1,2,3,4].map(n => `<span class="${n===step?'on':''}">${n===1?'基本資料':n===2?'外觀':n===3?'聲音':'AI 大腦'}</span>`).join('');
+      let body = '';
+      if (step === 1) {
+        body = `
+          <label>數位人名稱</label>
+          <input id="fName" value="${esc(draft.name)}" placeholder="例如：AIVAULT AI" />
+          <label>描述</label>
+          <textarea id="fDesc" placeholder="這位數位人的用途與風格">${esc(draft.description)}</textarea>`;
+      } else if (step === 2) {
+        body = `
+          <h3>選擇你的數位人外觀</h3>
+          <div class="row" style="margin:12px 0;">
+            <button class="pill" id="btnUpImg" type="button">＋ 上傳圖片</button>
+            <input id="fileImg" class="hidden" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" />
+            <button class="pill ghost" id="btnScan" type="button">臉部掃描台</button>
+            <button class="pill ghost" id="btnCam" type="button">拍照</button>
+            <button class="pill ghost" id="btnClip" type="button">短視訊驗證</button>
+            <input id="fileCam" class="hidden" type="file" accept="image/*" capture="user" />
+            <input id="fileClip" class="hidden" type="file" accept="video/*" capture="user" />
+          </div>
+          <video id="camPrev" playsinline muted style="display:none;width:100%;border-radius:12px;background:#000;"></video>
+          <canvas id="camShot" class="hidden"></canvas>
+          <div class="grid two" id="imgGrid"></div>`;
+      } else if (step === 3) {
+        body = `
+          <h3>選擇你的數位人聲音</h3>
+          <div class="row" style="margin:12px 0;">
+            <button class="pill" id="btnUpVoice" type="button">＋ 上傳聲音</button>
+            <input id="fileVoice" class="hidden" type="file" accept="audio/mpeg,audio/wav,audio/mp4,audio/ogg,audio/webm,.mp3,.wav,.m4a,.ogg,.webm" />
+          </div>
+          <div class="grid" id="voiceGrid"></div>`;
+      } else {
+        const img = assets.image.find(x => String(x.id) === String(draft.selected_image_id)) || assets.image[0];
+        const voice = assets.voice.find(x => String(x.id) === String(draft.selected_voice_id)) || assets.voice[0];
+        const imgSrc = imageUrl(img);
+        const vSrc = voiceUrl(voice);
+        body = `
+          <div class="card" style="margin:0 0 12px;padding:12px;">
+            <h3>已選外觀與聲音</h3>
+            ${imgSrc ? `<img class="preview" style="max-height:220px;aspect-ratio:3/4;margin:8px 0;" alt="" src="${esc(imgSrc)}" onerror="this.style.display='none'"/>` : '<p class="muted">尚未帶入照片，可回「外觀」再選一次。</p>'}
+            <p class="muted">${esc((img && (img.name || img.filename)) || '未選照片')}</p>
+            ${vSrc ? `<audio controls preload="none" src="${esc(vSrc)}" style="width:100%;margin:8px 0;"></audio>` : '<p class="muted">尚未帶入聲音，可回「聲音」再選一次。</p>'}
+            <p class="muted">${esc((voice && (voice.name || voice.filename)) || '未選聲音')}</p>
+          </div>
+        ` + brainForm(draft) + personaForm(draft);
+      }
+      document.getElementById('app').innerHTML = `<div class="steps">${stepHtml}</div><div class="card">${body}</div>`;
+      bindCreate(step);
+    }
+
+    function brainForm(src) {
+      if (!providers.find(p => p.code === src.brain_provider) && providers[0]) src.brain_provider = providers[0].code;
+      const models = modelsOf(src.brain_provider);
+      if (!models.includes(src.brain_model)) src.brain_model = models[0] || src.brain_model;
+      const pOpts = providers.map(p => `<option value="${esc(p.code)}" ${p.code===src.brain_provider?'selected':''}>${esc(p.name)}</option>`).join('');
+      const mOpts = models.map(m => `<option value="${esc(m)}" ${m===src.brain_model?'selected':''}>${esc(m)}</option>`).join('');
+      return `
+        <label>AI 大腦 Provider</label>
+        <select id="fProvider">${pOpts}</select>
+        <label>AI Model</label>
+        <select id="fModel">${mOpts}</select>
+        <p class="muted" style="margin-top:8px;">Provider / Model 由後端可用清單載入，未綁死單一供應商。</p>`;
+    }
+    function personaForm(src) {
+      return `
+        <h3 style="margin-top:16px;">人格設定</h3>
+        <label>角色</label>
+        <input id="fRole" value="${esc(src.persona_role || 'AIVAULT AI Assistant')}" />
+        <label>語氣</label>
+        <select id="fTone">${TONES.map(t => `<option ${t===(src.persona_tone||'自然')?'selected':''}>${t}</option>`).join('')}</select>
+        <label>語言</label>
+        <select id="fLang">${LANGS.map(l => `<option value="${l.v}" ${l.v===(src.persona_lang||'zh-Hant')?'selected':''}>${l.l}</option>`).join('')}</select>`;
+    }
+
+    function bindCreate(step) {
+      if (step === 1) {
+        document.getElementById('fName').oninput = e => draft.name = e.target.value;
+        document.getElementById('fDesc').oninput = e => draft.description = e.target.value;
+      }
+      if (step === 2) {
+        document.getElementById('btnUpImg').onclick = () => document.getElementById('fileImg').click();
+        document.getElementById('fileImg').onchange = async (e) => {
+          const file = e.target.files?.[0]; if (!file) return;
+          toast('上傳圖片中…');
+          try {
+            const item = await uploadAsset('image', file, current?.id);
+            assets.image.unshift(item);
+            if (item.id) draft.selected_image_id = item.id;
+            await lockFace(current?.id || draft.human_id, imageUrl(item));
+            renderCreate();
+            toast('圖片已儲存');
+          } catch (err) { toast(err.message); }
+        };
+        renderImgCards();
+        const upFile = async (file) => {
+          if (!file) return;
+          toast('上傳中…');
+          try {
+            const item = await uploadAsset('image', file, current?.id || draft.human_id);
+            assets.image.unshift(item);
+            if (item.id) draft.selected_image_id = item.id;
+            persistDraft();
+            await lockFace(current?.id || draft.human_id, imageUrl(item));
+            renderCreate();
+            toast('已存檔');
+          } catch (err) { toast(err.message); }
+        };
+        document.getElementById('btnScan').onclick = () => { persistDraft(); location.href = 'aivault-face-scan.html'; };
+        document.getElementById('btnCam').onclick = () => document.getElementById('fileCam').click();
+        document.getElementById('fileCam').onchange = e => upFile(e.target.files?.[0]);
+        document.getElementById('btnClip').onclick = () => document.getElementById('fileClip').click();
+        document.getElementById('fileClip').onchange = async (e) => {
+          const file = e.target.files?.[0]; if (!file) return;
+          toast('擷取驗證畫面…');
+          try {
+            const url = URL.createObjectURL(file);
+            const v = document.getElementById('camPrev');
+            v.style.display='block'; v.src=url; v.muted=true;
+            await v.play().catch(()=>{});
+            await new Promise(r => setTimeout(r, 800));
+            const c = document.getElementById('camShot');
+            c.width = v.videoWidth || 720; c.height = v.videoHeight || 1280;
+            c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+            c.toBlob(async (blob) => {
+              if (!blob) return toast('無法擷取畫面');
+              await upFile(new File([blob], 'verify-face.jpg', { type:'image/jpeg' }));
+            }, 'image/jpeg', 0.9);
+          } catch (err) { toast(err.message); }
+        };
+      }
+      if (step === 3) {
+        document.getElementById('btnUpVoice').onclick = () => document.getElementById('fileVoice').click();
+        document.getElementById('fileVoice').onchange = async (e) => {
+          const file = e.target.files?.[0]; if (!file) return;
+          toast('上傳聲音中…');
+          try {
+            const item = await uploadAsset('voice', file, current?.id);
+            assets.voice.unshift(item);
+            if (item.id) draft.selected_voice_id = item.id;
+            await lockVoice(current?.id || draft.human_id, voiceUrl(item));
+            renderCreate();
+            toast('聲音已儲存');
+          } catch (err) { toast(err.message); }
+        };
+        renderVoiceCards();
+      }
+      if (step === 4) {
+        const bindBrain = (rerender) => {
+          document.getElementById('fProvider').onchange = async (e) => {
+            draft.brain_provider = e.target.value;
+            draft.brain_model = modelsOf(draft.brain_provider)[0] || draft.brain_model;
+            toast('已選擇 AI：' + draft.brain_provider);
+            const hid = current?.id || draft.human_id;
+            if (hid) { try { await updateBrain(hid); } catch {} }
+            rerender();
+          };
+          document.getElementById('fModel').onchange = async (e) => {
+            draft.brain_model = e.target.value;
+            toast('已選擇 Model：' + draft.brain_model);
+            const hid = current?.id || draft.human_id;
+            if (hid) { try { await updateBrain(hid); } catch {} }
+          };
+        };
+        bindBrain(renderCreate);
+        document.getElementById('fRole').oninput = e => draft.persona_role = e.target.value;
+        document.getElementById('fTone').onchange = e => draft.persona_tone = e.target.value;
+        document.getElementById('fLang').onchange = e => draft.persona_lang = e.target.value;
+      }
+    }
+
+    function renderImgCards() {
+      const grid = document.getElementById('imgGrid');
+      if (!grid) return;
+      if (!assets.image.length) {
+        grid.innerHTML = `<div class="empty">尚未上傳圖片</div>`;
+        return;
+      }
+      grid.innerHTML = assets.image.map(img => `
+        <div class="asset ${String(img.id)===String(draft.selected_image_id)?'selected':''}">
+          <img class="thumb" alt="" src="${esc(imageUrl(img))}"/>
+          <div style="margin-top:8px;font-weight:700;">${esc(img.name || img.filename || '圖片')}</div>
+          <div class="muted">${esc(img.created_at || '')}</div>
+          <div class="row" style="margin-top:8px;">
+            <button class="pill ${String(img.id)===String(draft.selected_image_id)?'':'ghost'}" data-pick-img="${esc(img.id)}">
+              ${String(img.id)===String(draft.selected_image_id)?'✓ 已選擇':'選擇'}
+            </button>
+            <button class="pill danger" data-del-img="${esc(img.id)}">刪除</button>
+          </div>
+        </div>`).join('');
+    }
+    function renderVoiceCards() {
+      const grid = document.getElementById('voiceGrid');
+      if (!grid) return;
+      if (!assets.voice.length) {
+        grid.innerHTML = `<div class="empty">尚未上傳聲音</div>`;
+        return;
+      }
+      grid.innerHTML = assets.voice.map(v => {
+        const url = voiceUrl(v);
+        return `
+        <div class="asset ${String(v.id)===String(draft.selected_voice_id)?'selected':''}">
+          <div style="font-weight:700;">${esc(v.name || v.filename || '聲音')}</div>
+          <div class="muted">${esc(v.mime_type || v.storage_path || '')}</div>
+          ${url ? `<audio controls preload="none" src="${esc(url)}" style="width:100%;margin-top:8px;" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'muted',textContent:'聲音已存檔，預覽連結失效，仍可選擇使用'}))"></audio>` : `<div class="muted" style="margin-top:8px;">聲音已存檔，預覽稍後再試</div>`}
+          <div class="row" style="margin-top:8px;">
+            <button class="pill ${String(v.id)===String(draft.selected_voice_id)?'':'ghost'}" data-pick-voice="${esc(v.id)}">
+              ${String(v.id)===String(draft.selected_voice_id)?'✓ 已選擇':'選擇'}
+            </button>
+            <button class="pill danger" data-del-voice="${esc(v.id)}">刪除</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    async function onCreatePrimary() {
+      const step = Number(sessionStorage.getItem('dh_step') || '1');
+      if (step === 1) {
+        if (!draft.name.trim()) return toast('請輸入數位人名稱');
+        try {
+          toast('建立數位人檔案…');
+          await ensureHumanId();
+        } catch (err) { return toast(err.message); }
+        sessionStorage.setItem('dh_step', '2'); persistDraft();
+        return renderCreate();
+      }
+      if (step < 4) {
+        sessionStorage.setItem('dh_step', String(step + 1)); persistDraft();
+        const hid = current?.id || draft.human_id;
+        if (hid) {
+          assets.image = await listAssets('image', hid);
+          assets.voice = await listAssets('voice', hid);
+        }
+        if (Number(sessionStorage.getItem('dh_step')) === 4) {
+          if (!draft.selected_image_id && assets.image[0]?.id) draft.selected_image_id = assets.image[0].id;
+          if (!draft.selected_voice_id && assets.voice[0]?.id) draft.selected_voice_id = assets.voice[0].id;
+          if (hid && draft.selected_image_id) {
+            try { await callFn('digital-human-asset', { action: 'select_image', digital_human_id: hid, image_id: draft.selected_image_id }); } catch {}
+          }
+          if (hid && draft.selected_voice_id) {
+            try { await callFn('digital-human-asset', { action: 'select_voice', digital_human_id: hid, voice_id: draft.selected_voice_id }); } catch {}
+          }
+        }
+        return renderCreate();
+      }
+      toast('儲存 AI 大腦…');
+      try {
+        const id = await ensureHumanId();
+        let saved = null;
+        try { saved = await updateBrain(id); } catch {}
+        try {
+          saved = await saveHuman({
+            action: 'update',
+            id,
+            digital_human_id: id,
+            name: draft.name,
+            description: draft.description,
+            selected_image_id: draft.selected_image_id,
+            selected_voice_id: draft.selected_voice_id,
+            brain_provider: draft.brain_provider,
+            provider: draft.brain_provider,
+            brain_model: draft.brain_model,
+            model: draft.brain_model,
+            video_provider: draft.video_provider,
+            persona_role: draft.persona_role,
+            persona_tone: draft.persona_tone,
+            persona_lang: draft.persona_lang,
+            video_enabled: draft.video_enabled,
+            voice_enabled: draft.voice_enabled,
+            status: 'ready'
+          });
+        } catch {}
+        sessionStorage.removeItem('dh_step');
+        toast('AI 大腦已設定');
+        go('/' + id);
+      } catch (err) { toast(err.message); }
+    }
+
+    function dashButtons(id) {
+      return `
+        <div class="row">
+          <button class="pill" data-go="/${id}/chat">開始 AI 對話</button>
+          <button class="pill ghost" data-go-voice="1">聲音克隆室</button>
+          <button class="pill ghost" data-go-stage="${id}">進入 3D 舞台</button>
+          <button class="pill ghost" data-go-warroom="${id}">開始數位人會議</button>
+          <button class="pill ghost" data-go="/${id}/video">產生影片</button>
+          <button class="pill ghost" data-go="/${id}/settings">管理設定</button>
+        </div>`;
+    }
+
+    function renderDash() {
+      const h = current || {};
+      const img = assets.image.find(x => String(x.id) === String(h.selected_image_id))
+        || assets.image.find(x => x.is_selected)
+        || assets.image[0];
+      setHeader('數位人', statusLabel(h), '管理設定', () => go(`/${h.id}/settings`));
+      document.getElementById('app').innerHTML = `
+        <div class="hero">
+          ${imageUrl(img||h) ? `<img class="preview" alt="" src="${esc(imageUrl(img||h))}" data-path="${esc((img||{}).storage_path||'')}" onerror="window.__resignImg&&window.__resignImg(this)"/><div class="preview-ph" style="display:none">照片已上傳，預覽連結失效<br><button class="pill" style="margin-top:12px;" data-go="/${esc(h.id)}/images">重新選擇圖片</button></div>` : `<div class="preview-ph">尚未設定數位人外觀<br><button class="pill" style="margin-top:12px;" data-go="/${esc(h.id)}/images">選擇圖片</button></div>`}
+          <div class="row" style="margin-top:12px;">
+            <span class="chip on">${esc(statusLabel(h))}</span>
+            <span class="chip">${esc(h.brain_provider || h.provider || '—')}</span>
+            <span class="chip">${esc(h.brain_model || h.model || '—')}</span>
+          </div>
+        </div>
+        ${dashButtons(esc(h.id))}
+        <div class="card">
+          <h3>AI 大腦</h3>
+          <p class="muted">Provider：${esc(h.brain_provider || h.provider || '未設定')}</p>
+          <p class="muted">Model：${esc(h.brain_model || h.model || '未設定')}</p>
+        </div>
+        <div class="card">
+          <h3>聲音</h3>
+          <p class="muted">目前聲音：${h.selected_voice_id ? '已選擇' : '尚未設定'}</p>
+          <button class="pill ghost" data-go="/${esc(h.id)}/voices">選擇聲音</button>
+        </div>
+        <div class="card">
+          <h3>外觀</h3>
+          <p class="muted">目前圖片：${h.selected_image_id ? '已選擇' : '尚未設定'}</p>
+          <button class="pill ghost" data-go="/${esc(h.id)}/images">選擇圖片</button>
+        </div>
+        <div class="card">
+          <h3>我的資產</h3>
+          <div class="row">
+            <button class="pill ghost" data-go="/${esc(h.id)}/images">圖片</button>
+            <button class="pill ghost" data-go="/${esc(h.id)}/voices">聲音</button>
+            <button class="pill ghost" data-go="/${esc(h.id)}/videos">影片</button>
+          </div>
+        </div>`;
+    }
+
+    function setSpeaking(on) {
+      isSpeaking = !!on;
+      if (!isSpeaking) { try { window.__dhVoice && window.__dhVoice.stopAll(); } catch {} }
+      document.querySelectorAll('.dh-mouth').forEach(el => el.classList.toggle('on', isSpeaking));
+      document.querySelectorAll('.mouth').forEach(el => el.classList.toggle('talking', isSpeaking));
+      document.querySelectorAll('.face-stage').forEach(el => el.classList.toggle('talking', isSpeaking));
+      document.querySelectorAll('.dh-head.real').forEach(el => {
+        el.classList.toggle('talking', isSpeaking);
+
+      });
+      if (isSpeaking) startMouth(); else stopMouth();
+      try { dhVid.update(); } catch {}
+      paintFace();
+    }
+    function stopTalk() {
+      setSpeaking(false);
+      try { window.speechSynthesis?.cancel(); } catch {}
+      try { mineAudio?.pause(); } catch {}
+      try { stopHum(); } catch {}
+    }
+
+    // 女聲清單（手機語音）：依名稱判斷
+    const DH_FEMALE_RE = /female|woman|girl|mei-?jia|ting-?ting|sin-?ji|hsiao|xiaoxiao|xiaoyi|xiaochen|xiaohan|xiaomo|xiaorui|xiaoshuang|yating|hanhan|huihui|yaoyao|zhiyu|hiumaan|tracy|google\s*(國語|普通话|粤語|粵語)|shan-?shan|li-?mu|yu-?shu|meijia|tingting/i;
+    function dhFemaleVoices() {
+      const voices = window.speechSynthesis?.getVoices?.() || [];
+      const zh = voices.filter(v => /zh|cmn|yue/i.test(v.lang));
+      const fem = zh.filter(v => DH_FEMALE_RE.test(v.name));
+      return (fem.length ? fem : zh).sort((a, b) => (/tw|hant/i.test(b.lang) ? 1 : 0) - (/tw|hant/i.test(a.lang) ? 1 : 0));
+    }
+    // Gemini Live 預設女聲（prebuilt voices）
+    const DH_LIVE_VOICES = [['Aoede','Aoede · 輕快'],['Kore','Kore · 堅定'],['Leda','Leda · 年輕'],['Zephyr','Zephyr · 明亮'],['Callirrhoe','Callirrhoe · 隨和'],['Despina','Despina · 柔順'],['Autonoe','Autonoe · 明亮'],['Erinome','Erinome · 清晰'],['Laomedeia','Laomedeia · 開朗'],['Achernar','Achernar · 柔和'],['Gacrux','Gacrux · 成熟'],['Pulcherrima','Pulcherrima · 直率'],['Vindemiatrix','Vindemiatrix · 溫柔'],['Sulafat','Sulafat · 溫暖']];
+    function dhLiveVoice() { try { return localStorage.getItem('dh_live_voice') || AVATAR.liveVoice || 'Aoede'; } catch { return AVATAR.liveVoice || 'Aoede'; } }
+
+    function pickTalkVoice(langHint) {
+      const voices = window.speechSynthesis?.getVoices?.() || [];
+      try { const saved = localStorage.getItem('dh_tts_voice'); const sv = saved && voices.find(v => v.voiceURI === saved || v.name === saved); if (sv) return sv; } catch {}
+      const want = (langHint || 'zh-TW').toLowerCase();
+      const zh = voices.filter(v => /zh|cmn|yue/i.test(v.lang));
+      const female = zh.find(v => /female|woman|girl|ting|mei|xia|han|yating|hanhan|meijia|sinji/i.test(v.name + v.lang));
+      return female || zh.find(v => v.lang.toLowerCase().startsWith(want)) || zh[0] || voices.find(v => v.lang.toLowerCase().startsWith('en')) || voices[0] || null;
+    }
+
+    function selectedVoiceItem() {
+      const h = current || {};
+      return assets.voice.find(x => String(x.id) === String(h.selected_voice_id))
+        || assets.voice.find(x => x.is_selected)
+        || assets.voice[0];
+    }
+
+    function playMyVoice() {
+      const v = selectedVoiceItem();
+      const url = voiceUrl(v);
+      if (!url) { toast('還沒有我的聲音，請先去聲音克隆室錄音'); return false; }
+      try { mineAudio?.pause(); } catch {}
+      mineAudio = new Audio(url);
+      (async () => {
+        const a = mineAudio;
+        try { if (window.__dhVoice) await window.__dhVoice.prepAndWatch(a); } catch {}
+        if (a !== mineAudio) return;
+        a.play().catch(() => toast('我的聲音檔暫時無法播放，可改切「手機語音」'));
+      })();
+      setSpeaking(true);
+      mineAudio.onended = () => { mineAudio = null; setSpeaking(false); };
+      return true;
+    }
+
+    function speakBrowser(text, langHint) {
+      if (!('speechSynthesis' in window)) return;
+      const u = new SpeechSynthesisUtterance(String(text).replace(/[#*_`]/g, ''));
+      try { u.onboundary = (ev) => { let w = ''; try { w = u.text.substr(ev.charIndex, ev.charLength || 2); } catch {} window.__dhVoice && window.__dhVoice.boundary(w); window.__dhMouthKick && window.__dhMouthKick(); }; u.onstart = () => window.__dhVoice && window.__dhVoice.startTTS(); } catch {}
+      u.lang = (langHint === 'en') ? 'en-US' : (langHint === 'zh-Hans' ? 'zh-CN' : 'zh-TW');
+      u.rate = 1.02;
+      u.pitch = 1.06;
+      const v = pickTalkVoice(u.lang);
+      if (v) u.voice = v;
+      setSpeaking(true);
+      u.onend = () => setSpeaking(false);
+      u.onerror = () => setSpeaking(false);
+      window.speechSynthesis.speak(u);
+    }
+
+    async function talk(text, langHint) {
+      if (!voiceChatOn || !text) return;
+      stopTalk();
+      try { mineAudio?.pause(); } catch {}
+      if (singing) return sing(text, langHint);
+      try {
+        const data = await callFn('aivault-tts', {
+          action: 'tts',
+          text: String(text).replace(/[#*_`]/g, ''),
+          provider: 'auto',
+          language: langHint === 'en' ? 'en-US' : (langHint === 'zh-Hans' ? 'zh-CN' : 'zh-TW'),
+          digital_human_id: current?.id || draft.human_id,
+          voice_id: current?.selected_voice_id || draft.selected_voice_id || null
+        });
+        const pack = data.result || data;
+        const url = pack.audio_url;
+        if (url) {
+          mineAudio = new Audio(url);
+          try { if (window.__dhVoice) await window.__dhVoice.prepAndWatch(mineAudio); } catch {}
+          setSpeaking(true);
+          mineAudio.onended = () => setSpeaking(false);
+          mineAudio.play().catch(() => speakBrowser(text, langHint));
+          return;
+        }
+        if (pack.audio_base64) {
+          mineAudio = new Audio('data:' + (pack.mime || 'audio/mpeg') + ';base64,' + pack.audio_base64);
+          try { if (window.__dhVoice) await window.__dhVoice.prepAndWatch(mineAudio); } catch {}
+          setSpeaking(true);
+          mineAudio.onended = () => setSpeaking(false);
+          mineAudio.play().catch(() => speakBrowser(text, langHint));
+          return;
+        }
+      } catch {}
+      if (voiceMode === 'mine') { playMyVoice(); return; }
+      speakBrowser(text, langHint);
+    }
+
+    function isSingAsk(text) {
+      return /唱|唱歌|唱一[首曲]|哼歌|演唱|來首歌/.test(String(text || ''));
+    }
+
+    function startHum() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = 220;
+        g.gain.value = 0.03;
+        o.connect(g); g.connect(ctx.destination);
+        o.start();
+        const notes = [220, 247, 262, 294, 330, 294, 262, 247];
+        let i = 0;
+        const timer = setInterval(() => {
+          o.frequency.setTargetAtTime(notes[i % notes.length], ctx.currentTime, 0.05);
+          i += 1;
+        }, 420);
+        startHum._stop = () => { try { clearInterval(timer); o.stop(); ctx.close(); } catch {} };
+      } catch {}
+    }
+
+    function stopHum() {
+      try { startHum._stop?.(); } catch {}
+      startHum._stop = null;
+    }
+
+    function sing(text, langHint) {
+      stopTalk();
+      stopHum();
+      startHum();
+      const lines = String(text).replace(/[#*_`]/g, '').split(/\n+/).map(s => s.trim()).filter(Boolean);
+      const parts = lines.length > 1 ? lines : String(text).split(/[，。！？,.!?]/).map(s => s.trim()).filter(Boolean);
+      const queue = parts.length ? parts : [text];
+      const lang = (langHint === 'en') ? 'en-US' : (langHint === 'zh-Hans' ? 'zh-CN' : 'zh-TW');
+      const voice = pickTalkVoice(lang);
+      queue.forEach((line, idx) => {
+        const u = new SpeechSynthesisUtterance(line);
+        try { u.onboundary = (ev) => { let w = ''; try { w = u.text.substr(ev.charIndex, ev.charLength || 2); } catch {} window.__dhVoice && window.__dhVoice.boundary(w); window.__dhMouthKick && window.__dhMouthKick(); }; u.onstart = () => window.__dhVoice && window.__dhVoice.startTTS(); } catch {}
+        u.lang = lang;
+        u.rate = 0.78;
+        u.pitch = 1.35 + (idx % 3) * 0.08;
+        if (voice) u.voice = voice;
+        if (idx === queue.length - 1) u.onend = () => { stopHum(); singing = false; };
+        window.speechSynthesis.speak(u);
+      });
+    }
+
+    function mapEngineEmotion(raw) {
+      const e = String(raw || '').toUpperCase();
+      if (/JOY|HAPP|GLAD|EXCIT|AMUSE|LOVE|樂|喜/.test(e)) return 'happy';
+      if (/ANG|RAGE|ANNOY|怒/.test(e)) return 'angry';
+      if (/SAD|SORROW|GRIEF|哀/.test(e)) return 'sad';
+      if (/SURPR|SHOCK|AMAZE|WONDER|驚/.test(e)) return 'wow';
+      if (/THINK|CURIO|CONFUS|思/.test(e)) return 'think';
+      return 'calm';
+    }
+
+    async function readEmotion(text) {
+      try {
+        const data = await callFn('ai-human-emotion', { action: 'analyze', text, language: 'ZH_TW', source: 'TEXT' });
+        const pack = data.result || data;
+        const primary = pack.primary_emotion || pack.emotion || pack.facial_expression?.emotion;
+        if (primary) return mapEngineEmotion(primary);
+      } catch {}
+      return detectEmotion(text);
+    }
+
+    async function accountId() {
+      const { data } = await sb.auth.getSession();
+      session = data.session;
+      return session?.user?.id || null;
+    }
+
+    async function lockFace(humanId, url) {
+      if (!humanId) return;
+      try {
+        await callFn('ai-human-face', {
+          action: 'analyze',
+          digital_human_id: humanId,
+          image_url: url || '',
+          view: 'FRONT'
+        });
+      } catch {}
+    }
+
+    async function lockVoice(humanId, url) {
+      if (!humanId) return;
+      try {
+        await callFn('ai-human-voice', {
+          action: 'analyze',
+          digital_human_id: humanId,
+          voice_url: url || '',
+          language: 'ZH_TW'
+        });
+      } catch {}
+    }
+
+    async function thinkBrain(text, mode) {
+      const aid = await accountId();
+      if (!aid) return null;
+      try {
+        const data = await callFn('ai-human-brain', {
+          action: 'analyze',
+          account_id: aid,
+          user_id: aid,
+          digital_human_id: current?.id || draft.human_id,
+          text,
+          mode: mode || 'CONVERSATION'
+        });
+        return data.result || data.brain_decision || data;
+      } catch {
+        return null;
+      }
+    }
+
+
+    function detectEmotion(text) {
+      const t = String(text || '');
+      const m = t.match(/\[表情[:：]\s*(喜|怒|哀|樂|驚|思|平)\]/);
+      if (m) {
+        return { 喜:'happy', 樂:'happy', 怒:'angry', 哀:'sad', 驚:'wow', 思:'think', 平:'calm' }[m[1]] || 'calm';
+      }
+      if (/開心|高興|哈哈|太好|喜歡|恭喜|棒|愛你|謝謝/.test(t)) return 'happy';
+      if (/生氣|憤怒|討厭|不行|禁止|氣|怒/.test(t)) return 'angry';
+      if (/難過|抱歉|可惜|傷心|遺憾|哭/.test(t)) return 'sad';
+      if (/驚|哇|真的嗎|不會吧|意外/.test(t)) return 'wow';
+      if (/想想|分析|可能|建議|因為|所以/.test(t)) return 'think';
+      return 'calm';
+    }
+
+    function stripEmotionTag(text) {
+      return String(text || '')
+        .replace(/\[表情[:：]\s*(喜|怒|哀|樂|驚|思|平)\]\s*/g, '')
+        .replace(/^\s*(首先|再來|接著|總結|第一[，,]|第二[，,])[:：]?\s*/gm, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function faceSVG(emotion, talking) {
+      const faces = {
+        happy: { brow: -8, eye: 10, mouth: 'M30 62 Q50 78 70 62', blush: true },
+        angry: { brow: 10, eye: 8, mouth: 'M32 70 Q50 60 68 70', blush: false },
+        sad: { brow: -4, eye: 7, mouth: 'M32 72 Q50 62 68 72', blush: false },
+        wow: { brow: -10, eye: 13, mouth: 'M50 68 m-7 0 a7 9 0 1 0 14 0 a7 9 0 1 0 -14 0', blush: true },
+        think: { brow: 2, eye: 8, mouth: 'M38 68 Q50 66 62 68', blush: false },
+        calm: { brow: 0, eye: 9, mouth: 'M34 66 Q50 72 66 66', blush: false }
+      };
+      const f = faces[emotion] || faces.calm;
+      const mouthClass = talking ? 'mouth talking' : 'mouth';
+      return `
+        <svg class="face-svg" viewBox="0 0 100 100" aria-hidden="true">
+          ${f.blush ? '<ellipse cx="22" cy="58" rx="8" ry="5" fill="rgba(244,114,182,.35)"/><ellipse cx="78" cy="58" rx="8" ry="5" fill="rgba(244,114,182,.35)"/>' : ''}
+          <path d="M22 32 q14 ${f.brow} 22 0" stroke="#e2e8f0" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M56 32 q14 ${f.brow} 22 0" stroke="#e2e8f0" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse class="eye" cx="34" cy="46" rx="6" ry="${f.eye}" fill="#e2e8f0"/>
+          <ellipse class="eye" cx="66" cy="46" rx="6" ry="${f.eye}" fill="#e2e8f0"/>
+          <circle cx="34" cy="47" r="2.2" fill="#0f172a"/>
+          <circle cx="66" cy="47" r="2.2" fill="#0f172a"/>
+          <path class="${mouthClass}" d="${f.mouth}" stroke="#fda4af" stroke-width="4" fill="${emotion==='wow'?'#7f1d1d':'none'}" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    // 真人表情包（digital-human-real/）：載入失敗才退回原本的 orb
+    const REAL_FACE_DIR = 'digital-human-real/';
+    // 狀態：情緒(happy 有專屬臉) + 嘴型 n(0-3) + 眨眼階段(0 開/1 半/2 閉)
+    let mouthN = 0, blinkStage = 0;
+    function realFaceSrc(emotion, talking) {
+      const happy = emotion === 'happy';
+      let f;
+      if (blinkStage) f = (happy ? 'happy_' : '') + (blinkStage === 2 ? 'blink' : 'blink_half');
+      else if (talking) f = happy ? (mouthN ? 'happy_mouth' + mouthN : 'happy') : 'mouth' + mouthN;
+      else f = { happy:'happy', angry:'angry', think:'question', wow:'question', sad:'affection' }[emotion] || 'base';
+      return REAL_FACE_DIR + f + '.jpg';
+    }
+    function paintFace() {
+      document.querySelectorAll('.dh-head.real .dh-real').forEach(img => {
+        const src = realFaceSrc(currentEmotion, isSpeaking || (typeof singing !== 'undefined' && singing));
+        if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+      });
+    }
+    ['base','mouth0','mouth1','mouth2','mouth3','blink','blink_half','happy','happy_mouth1','happy_mouth2','happy_mouth3','happy_blink','happy_blink_half','angry','question','affection']
+      .forEach(n => { const i = new Image(); i.src = REAL_FACE_DIR + n + '.jpg'; });
+    // 說話嘴型：不規則循環，字詞間閉嘴；語音 boundary 事件會觸發張嘴
+    let mouthTimer = null, mouthKickAt = 0, syll = 0;
+    function setMouth(n) { mouthN = n; paintFace(); }
+    function pickOpen() {
+      const r = Math.random();
+      return r < 0.30 ? 1 : r < 0.72 ? 2 : 3;
+    }
+    function mouthStep() {
+      if (!isSpeaking) { mouthTimer = null; mouthN = 0; return; }
+      let n, ms;
+      const kicked = Date.now() - mouthKickAt < 160;
+      if (kicked) { n = pickOpen(); ms = 90 + Math.random() * 50; syll = 0; }
+      else if (syll >= 2 + Math.floor(Math.random() * 4)) { n = 0; ms = 90 + Math.random() * 90; syll = 0; }
+      else { n = syll % 2 === 0 ? pickOpen() : (Math.random() < 0.5 ? 1 : 0); ms = 80 + Math.random() * 60; syll++; }
+      setMouth(n);
+      mouthTimer = setTimeout(mouthStep, ms);
+    }
+    window.__dhMouthKick = () => { mouthKickAt = Date.now(); if (isSpeaking) { clearTimeout(mouthTimer); mouthStep(); } };
+    function startMouth() { if (!mouthTimer) mouthStep(); }
+    function stopMouth() { clearTimeout(mouthTimer); mouthTimer = null; mouthN = 0; paintFace(); }
+
+    // 眨眼：開→半→閉→半→開（每步 40-60ms），隨機 2.5-6 秒，偶爾連眨兩次；說話中也會眨
+    function blinkOnce(done) {
+      const seq = [1, 2, 1, 0];
+      let i = 0;
+      (function step() {
+        blinkStage = seq[i++]; paintFace();
+        if (i < seq.length) setTimeout(step, 40 + Math.random() * 20); else if (done) done();
+      })();
+    }
+    (function scheduleBlink() {
+      setTimeout(() => {
+        blinkOnce(() => { if (Math.random() < 0.2) setTimeout(() => blinkOnce(scheduleBlink), 120); else scheduleBlink(); });
+      }, 2500 + Math.random() * 3500);
+    })();
+
+
+    // ===== 發聲偵測：只有聲音真的在響時才 voiced=true（TTS onstart/boundary；音檔 playing + AnalyserNode 音量）=====
+    const dhVoice = (() => {
+      let voiced = false, ttsActive = false, gotBoundary = false, lastBoundary = 0, level = 0;
+      let ctx = null, rafId = 0, audioGate = false, analysing = false;
+      const feat = { rms: 0, centroid: 0, low: 0, high: 0 };
+      function ensureCtx() { try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state !== 'running') ctx.resume(); } catch {} return ctx; }
+      ['pointerdown', 'touchend', 'keydown'].forEach(ev => window.addEventListener(ev, ensureCtx, { passive: true }));   // iOS 需要使用者手勢解鎖
+      const listeners = [];
+      function emit(v) { if (v === voiced) return; voiced = v; listeners.forEach(f => { try { f(v); } catch {} }); }
+      function startTTS() { ttsActive = true; gotBoundary = false; lastBoundary = Date.now(); emit(true); }
+      function boundary(word) { if (!ttsActive) startTTS(); gotBoundary = true; lastBoundary = Date.now(); emit(true); if (window.__dhLipWord) window.__dhLipWord(word || ''); }
+      function stopAll() { ttsActive = false; audioGate = false; analysing = false; cancelAnimationFrame(rafId); level = 0; feat.rms = 0; emit(false); }
+      // TTS：收過 boundary 之後，超過 350ms 沒有新 boundary 視為停頓 → 閉嘴
+      setInterval(() => {
+        if (!ttsActive) return;
+        if (gotBoundary) emit(Date.now() - lastBoundary < 350);
+      }, 60);
+      function canAnalyse(url) {
+        try { if (/^(blob:|data:)/.test(url)) return true; return new URL(url, location.href).origin === location.origin; } catch { return false; }
+      }
+      async function prepAndWatch(audio) {
+        // 把跨網域音檔（Supabase storage 有 CORS *）抓成 blob，才能用 AnalyserNode 量音量
+        try {
+          if (audio && audio.src && !canAnalyse(audio.src)) {
+            const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), 2500);
+            const r = await fetch(audio.src, { mode: 'cors', signal: ac.signal }); clearTimeout(tm);
+            if (r.ok) { const b = await r.blob(); audio.src = URL.createObjectURL(b); }
+          }
+        } catch {}
+        watchAudio(audio);
+      }
+      function watchAudio(audio) {
+        if (!audio) return;
+        ttsActive = false; audioGate = false;
+        let analyser = null;
+        try {
+          if (canAnalyse(audio.src)) {
+            ensureCtx();
+            if (ctx.state === 'running') {   // 只有在 context 已在跑時才接管，避免 iOS 把聲音變靜音
+              const src = ctx.createMediaElementSource(audio);
+              analyser = ctx.createAnalyser(); analyser.fftSize = 512;
+              src.connect(analyser); analyser.connect(ctx.destination);
+            }
+          }
+        } catch { analyser = null; }
+        audio.addEventListener('playing', () => {
+          if (!analyser) { analysing = false; emit(true); return; }
+          audioGate = true; analysing = true;
+          const buf = new Uint8Array(analyser.fftSize); const fb = new Uint8Array(analyser.frequencyBinCount); let quietSince = 0;
+          const hz = ctx.sampleRate / analyser.fftSize;
+          (function loop() {
+            if (!audioGate) return;
+            analyser.getByteTimeDomainData(buf);
+            let sum = 0; for (let i = 0; i < buf.length; i++) { const d = (buf[i] - 128) / 128; sum += d * d; }
+            const rms = Math.sqrt(sum / buf.length);
+            level = level * 0.7 + rms * 0.3;
+            analyser.getByteFrequencyData(fb);
+            let tot = 0, wsum = 0, lo = 0, hi = 0;
+            for (let i = 2; i < fb.length; i++) { const f = i * hz, m = fb[i]; if (f > 6000) break; tot += m; wsum += m * f; if (f < 900) lo += m; else if (f > 2200) hi += m; }
+            feat.rms = feat.rms * 0.5 + rms * 0.5;
+            feat.centroid = tot ? feat.centroid * 0.5 + (wsum / tot) * 0.5 : feat.centroid;
+            feat.low = tot ? lo / tot : 0; feat.high = tot ? hi / tot : 0;
+            if (rms > 0.02) { quietSince = 0; emit(true); }
+            else { if (!quietSince) quietSince = Date.now(); if (Date.now() - quietSince > 120) emit(false); }
+            rafId = requestAnimationFrame(loop);
+          })();
+        });
+        ['pause', 'ended', 'error'].forEach(ev => audio.addEventListener(ev, () => { audioGate = false; cancelAnimationFrame(rafId); level = 0; emit(false); }));
+      }
+      // Gemini Live 輸出音訊的分析（嘴型）
+      let liveRaf = 0;
+      function liveFeed(an, rate) {
+        cancelAnimationFrame(liveRaf);
+        const buf = new Uint8Array(an.fftSize), fb = new Uint8Array(an.frequencyBinCount), hz = rate / an.fftSize; let quietSince = 0;
+        (function loop() {
+          liveRaf = requestAnimationFrame(loop);
+          if (!isSpeaking) { if (analysing && !audioGate) analysing = false; return; }
+          analysing = true;
+          an.getByteTimeDomainData(buf); let sum = 0; for (let i = 0; i < buf.length; i++) { const d = (buf[i] - 128) / 128; sum += d * d; }
+          const rms = Math.sqrt(sum / buf.length); level = level * 0.7 + rms * 0.3;
+          an.getByteFrequencyData(fb); let tot = 0, wsum = 0, lo = 0, hi = 0;
+          for (let i = 2; i < fb.length; i++) { const f = i * hz, m = fb[i]; if (f > 6000) break; tot += m; wsum += m * f; if (f < 900) lo += m; else if (f > 2200) hi += m; }
+          feat.rms = feat.rms * 0.5 + rms * 0.5; feat.centroid = tot ? feat.centroid * 0.5 + (wsum / tot) * 0.5 : feat.centroid; feat.low = tot ? lo / tot : 0; feat.high = tot ? hi / tot : 0;
+          if (rms > 0.02) { quietSince = 0; emit(true); } else { if (!quietSince) quietSince = Date.now(); if (Date.now() - quietSince > 120) emit(false); }
+        })();
+      }
+      return { startTTS, boundary, stopAll, watchAudio, prepAndWatch, feat, liveFeed, get analysing() { return analysing; }, get ttsActive() { return ttsActive; }, get voiced() { return voiced; }, get level() { return level; }, onChange: f => listeners.push(f) };
+    })();
+    window.__dhVoice = dhVoice;
+
+    // ===== 影片頭像：每個片段一個 <video>，切換只換透明度（快、不重新載入）；失敗退回照片 =====
+    const dhVid = (() => {
+      const DIR = AVATAR.clipDir || (REAL_FACE_DIR + 'video/');
+      const CLIPS = AVATAR.clips ? Object.keys(AVATAR.clips) : ['transition','idle','talk','happy','question','angry','affection','drink','petcat','hair','screen','stretch','think','catplay'];
+      const ONCE = { transition:1, drink:1, petcat:1, hair:1, screen:1, stretch:1, think:1, catplay:1, question:1, angry:1, affection:1, happy:0 };
+      const MOOD = AVATAR.moods || { happy:'happy', think:'question', wow:'question', angry:'angry', sad:'affection', affection:'affection' };
+      const el = document.createElement('div'); el.className = 'dh-vid';
+      const V = {};
+      let failed = false, clip = '', phase = 'intro', drinking = false, petting = false, filler = '', lastFiller = '', waitKind = '', waiting = false, forced = '', forcedUntil = 0, fillerN = 0, moodOnce = '', lastEmotion = 'calm';
+      function fail() { if (failed) return; failed = true; el.remove(); document.querySelectorAll('.dh-head.vid').forEach(h => h.classList.remove('vid')); }
+      CLIPS.forEach(n => {
+        const v = document.createElement('video');
+        v.muted = true; v.defaultMuted = true; v.playsInline = true; v.preload = 'auto';
+        v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+        { const c = AVATAR.clips && AVATAR.clips[n]; v.poster = DIR + ((c && c.poster) || n + '.jpg'); v.src = DIR + ((c && c.src) || n + '.mp4'); }
+        v.loop = !ONCE[n];
+        let errs = 0;
+        v.onerror = () => {   // 只有 idle 連續失敗才退回照片；其他片段失敗就略過
+          if (n === 'transition') { phase = 'main'; update(); return; }
+          if (n !== 'idle') { if (clip === n) { drinking = petting = false; filler = ''; moodOnce = ''; update(); } return; }
+          if (++errs >= 2) fail(); else setTimeout(() => { try { v.load(); } catch {} }, 800);
+        };
+        v.onended = () => {
+          if (n === 'transition') phase = 'main';
+          if (n === 'drink') drinking = false;
+          if (n === filler) filler = '';
+          if (n === 'petcat') { petting = false; v.muted = true; }
+          if (n === moodOnce) moodOnce = '';
+          update();
+        };
+        el.appendChild(v); V[n] = v;
+      });
+      V.happy.loop = true;
+      const cup = document.createElement('button'); cup.type = 'button'; cup.className = 'dh-cup'; cup.textContent = '☕'; cup.title = '喝一口';
+      cup.onclick = (e) => { e.stopPropagation(); drink(); }; el.appendChild(cup);
+      const cat = document.createElement('button'); cat.type = 'button'; cat.className = 'dh-cup'; cat.style.right = '50px'; cat.textContent = '🐱'; cat.title = '摸摸貓';
+      cat.onclick = (e) => { e.stopPropagation(); petCat(true); }; el.appendChild(cat);
+      function want() {
+        if (phase === 'intro') return 'transition';
+        if (currentEmotion !== lastEmotion) {
+          lastEmotion = currentEmotion;
+          const m = MOOD[currentEmotion];
+          moodOnce = (m && m !== 'happy') ? m : '';
+        }
+        const happy = currentEmotion === 'happy';
+        if (isSpeaking || dhVoice.voiced) return 'idle';          // 說話時用 idle + 即時嘴型疊圖
+        if (drinking) return 'drink';
+        if (petting) return 'petcat';
+        if (filler) return filler;
+        if (forced && Date.now() < forcedUntil) return forced;
+        if (window.__dhReplyPending) return 'idle';               // 等回覆時不播情緒片段（改由 filler 處理）
+        if (moodOnce) return moodOnce;
+        return happy ? 'happy' : 'idle';
+      }
+      function show(name, fadeMs) {
+        if (failed) return;
+        if (name === 'transition' && !show._tg) show._tg = setTimeout(() => { if (phase === 'intro') { phase = 'main'; update(); } }, 7000);   // iOS 若沒播完也不會卡在第一格
+        const v = V[name];
+        if (name !== clip) {
+          if (ONCE[name] && name !== clip) { try { v.currentTime = 0; } catch {} }
+          const prev = V[clip];
+          clip = name;
+          Object.values(V).forEach(x => x.style.transitionDuration = fadeMs + 'ms');
+          const reveal = () => {
+            v.classList.add('on');
+            Object.entries(V).forEach(([k, x]) => { if (k !== name && x.classList.contains('on')) { x.classList.remove('on'); setTimeout(() => { if (clip !== k) x.pause(); }, fadeMs + 20); } });
+          };
+          const p = v.play();
+          if (v.readyState >= 2) reveal(); else { v.addEventListener('playing', reveal, { once: true }); setTimeout(reveal, 400); }
+          if (p && p.catch) p.catch(() => reveal());
+        } else if (v.paused) { v.play().catch(() => {}); }
+        // 說話時依音量微調速度
+        if (name === 'talk' || name === 'happy') {
+          const lv = dhVoice.level;
+          v.playbackRate = lv > 0 ? Math.max(0.85, Math.min(1.2, 0.9 + lv * 2)) : 1;
+        }
+      }
+      function update(fast) {
+        if (failed) return;
+        const n = want();
+        const toIdleFromTalk = (clip === 'talk' || clip === 'happy') && n === 'idle';
+        show(n, (fast || toIdleFromTalk || n === 'talk') ? 120 : 250);
+      }
+      dhVoice.onChange(() => update(true));
+      setInterval(() => { if (clip === 'talk' || clip === 'happy') show(clip, 120); }, 250);
+      function drink() { if (failed || phase === 'intro' || isSpeaking || petting) return; filler = ''; drinking = true; update(); }
+      function petCat(withSound) {
+        if (failed || phase === 'intro' || isSpeaking || drinking) return;
+        const v = V.petcat; v.muted = !withSound; if (withSound) { v.removeAttribute('muted'); v.volume = 1; }
+        filler = ''; petting = true; update();
+        if (withSound) v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
+      }
+      setInterval(() => { if (!isSpeaking && !drinking && !petting && !window.__dhLiveActive && phase === 'main' && clip === 'idle' && document.contains(el) && Math.random() < 0.2) petCat(false); }, 60000);
+      setInterval(() => { if (!isSpeaking && !drinking && !window.__dhLiveActive && phase === 'main' && clip === 'idle' && document.contains(el) && Math.random() < 0.25) drink(); }, 45000);
+      const status = document.createElement('div');
+      status.style.cssText = 'position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:2;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(15,23,42,.55);white-space:nowrap;color:#e2e8f0;display:none;';
+      el.appendChild(status);
+      function setStatus(t) { status.textContent = t || ''; status.style.display = t ? '' : 'none'; }
+      const ACTION = { transition:1, drink:1, petcat:1, question:1, angry:1, affection:1, hair:1, screen:1, stretch:1, think:1, catplay:1 };
+      function remainingMs() {
+        if (failed || !ACTION[clip]) return 0;
+        const v = V[clip]; const d = (v.duration || 8) - (v.currentTime || 0);
+        return Math.max(0, d * 1000 / (v.playbackRate || 1));
+      }
+      // 等目前的動作片段播完回到 idle（上限：剩餘時間+0.5s，最多 9s）
+      function waitIdle() {
+        return new Promise(res => {
+          const cap = Math.min(9000, remainingMs() + 500), t0 = Date.now();
+          (function chk() {
+            if (failed || !ACTION[clip] || Date.now() - t0 > cap) return res();
+            setTimeout(chk, 80);
+          })();
+        });
+      }
+      // 等待中的填充動作：drink / petcat（靜音）輪流
+      let bag = [];
+      function fillerTick() {
+        if (!waiting || failed || phase !== 'main' || isSpeaking || clip !== 'idle' || drinking || petting || filler) return;
+        // 洗牌袋：7 個片段全部輪過一次才重複，跨袋也不連續重複；等 AI 回覆時若袋中還有 think 就優先
+        if (!bag.length) {
+          bag = (AVATAR.fillers || ['drink','petcat','hair','screen','stretch','think','catplay']).filter(n => V[n]);
+          for (let i = bag.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [bag[i], bag[j]] = [bag[j], bag[i]]; }
+          if (bag[0] === lastFiller) bag.push(bag.shift());
+        }
+        let idx = 0;
+        if (waitKind === 'reply' && !window.__dhLiveActive) { const k = bag.indexOf('think'); if (k >= 0 && lastFiller !== 'think') idx = k; }
+        const pick = bag.splice(idx, 1)[0];
+        lastFiller = pick; fillerN++;
+        if (pick === 'drink') drink();
+        else if (pick === 'petcat') petCat(false);
+        else { filler = pick; update(); }
+      }
+      setInterval(fillerTick, 1500);
+      function cancelAction() { if (failed) return; filler = ''; drinking = false; petting = false; moodOnce = ''; if (phase === 'intro') phase = 'main'; waiting = false; setStatus(''); clip === 'idle' || show('idle', 100); }
+      function startWaiting(label, kind) { waiting = true; waitKind = kind || 'net'; setStatus(label); }
+      function stopWaiting() { waiting = false; setStatus(''); }
+      function flash(name, ms) { forced = name; forcedUntil = Date.now() + ms; update(); setTimeout(() => { if (forced === name) { forced = ''; update(); } }, ms + 50); }
+      // 使用者口令觸發動作／表情
+      let happyAfterTalk = false;
+      function cmd(name) {
+        if (failed || phase === 'intro') return false;
+        if (name === 'drink') { if (isSpeaking || dhVoice.voiced) return false; drink(); return true; }
+        if (name === 'petcat') { if (isSpeaking || dhVoice.voiced) return false; petCat(true); return true; }
+        if (name === 'happy' && (isSpeaking || dhVoice.voiced)) { happyAfterTalk = true; return true; }   // 說話中：講完立刻笑
+        if (isSpeaking || dhVoice.voiced) return false;
+        filler = ''; drinking = petting = false; moodOnce = '';
+        const v = V[name]; const ms = name === 'happy' ? 3500 : Math.min(9000, Math.max(2500, ((v && v.duration) || 5) * 1000));
+        flash(name, ms); return true;
+      }
+      dhVoice.onChange(() => { if (happyAfterTalk && !isSpeaking && !dhVoice.voiced) { happyAfterTalk = false; setTimeout(() => cmd('happy'), 150); } });
+      function attach() {
+        if (failed) return;
+        const head = document.querySelector('.dh-head'); if (!head) return;
+        head.classList.add('vid');
+        if (el.parentNode !== head) { head.appendChild(el); if (V[clip]) V[clip].play().catch(() => {}); }
+        update();
+      }
+      return { attach, update, drink, petCat, cmd, waitIdle, cancelAction, startWaiting, stopWaiting, setStatus, flash, get clip() { return clip; }, video: n => V[n], el, get failed() { return failed; } };
+    })();
+
+
+    // ===== 口令：使用者說／打的字觸發表情與動作（繁簡皆可）=====
+    const DH_CMDS = [
+      ['happy', /笑一笑|笑一個|笑一个|微笑|笑笑|開心一點|开心一点|開心點|开心点|笑一下/],
+      ['angry', /小生氣|小生气|生氣|生气/],
+      ['think', /想一想|想一下|思考/],
+      ['question', /疑問|疑问|歪頭|歪头/],
+      ['affection', /溫柔|温柔|撒嬌|撒娇/],
+      ['drink', /喝口水|喝水/],
+      ['catplay', /逗貓|逗猫/],
+      ['petcat', /摸貓|摸猫|貓咪|猫咪/],
+      ['hair', /撥頭髮|拨头发|撥頭发|撩頭髮|撩头发/],
+      ['stretch', /伸懶腰|伸懒腰/],
+      ['screen', /看螢幕|看屏幕|看荧幕/],
+      ['blink', /眨眼|眨眨眼|眨一下/],
+    ];
+    function dhCommand(text, fired) {
+      const t = String(text || ''); if (!t) return '';
+      for (const [name, re] of DH_CMDS) {
+        if (!re.test(t) || (fired && fired.has(name))) continue;
+        if (fired) fired.add(name);
+        try {
+          if (name === 'blink') { try { blinkOnce(() => blinkOnce(() => {})); } catch {} }
+          else dhVid.cmd(name);
+        } catch {}
+        return name;
+      }
+      return '';
+    }
+    window.__dhCommand = dhCommand;
+
+    // ===== 即時嘴型：在 idle 影片上疊一塊羽化嘴部貼圖（取自 talk 影片），依聲音特徵選嘴型 =====
+    const dhLip = (() => {
+      const LP = AVATAR.lip || {};
+      const IDLE_OFF = LP.idleOffsets || [[0,0]];
+      const X0 = LP.x0 ?? 218, Y0 = LP.y0 ?? 96, PW = LP.w ?? 74, PH = LP.h ?? 56, VW = LP.videoW ?? 480, VH = LP.videoH ?? 432, FPS = LP.fps ?? 24;
+      const VIS = LP.shapes || ['slight','mid','ee','wide','oh','u'];
+      const box = document.createElement('div'); box.className = 'dh-lip';
+      box.style.cssText = `position:absolute;width:${PW/VW*100}%;height:${PH/VH*100}%;pointer-events:none;z-index:1;`;
+      const IM = {};
+      VIS.forEach(k => { const i = document.createElement('img'); i.src = (LP.dir || REAL_FACE_DIR + 'lip/') + (LP.prefix ?? 'mouth_') + k + '.png'; i.alt = '';
+        i.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;opacity:0;transform:scale(' + ((LP.scale || [0.94,0.82]).join(',')) + ');transform-origin:' + (LP.origin || '50% 38%') + ';'; box.appendChild(i); IM[k] = i; });
+      let cur = '', holdUntil = 0, seq = [], seqT = 0;
+      function setVis(k) {
+        if (k === cur) return;
+        if (cur && IM[cur]) IM[cur].style.opacity = 0;
+        cur = k; if (k && IM[k]) IM[k].style.opacity = 1;
+      }
+      // 平滑閘門：開口 attack 60ms、閉口 release 120ms、每個嘴型至少 120ms（≤ ~6.5 次/秒）、相鄰嘴型需持續 90ms 才切換（遲滯）
+      const NEAR = { slight:['mid'], mid:['slight','wide','ee','oh'], wide:['mid'], ee:['mid'], oh:['u','mid'], u:['oh'] };
+      let gWide = 0, gLast = 0, gCand = null, gCandT = 0;
+      function gate(v, now) {
+        if (v === 'wide' && cur !== 'wide' && now - gWide < 450) v = 'mid';   // 張大嘴少用，偏向較小嘴型
+        if (v === 'wide' && cur !== 'wide') gWide = now;
+        if (v === cur) { gCand = null; return; }
+        if (v !== gCand) { gCand = v; gCandT = now; }
+        const held = now - gCandT;
+        if (v === '') { if (held >= 120) { setVis(''); gLast = now; gCand = null; } return; }
+        if (cur === '') { if (held >= 60) { setVis(v); gLast = now; gCand = null; } return; }
+        if (now - gLast < 150) return;
+        if ((NEAR[cur] || []).includes(v) && held < 90) return;
+        setVis(v); gLast = now; gCand = null;
+      }
+      // 中文字無法即時轉拼音：用字碼決定一個穩定的口型（同一字每次相同），英文用母音
+      function charVis(ch) {
+        if (/[，。！？、,.!?;；:：\s…—]/.test(ch)) return '';
+        const c = ch.toLowerCase();
+        if (/[a-z]/.test(c)) return /[a]/.test(c) ? 'wide' : /[ei]/.test(c) ? 'ee' : /[o]/.test(c) ? 'oh' : /[u w]/.test(c) ? 'u' : 'slight';
+        const pick = ['mid','slight','mid','ee','wide','oh','mid','u','slight','mid'];
+        return pick[ch.charCodeAt(0) % pick.length];
+      }
+      window.__dhLipWord = (word) => {
+        const now = performance.now(); seq = []; let t = now;
+        const chars = Array.from(String(word || '')).slice(0, 8);
+        chars.forEach(ch => { const v = charVis(ch); if (v) { seq.push([t, v]); t += 120 + Math.random() * 30; seq.push([t, Math.random() < 0.5 ? 'slight' : '']); t += 45; } else { seq.push([t, '']); t += 120; } });
+        seqT = t;
+      };
+      function fromAudio() {
+        const f = dhVoice.feat;
+        if (f.rms < 0.02) return '';
+        if (f.rms < 0.06) return 'slight';
+        if (f.centroid < 1100 && f.low > 0.45) return f.rms > 0.12 ? 'oh' : 'u';
+        if (f.centroid > 2300 || f.high > 0.35) return 'ee';
+        return f.rms > 0.14 ? 'wide' : 'mid';
+      }
+      let synthPhase = 0;
+      function fromRhythm(now) {   // 沒有音訊特徵也沒有 boundary：約 5.5 音節/秒
+        const t = (now / 1000) * 5.5 + synthPhase; const ph = t % 1;
+        if (ph > 0.72) return '';
+        const k = Math.floor(t); return ['mid','slight','ee','mid','oh','slight','wide','u'][k % 8];
+      }
+      // Gemini Live：依實際播放時間排程的嘴型 [ctxTime, viseme]
+      let liveQ = [], liveCtx = null, liveUntil = 0;
+      function schedule(ctx, list) { liveCtx = ctx; for (const it of list) liveQ.push(it); if (list.length) liveUntil = Math.max(liveUntil, list[list.length - 1][0] + 0.03); }
+      function clearSchedule() { liveQ = []; liveUntil = 0; }
+      function liveVis() {
+        const t = liveCtx.currentTime; let v = '';
+        while (liveQ.length > 1 && liveQ[1][0] <= t) liveQ.shift();
+        if (liveQ.length && liveQ[0][0] <= t && t < liveUntil) v = liveQ[0][1];
+        return v;
+      }
+      let last = 0;
+      function tick(now) {
+        requestAnimationFrame(tick);
+        const live = liveCtx && liveQ.length && liveCtx.currentTime < liveUntil + 0.05;
+        if (!live && now - last < 33) return; last = now;
+        const idle = dhVid.video('idle');
+        const on = !dhVid.failed && dhVid.clip === 'idle' && (isSpeaking || dhVoice.voiced) && document.contains(dhVid.el);
+        if (box.parentNode !== dhVid.el) dhVid.el.appendChild(box);
+        if (!on) { setVis(''); gCand = null; box.style.display = 'none'; return; }
+        box.style.display = '';
+        const fi = Math.floor((idle.currentTime || 0) * FPS) % IDLE_OFF.length; const o = IDLE_OFF[fi] || [0, 0];
+        box.style.left = ((X0 + o[0]) / VW * 100) + '%'; box.style.top = ((Y0 + o[1]) / VH * 100) + '%';
+        if (live) { gate(liveVis(), now); return; }
+        let v = '';
+        if (!dhVoice.voiced) v = '';
+        else if (dhVoice.analysing) v = fromAudio();
+        else if (seq.length && now < seqT + 200) { for (const [t, k] of seq) if (t <= now) v = k; }
+        else v = fromRhythm(now);
+        gate(v, now);
+      }
+      requestAnimationFrame(tick);
+      return { setVis, schedule, clearSchedule };
+    })();
+
+
+    function dhFillTtsSelect() {
+      const sel = document.getElementById('selTtsVoice'); if (!sel) return;
+      const list = dhFemaleVoices(); let saved = ''; try { saved = localStorage.getItem('dh_tts_voice') || ''; } catch {}
+      sel.innerHTML = '<option value="">自動（女聲優先）</option>' + list.map(v => `<option value="${esc(v.voiceURI)}" ${saved && (saved === v.voiceURI || saved === v.name) ? 'selected' : ''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('');
+    }
+    try { window.speechSynthesis && window.speechSynthesis.addEventListener('voiceschanged', dhFillTtsSelect); } catch {}
+
+    // ===== Gemini Live 即時語音／視訊：協定完全比照 technical-dark-star-live-session.js（同一個後端 relay）=====
+    const dhLive = (() => {
+      const RELAY = 'wss://svtkpdmqemidlasowqew.supabase.co/functions/v1/technical-dark-star-live-voice-v2';
+      const AC = window.AudioContext || window.webkitAudioContext;
+      let ws = null, stream = null, inCtx = null, micNode = null, micSrc = null, frameT = 0, pip = null, canvas = null;
+      let loudN = 0; let playCtx = null, outGain = null, outDest = null, outEl = null, outMode = 'none', nextPlay = 0, sources = [], drainT = 0, userTalkingUntil = 0;
+      let active = false, wanted = false, retry = 0, camOn = false, inBuf = '', outBuf = '', userIdx = -1, aiIdx = -1;
+      let cmdFired = new Set(), knowT = 0, knowLast = '', liveChip = '', liveChipUsed = false;
+      let knowTurnDone = false;   // 每個使用者問題最多送一次資料
+      async function liveKnow(q) {   // 只有明確要求查資料時：等她講完話，再把資料靜默送進即時對話（一次）
+        q = String(q || '').trim(); if (!q || knowTurnDone || q === knowLast || !window.DHKnow || !DHKnow.wantsLookup || !DHKnow.wantsLookup(q)) return;
+        knowTurnDone = true; knowLast = q;
+        let k = null; try { k = await DHKnow.lookup(q); } catch {}
+        if (!k || !k.prompt) return;
+        for (let i = 0; i < 60 && (isSpeaking || (typeof dhVoice !== "undefined" && dhVoice.voiced)); i++) await new Promise(r => setTimeout(r, 250));
+        if (isSpeaking || !ws || ws.readyState !== 1) return;
+        try { ws.send(JSON.stringify({ type: 'text', text: `（系統備註，不要唸出來）使用者的問題：「${q}」\n${k.prompt}` })); liveChip = k.chip; liveChipUsed = false; lastErr = ''; } catch {}
+      }
+      let wsState = '未連線', micSent = 0, rx = 0, played = 0, lastErr = '', dbgEl = null, waitingAudio = false;
+      window.__dhLiveCam = false;
+      function token() {   // 同其他 live 頁：Supabase session（localStorage sb-…-auth-token）
+        try { const j = JSON.parse(localStorage.getItem('sb-svtkpdmqemidlasowqew-auth-token') || 'null'); const t = String((j && (j.access_token || (j.currentSession && j.currentSession.access_token))) || '').trim(); if (t) return t; } catch {}
+        try { return (session && session.access_token) || ''; } catch { return ''; }
+      }
+      // 獨立頻道：數字人用自己的 agent id 與 aivault-dh- 命名空間；後端若不接受自訂 agent，才退回暗星 agent（但 topic/conversation 仍是數字人專用 key，不碰暗星/曙光的 key）
+      const DH_AGENT = 'aivault-digital-human';
+      function agentId() { try { const v = localStorage.getItem('aivault-dh-live-agent'); const t = +localStorage.getItem('aivault-dh-live-agent-at') || 0; if (v && v !== DH_AGENT && Date.now() - t > 6 * 3600e3) { localStorage.removeItem('aivault-dh-live-agent'); return DH_AGENT; } return v || DH_AGENT; } catch { return DH_AGENT; } }
+      function nsKey(base) { return base + (agentId() === DH_AGENT ? '-v2' : ''); }
+      function topicId() {
+        const k = nsKey('aivault-dh-live-topic-id');
+        const prefix = agentId() === DH_AGENT ? 'aivault-dh-' : 'technical-dark-star-';
+        try { let v = localStorage.getItem(k); if (!v) { v = prefix + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2)); localStorage.setItem(k, v); } return v; }
+        catch { return prefix + Date.now(); }
+      }
+      let gotSetup = false, customFails = 0;
+      function dbg() {
+        if (!dbgEl) { dbgEl = document.createElement('div'); dbgEl.style.cssText = 'position:absolute;left:4px;right:4px;bottom:4px;z-index:3;font:9px/1.25 monospace;color:#9f9;opacity:.7;background:rgba(0,0,0,.4);padding:2px 6px;border-radius:6px;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'; }
+        if (!active || !/[?&]debug=1/.test(location.search)) { dbgEl.remove(); return; }
+        if (dbgEl.parentNode !== dhVid.el) dhVid.el.appendChild(dbgEl);
+        dbgEl.textContent = `${wsState} | 麥克風送出 ${micSent} | 收到音訊 ${rx} 播 ${played} | 聲音 ${playCtx ? playCtx.state : '-'} ${outMode}${outEl ? (outEl.paused ? ' 暫停' : '') : ''}${lastErr ? ' | ' + lastErr : ''}`;
+      }
+      setInterval(dbg, 500);
+      // —— 必須在點擊當下同步執行（iOS）——
+      function unlock() {
+        try { if (navigator.audioSession) navigator.audioSession.type = 'play-and-record'; } catch {}
+        if (!playCtx || playCtx.state === 'closed') {
+          playCtx = new AC(); outGain = playCtx.createGain();
+          // iOS 開麥克風時 Web Audio 直出常變聽筒/無聲：改經 MediaStreamDestination → <audio> 元素播放（同暗星頁做法）
+          if (playCtx.createMediaStreamDestination) {
+            outDest = playCtx.createMediaStreamDestination(); outGain.connect(outDest);
+            outEl = document.createElement('audio'); outEl.setAttribute('playsinline', ''); outEl.setAttribute('webkit-playsinline', ''); outEl.autoplay = true; outEl.muted = false; outEl.style.display = 'none';
+            document.body.appendChild(outEl); outEl.srcObject = outDest.stream; outMode = '待定';
+            outEl.play().then(() => { outMode = 'audio元素'; }).catch(e => { outMode = '直出'; try { outGain.disconnect(); } catch {} outGain.connect(playCtx.destination); lastErr = 'audioEl ' + (e.name || ''); });
+          } else { outGain.connect(playCtx.destination); outMode = '直出'; }
+        }
+        try { playCtx.resume(); } catch {}
+        try { const b = playCtx.createBuffer(1, 1, 22050), sN = playCtx.createBufferSource(); sN.buffer = b; sN.connect(outGain); sN.start(0); } catch {}
+        if (!inCtx || inCtx.state === 'closed') { try { inCtx = new AC({ sampleRate: 16000 }); } catch { inCtx = new AC(); } }
+        try { inCtx.resume(); } catch {}
+      }
+      function b64(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
+      function sendPcm(f32, rate) {
+        if (!ws || ws.readyState !== 1) return;
+        let data = f32;
+        // 半雙工：她說話時（iPhone 喇叭回授、回音消除對 <audio> 播放常失效），只有使用者大聲說話（連續幾格）才送出，否則送靜音，避免她被自己的聲音打斷
+        if (playCtx && nextPlay > playCtx.currentTime - 0.3) {
+          let sq = 0; for (let i = 0; i < f32.length; i++) sq += f32[i] * f32[i];
+          const rms = Math.sqrt(sq / (f32.length || 1));
+          loudN = rms > 0.09 ? loudN + 1 : 0;
+          if (loudN < 3) data = new Float32Array(f32.length);
+        } else loudN = 0;
+        if (rate !== 16000) { const r = rate / 16000, n = Math.floor(f32.length / r); data = new Float32Array(n); for (let i = 0; i < n; i++) data[i] = f32[Math.floor(i * r)]; }
+        const pcm = new Int16Array(data.length); for (let i = 0; i < data.length; i++) pcm[i] = Math.max(-1, Math.min(1, data[i])) * 32767;
+        try { ws.send(JSON.stringify({ type: 'audio', data: b64(new Uint8Array(pcm.buffer)), mimeType: 'audio/pcm;rate=16000' })); micSent++; } catch {}
+      }
+      async function startMic() {
+        micSrc = inCtx.createMediaStreamSource(stream);
+        const sink = inCtx.createGain(); sink.gain.value = 0;
+        try {   // AudioWorklet（每 ~32ms 送一包）
+          const code = `class P extends AudioWorkletProcessor{constructor(){super();this.b=[];this.n=0}process(i){const c=i[0]&&i[0][0];if(c){this.b.push(new Float32Array(c));this.n+=c.length;if(this.n>=512){const o=new Float32Array(this.n);let k=0;for(const x of this.b){o.set(x,k);k+=x.length}this.port.postMessage(o,[o.buffer]);this.b=[];this.n=0}}return true}}registerProcessor('dh-mic',P)`;
+          const url = URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
+          await inCtx.audioWorklet.addModule(url);
+          micNode = new AudioWorkletNode(inCtx, 'dh-mic');
+          micNode.port.onmessage = e => sendPcm(e.data, inCtx.sampleRate);
+        } catch (e) {
+          micNode = inCtx.createScriptProcessor(512, 1, 1);
+          micNode.onaudioprocess = ev => sendPcm(ev.inputBuffer.getChannelData(0), inCtx.sampleRate);
+        }
+        micSrc.connect(micNode); micNode.connect(sink); sink.connect(inCtx.destination);
+      }
+      // —— 播放 + 由 PCM 直接算嘴型（每 20ms 一格，排在實際播放時間上）——
+      function visFor(rms, zcr) {
+        if (rms < 0.015) return '';
+        if (rms < 0.035) return 'slight';
+        if (zcr > 0.22) return 'ee';
+        if (zcr < 0.06 && rms > 0.07) return rms > 0.14 ? 'oh' : 'u';
+        return rms > 0.11 ? 'wide' : 'mid';
+      }
+      function playPCM(u8, rate) {
+        rx++;
+        if (!playCtx) return;
+        if (Date.now() < userTalkingUntil) return;
+        if (waitingAudio || dhVid.clip !== 'idle') { waitingAudio = false; try { dhVid.cancelAction(); } catch {} }
+        rate = rate || 24000;
+        const n = Math.floor(u8.byteLength / 2); if (!n) return;
+        const dv = new DataView(u8.buffer, u8.byteOffset, n * 2);
+        const buf = playCtx.createBuffer(1, n, rate), ch = buf.getChannelData(0);
+        for (let i = 0; i < n; i++) ch[i] = dv.getInt16(i * 2, true) / 32768;
+        if (playCtx.state !== 'running') playCtx.resume().catch(() => {});
+        const s = playCtx.createBufferSource(); s.buffer = buf; s.connect(outGain);
+        const t0 = nextPlay > playCtx.currentTime + 0.01 ? nextPlay : playCtx.currentTime + 0.12;   // 斷流後先墊 120ms 緩衝，之後無縫接續
+        s.start(t0); nextPlay = t0 + buf.duration;
+        sources.push(s); s.onended = () => { sources = sources.filter(x => x !== s); played++; };
+        const step = Math.round(rate * 0.02), list = [];
+        for (let i = 0; i < n; i += step) {
+          let sum = 0, z = 0, m = Math.min(n, i + step);
+          for (let j = i; j < m; j++) { sum += ch[j] * ch[j]; if (j > i && (ch[j] >= 0) !== (ch[j - 1] >= 0)) z++; }
+          list.push([t0 + i / rate, visFor(Math.sqrt(sum / (m - i)), z / (m - i))]);
+        }
+        try { dhLip.schedule(playCtx, list); } catch {}
+        if (!isSpeaking) setSpeaking(true);
+        clearTimeout(drainT); drainT = setTimeout(() => { if (!sources.length) setSpeaking(false); }, (nextPlay - playCtx.currentTime) * 1000 + 450);
+      }
+      function playB64(b, mime) { const m = /rate=(\d+)/.exec(String(mime || '')); try { const bin = atob(b), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); playPCM(u, m ? +m[1] : 24000); } catch (e) { lastErr = 'decode'; } }
+      function bargeIn() {
+        sources.forEach(x => { try { x.stop(); } catch {} }); sources = []; nextPlay = 0; userTalkingUntil = Date.now() + 700;
+        clearTimeout(drainT); try { dhLip.clearSchedule(); } catch {} setSpeaking(false);
+      }
+      function upsert(role, text) {
+        // A typed message already exists in chatLog; do not create a second user bubble
+        // when the Live relay echoes its transcript.
+        if (role === 'user' && lastTypedLive && String(text || '').trim() === lastTypedLive) { lastTypedLive = ''; return; }
+        if (role === 'user') { if (userIdx < 0 || chatLog[userIdx]?.role !== 'user' || userIdx !== chatLog.length - 1) { chatLog.push({ role: 'user', text: '' }); userIdx = chatLog.length - 1; } chatLog[userIdx].text = text; }
+        else { if (aiIdx < 0 || chatLog[aiIdx]?.role !== 'assistant' || aiIdx !== chatLog.length - 1) { chatLog.push({ role: 'assistant', text: '' }); aiIdx = chatLog.length - 1; } chatLog[aiIdx].text = text; }
+        lastSpoken = chatLog.length - 1;
+        clearTimeout(upsert._t); upsert._t = setTimeout(() => { try { renderChat(); } catch {} }, 300);
+      }
+      function takeAudio(d) {
+        if (d.audio && d.audio.data) { playB64(d.audio.data, d.audio.mimeType); return; }
+        if (d.data && d.mimeType && String(d.mimeType).indexOf('audio') === 0) { playB64(d.data, d.mimeType); return; }
+        const parts = (d.serverContent && d.serverContent.modelTurn && d.serverContent.modelTurn.parts) || (d.modelTurn && d.modelTurn.parts) || [];
+        parts.forEach(p => { const id = p && p.inlineData; if (id && id.data && String(id.mimeType || '').indexOf('audio') === 0) playB64(id.data, id.mimeType); });
+      }
+      function onMsg(raw) {
+        if (raw instanceof ArrayBuffer) { playPCM(new Uint8Array(raw), 24000); return; }
+        if (typeof Blob !== 'undefined' && raw instanceof Blob) { raw.arrayBuffer().then(b => playPCM(new Uint8Array(b), 24000)); return; }
+        let d; try { d = JSON.parse(raw); } catch { return; }
+        const sc = d.serverContent || d;
+        if (d.type === 'interrupted' || sc.interrupted) bargeIn();
+        takeAudio(d);
+        try {   // 記住後端回傳的 conversation/topic（比照 technical-dark-star.html applyLiveSessionIds）
+          const cid = d.conversation_id || d.conversationId || (d.session && d.session.conversation_id) || (d.live_open && d.live_open.conversation_id) || (d.memory && d.memory.conversation_id);
+          const tp = d.topic_id || d.topicId || (d.live_open && d.live_open.topic_id);
+          if (typeof cid === 'string' && cid.trim()) localStorage.setItem(nsKey('aivault-dh-live-conversation-id'), cid.trim());
+          if (typeof tp === 'string' && tp.trim()) localStorage.setItem(nsKey('aivault-dh-live-topic-id'), tp.trim());
+        } catch {}
+        if (d.type === 'live_open' || d.setupComplete) { gotSetup = true; wsState = '已連線'; retry = 0; try { dhVid.stopWaiting(); dhVid.cancelAction(); } catch {} }
+        const inn = (sc.inputTranscription && sc.inputTranscription.text) || (d.type === 'inputTranscription' ? d.text : '');
+        if (inn) { inBuf += inn; upsert('user', inBuf); try { dhCommand(inBuf, cmdFired); } catch {} clearTimeout(knowT); const q = inBuf; knowT = setTimeout(() => liveKnow(q), 1200); }
+        const out = (sc.outputTranscription && sc.outputTranscription.text) || (d.type === 'outputTranscription' ? d.text : '');
+        if (out) { if (inBuf) { inBuf = ''; userIdx = -1; } outBuf += out; upsert('assistant', outBuf); if (liveChip && chatLog[aiIdx]) chatLog[aiIdx].src = liveChip; if (/[（(]\s*(微笑|笑)/.test(outBuf) && !cmdFired.has('outsmile')) { cmdFired.add('outsmile'); try { dhVid.cmd('happy'); } catch {} } }
+        if (sc.turnComplete || d.turnComplete || d.type === 'turnComplete') { cmdFired = new Set(); knowTurnDone = false; if (liveChipUsed) liveChip = ''; liveChipUsed = !!liveChip; outBuf = ''; aiIdx = -1; inBuf = ''; userIdx = -1; }
+        if (d.type === 'error' || d.error) {
+          const m = d.message || (d.error && d.error.message) || JSON.stringify(d.error || d); lastErr = String(m).slice(0, 60);
+          if (/AUTH_REQUIRED|INVALID_AUTH/.test(m)) { wanted = false; toast('請先登入 AIVAULT 再使用即時語音'); }
+          if (/TOPIC_ID_REQUIRED|IDENTITY_MISMATCH/.test(m)) { try { localStorage.removeItem(nsKey('aivault-dh-live-topic-id')); localStorage.removeItem(nsKey('aivault-dh-live-conversation-id')); } catch {} }
+        }
+      }
+      function connect() {
+        return new Promise((resolve, reject) => {
+          const q = new URLSearchParams();
+          q.set('voice', dhLiveVoice()); q.set('agent_id', agentId()); q.set('client', 'aivault-digital-human'); q.set('topic_id', topicId()); gotSetup = false;
+          // 專用的 topic/conversation 配對（不可借用暗星頁的 conversation_id，否則 CONVERSATION_IDENTITY_MISMATCH）
+          let conv = ''; try { conv = localStorage.getItem(nsKey('aivault-dh-live-conversation-id')) || ''; } catch {} if (conv) q.set('conversation_id', conv);
+          const tok = token(); if (tok) q.set('access_token', tok); else lastErr = '未登入';
+          wsState = retry ? '重新連線中…' : '連線中…';
+          try { dhVid.startWaiting(retry ? '重新連線中…' : '連接中…', 'net'); } catch {}
+          waitingAudio = true;
+          const sock = new WebSocket(RELAY + '?' + q.toString()); sock.binaryType = 'arraybuffer'; ws = sock;
+          const t = setTimeout(() => { try { sock.close(); } catch {} reject(new Error('連線逾時')); }, 8000);
+          sock.onopen = () => { clearTimeout(t); wsState = '已連線'; resolve(); };
+          sock.onerror = () => { clearTimeout(t); lastErr = 'WS error'; reject(new Error('WebSocket error')); };
+          sock.onmessage = e => onMsg(e.data);
+          sock.onclose = ev => {
+            clearTimeout(t); if (ws === sock) ws = null; wsState = '斷線 ' + ev.code + (ev.reason ? ' ' + String(ev.reason).slice(0, 40) : '');
+            // 自訂 agent 連兩次都在 setup 前被關（且不是登入問題）→ 後端不支援，改用暗星 agent（仍用數字人專用 key）
+            if (!gotSetup && agentId() === DH_AGENT && !/AUTH/.test(lastErr + ev.reason) && ++customFails >= 2) { try { localStorage.setItem('aivault-dh-live-agent', 'technical-dark-star'); localStorage.setItem('aivault-dh-live-agent-at', String(Date.now())); } catch {} lastErr = '自訂頻道不支援，改用暗星頻道'; }
+            if (active && wanted && retry < 6) { retry++; try { dhVid.startWaiting('重新連線中…', 'net'); } catch {}
+              setTimeout(() => { if (active && wanted) connect().catch(() => {}); }, Math.min(15000, 800 * 2 ** retry)); }
+            else if (active) { toast('即時語音已中斷' + (lastErr ? '：' + lastErr : '')); stop(); }
+          };
+        });
+      }
+      function startFrames() {
+        clearInterval(frameT);
+        if (!camOn) return;
+        canvas = canvas || document.createElement('canvas');
+        frameT = setInterval(() => {
+          if (!ws || ws.readyState !== 1 || !pip || pip.readyState < 2 || !pip.videoWidth) return;
+          const w = Math.min(640, pip.videoWidth), h = Math.round(pip.videoHeight * w / pip.videoWidth); canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(pip, 0, 0, w, h);
+          try { ws.send(JSON.stringify({ type: 'video', data: canvas.toDataURL('image/jpeg', 0.72).split(',')[1], mimeType: 'image/jpeg' })); } catch {}
+        }, 1000);
+      }
+      async function setCam(on) {
+        camOn = !!on; window.__dhLiveCam = camOn;
+        if (!active) { renderChat(); return; }
+        if (camOn) {
+          try {
+            const vs = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } });
+            vs.getVideoTracks().forEach(tr => stream.addTrack(tr));
+            pip = document.createElement('video'); pip.muted = true; pip.playsInline = true; pip.setAttribute('playsinline', ''); pip.autoplay = true;
+            pip.srcObject = new MediaStream(stream.getVideoTracks());
+            pip.style.cssText = 'position:absolute;left:8px;bottom:8px;width:28%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;border:2px solid rgba(255,255,255,.6);transform:scaleX(-1);z-index:3;background:#000;';
+            dhVid.el.appendChild(pip); pip.play().catch(() => {});
+            startFrames();
+          } catch (e) { camOn = false; window.__dhLiveCam = false; toast('無法開啟鏡頭'); }
+        } else {
+          clearInterval(frameT); try { stream.getVideoTracks().forEach(tr => { tr.stop(); stream.removeTrack(tr); }); } catch {}
+          try { pip && pip.remove(); } catch {} pip = null;
+        }
+        renderChat();
+      }
+      async function start() {
+        if (active) return;
+        unlock();                                   // 同步、在點擊手勢內
+        active = true; wanted = true; retry = 0; micSent = rx = played = 0; lastErr = ''; window.__dhLiveActive = true;
+        stopTalk(); renderChat(); dbg();
+        try {
+          if (!navigator.mediaDevices?.getUserMedia) throw new Error('此瀏覽器不支援麥克風');
+          stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+          await connect();
+          await startMic();                         // 麥克風持續開著，免按
+          if (camOn) { camOn = false; await setCam(true); }
+        } catch (e) { lastErr = String(e.message || e).slice(0, 60); toast('無法開始即時語音：' + lastErr); stop(); }
+      }
+      function stop() {
+        wanted = false; active = false; window.__dhLiveActive = false;
+        try { ws && ws.close(); } catch {} ws = null;
+        clearInterval(frameT); bargeIn();
+        try { micSrc && micSrc.disconnect(); micNode && micNode.disconnect(); } catch {} micSrc = micNode = null;
+        try { inCtx && inCtx.close(); } catch {} inCtx = null;
+        try { playCtx && playCtx.close(); } catch {} playCtx = null;
+        try { outEl && outEl.remove(); } catch {} outEl = null; outMode = 'none';
+        try { stream && stream.getTracks().forEach(t => t.stop()); } catch {} stream = null;
+        try { pip && pip.remove(); } catch {} pip = null;
+        try { dhVid.stopWaiting(); } catch {}
+        wsState = '未連線'; dbg(); renderChat();
+      }
+      let lastTypedLive = '';
+      async function sendTyped(text) {
+        if (!active || !ws || ws.readyState !== WebSocket.OPEN) return false;
+        const q = String(text || '').trim();
+        if (!q) return false;
+        let evidence = null;
+        if (window.DHKnow && DHKnow.wantsLookup(q)) {
+          try { evidence = await DHKnow.lookup(q); } catch (e) { console.warn('[DigitalHuman] lookup failed', e); }
+        }
+        if (!active || !ws || ws.readyState !== WebSocket.OPEN) return false;
+        const context = evidence && evidence.prompt ? '\n' + evidence.prompt : '\n若需要查資料但沒有取得檢索結果，請明確告知尚未查到，不要聲稱已讀取書籍或網站。';
+        try {
+          ws.send(JSON.stringify({ type: 'text', text: q + context }));
+          lastTypedLive = q;
+          if (evidence && evidence.chip) { liveChip = evidence.chip; liveChipUsed = false; }
+          return true;
+        } catch (e) { console.warn('[DigitalHuman] live text send failed', e); return false; }
+      }
+      return { start, stop, sendTyped, toggleCam: () => setCam(!camOn), get active() { return active; } };
+    })();
+
+    function emotionLabel(e) {
+      return { happy:'樂', angry:'怒', sad:'哀', wow:'驚', think:'思', calm:'平' }[e] || '平';
+    }
+
+    function renderChat() {
+      const h = current || {};
+      setHeader('', `${h.brain_provider || ''} · ${h.brain_model || ''}`, voiceChatOn ? '語音開' : '語音關', () => {
+        voiceChatOn = !voiceChatOn;
+        if (!voiceChatOn) stopTalk();
+        renderChat();
+      });
+      const img = assets.image.find(x => String(x.id) === String(h.selected_image_id))
+        || assets.image.find(x => x.is_selected)
+        || assets.image[0];
+      const src = imageUrl(img || h);
+      const talking = isSpeaking || singing;
+      const vItem = selectedVoiceItem();
+      document.getElementById('app').innerHTML = `
+        <div class="dh-avatar">
+          <div class="dh-head real ${talking?'talking':''}">
+            <img class="dh-real" alt="" src="${realFaceSrc(currentEmotion, talking)}" onerror="this.parentNode.classList.remove('real')"/>
+            ${src ? `<img alt="" src="${esc(src)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;" onerror="this.style.display='none'"/>` : ''}
+            ${faceSVG(currentEmotion, talking)}
+            <div class="dh-mouth ${talking?'on':''}">👄</div>
+          </div>
+          <div class="muted" style="margin-top:8px;">${talking ? '說話中' : '待機'} · ${emotionLabel(currentEmotion)}</div>
+        </div>
+        <div class="face-stage emo-${currentEmotion} ${talking ? 'talking' : ''}">
+          ${src ? `<img alt="" src="${esc(src)}" onerror="this.style.display='none'"/>` : ''}
+          <div class="face-layer">${faceSVG(currentEmotion, talking)}</div>
+          <div class="emo-tag">${singing ? '演唱中' : emotionLabel(currentEmotion)} · ${talking ? (singing ? '唱歌' : '說話中') : '待機'}</div>
+        </div>
+        <div class="row" style="margin:8px 0 12px;">
+          <button class="pill ${voiceMode==='device'?'':'ghost'}" type="button" id="btnVoiceDevice">手機語音</button>
+          <button class="pill ${voiceMode==='mine'?'':'ghost'}" type="button" id="btnVoiceMine">我的聲音</button>
+          <button class="pill ghost" type="button" id="btnVoiceStudio">去錄音</button>
+        </div>
+        <p class="muted" style="margin-bottom:8px;">沒有固定台詞。你問什麼，AI 就答什麼，並用語音唸出來。</p>
+        <div class="row" style="margin-bottom:8px;">
+          <button class="pill ghost" type="button" id="btnRecVideo">${recordingVideo ? '錄製中…' : '錄製這句成影片'}</button>
+        </div>
+        <div class="row" style="margin-bottom:8px;gap:8px;">
+          <button class="pill ${window.__dhLiveActive ? 'danger' : ''}" type="button" id="btnLive" style="flex:2;font-size:17px;padding:14px 10px;">${window.__dhLiveActive ? '⏹ 結束' : '▶ 開始即時語音'}</button>
+          <button class="pill ghost" type="button" id="btnLiveCam" style="flex:1;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:4px" aria-hidden="true"><path d="M3 9a3 3 0 0 1 3-3h1.5l1.4-2h6.2l1.4 2H18a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/><circle cx="12" cy="13" r="3.5"/></svg>${window.__dhLiveCam ? '鏡頭開' : '鏡頭關'}</button>
+        </div>
+        <div class="row" style="margin-bottom:8px;gap:6px;align-items:center;flex-wrap:wrap;">
+          <span class="muted" style="font-size:12px;">手機語音</span>
+          <select id="selTtsVoice" style="flex:1;min-width:140px;max-width:230px;"></select>
+          <span class="muted" style="font-size:12px;">視訊聲音</span>
+          <select id="selLiveVoice" style="flex:1;min-width:120px;max-width:200px;">${DH_LIVE_VOICES.map(([v, l]) => `<option value="${v}" ${dhLiveVoice()===v?'selected':''}>${l}</option>`).join('')}</select>
+        </div>
+        ${chatClip?.url ? `<video controls playsinline src="${esc(chatClip.url)}" style="width:100%;margin-bottom:10px;border-radius:12px;background:#000;"></video>
+          <button class="pill" type="button" id="btnDlClip">下載影片</button>` : ''}
+        <div class="chat-box">
+          <div class="msgs" id="msgs">${chatLog.length > 1 ? `<div class="msg-clear"><button type="button" data-clear-all>清除全部</button></div>` : ''}${chatLog.map((m, i) => `<div class="msg-wrap ${m.role==='user'?'me':'bot'}"><div class="bubble ${m.role==='user'?'me':'bot'}">${esc(m.text)}${m.src ? `<div style="margin-top:4px;font-size:11px;opacity:.7;">${esc(m.src)}</div>` : ''}</div><div class="msg-acts"><button type="button" data-copy="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>複製</span></button><button type="button" data-del="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg><span>刪除</span></button></div></div>`).join('') || '<div class="muted">按麥克風開始說話，數位人會用聲音回答。</div>'}</div>
+        </div>
+        <div class="composer-dock">
+          <div class="composer" style="background:var(--card);border:1px solid var(--border);border-radius:18px;">
+            <button class="icon-btn mic-ios" id="btnMic" type="button" aria-label="語音輸入"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></button>
+            <input id="chatIn" placeholder="說話或打字…" />
+            <button class="pill" id="btnSend" type="button">送出</button>
+          </div>
+        </div>`;
+      document.body.classList.add('chat-on');
+      const box = document.getElementById('msgs');
+      box.scrollTop = box.scrollHeight;
+      document.getElementById('btnSend').onclick = sendChat;
+      document.getElementById('chatIn').onkeydown = e => { if (e.key === 'Enter') sendChat(); };
+      document.getElementById('btnMic').onclick = startListen;
+      box.onclick = ev => {
+        const c = ev.target.closest('[data-copy]'), d = ev.target.closest('[data-del]'), all = ev.target.closest('[data-clear-all]');
+        if (c) { const t = (chatLog[+c.dataset.copy] || {}).text || ''; const ok = () => { const sp = c.querySelector('span'); sp.textContent = '已複製'; setTimeout(() => { sp.textContent = '複製'; }, 1200); };
+          const fb = () => { const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch {} ta.remove(); ok(); };
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, fb); else fb(); return; }
+        if (d) { chatLog.splice(+d.dataset.del, 1); lastSpoken = chatLog.length - 1; renderChat(); return; }
+        if (all) { if (!confirm('確定清除全部對話？')) return; chatLog.length = 0; lastSpoken = -1; renderChat(); }
+      };
+      try { dhVid.attach(); } catch {}
+      document.getElementById('btnVoiceDevice').onclick = () => { voiceMode='device'; sessionStorage.setItem('dh_voice_mode','device'); toast('已切換手機語音'); renderChat(); };
+      document.getElementById('btnVoiceMine').onclick = () => { voiceMode='mine'; sessionStorage.setItem('dh_voice_mode','mine'); toast(selectedVoiceItem()?'已切換我的聲音':'先去錄音'); renderChat(); };
+      document.getElementById('btnVoiceStudio').onclick = () => { location.href = 'aivault-voice-studio.html'; };
+      document.getElementById('btnRecVideo').onclick = recordChatVideo;
+      document.getElementById('btnLive').onclick = () => { dhLive.active ? dhLive.stop() : dhLive.start(); };
+      document.getElementById('btnLiveCam').onclick = () => dhLive.toggleCam();
+      dhFillTtsSelect();
+      document.getElementById('selTtsVoice').onchange = e => { try { localStorage.setItem('dh_tts_voice', e.target.value); } catch {} };
+      document.getElementById('selLiveVoice').onchange = e => { try { localStorage.setItem('dh_live_voice', e.target.value); } catch {} if (dhLive.active) toast('下次開啟視訊時套用'); };
+      document.getElementById('btnDlClip')?.addEventListener('click', downloadChatClip);
+      if (current && current.id === 'showcase') decorateShowcase();
+      const last = chatLog[chatLog.length - 1];
+      if (last && last.role === 'assistant' && chatLog.length - 1 !== lastSpoken) {
+        lastSpoken = chatLog.length - 1;
+        talk(last.text, current?.persona_lang);
+      }
+    }
+
+    function speakScript(text) {
+      const line = String(text || '').trim();
+      if (!line) return toast('請先輸入或選擇文案');
+      scriptDraft = line;
+      singing = /唱/.test(line);
+      currentEmotion = singing ? 'happy' : detectEmotion(line);
+      chatLog.push({ role: 'user', text: '請唸：' + line });
+      chatLog.push({ role: 'assistant', text: line });
+      lastSpoken = chatLog.length - 1;
+      renderChat();
+      talk(line, current?.persona_lang);
+    }
+
+    function downloadText(text, filename) {
+      const line = String(text || '').trim();
+      if (!line) return toast('沒有可下載的文字');
+      const blob = new Blob([line], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename || 'script.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      toast('已開始下載');
+    }
+
+    async function downloadSelectedVoice() {
+      const h = current || {};
+      const v = assets.voice.find(x => String(x.id) === String(h.selected_voice_id)) || assets.voice[0];
+      const url = voiceUrl(v);
+      if (!url) return toast('還沒有可下載的聲音檔');
+      try {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = (v.name || 'digital-human-voice') + (/\.\w+$/.test(v.name || '') ? '' : '.wav');
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        toast('聲音檔下載中');
+      } catch {
+        location.href = url;
+      }
+    }
+
+    function clipLine() {
+      const last = [...chatLog].reverse().find(m => m.role === 'assistant');
+      return (last?.text || '').trim();
+    }
+
+    async function recordChatVideo() {
+      if (recordingVideo) return toast('正在錄製，請稍候');
+      const h = current || {};
+      if (!h.id) return toast('找不到數位人');
+      if (!h.selected_image_id && !assets.image[0]) return toast('請先選擇一張照片再錄影片');
+      const line = clipLine();
+      if (!line) return toast('請先語音聊天，或在文案框輸入她要說的話');
+      recordingVideo = true;
+      renderChat();
+      toast('開始錄製 AI 影片…');
+      try {
+        const human = {
+          ...h,
+          selected_image_id: h.selected_image_id || assets.image[0]?.id,
+          selected_voice_id: h.selected_voice_id || assets.voice[0]?.id,
+          voice_enabled: true
+        };
+        const prompt = `一位女性數字人面向鏡頭，自然微笑，口語說出以下內容，不要加字幕標題：${line}`;
+        const job = unwrapOne(await startVideo(human, prompt, { duration: '5', ratio: '9:16', resolution: '720p' }));
+        let result = job;
+        for (let i = 0; i < 24; i++) {
+          const url = videoUrl(result);
+          const st = String(result.status || result.state || '').toLowerCase();
+          if (url && /done|complete|success|ready/.test(st || 'ready')) break;
+          if (url && i > 2) break;
+          await new Promise(r => setTimeout(r, 4000));
+          result = unwrapOne(await pollVideo(result));
+        }
+        const url = videoUrl(result);
+        if (!url) throw new Error('影片還沒好，請稍後再按一次');
+        chatClip = { url, raw: result, prompt: line };
+        try {
+          await callFn('digital-human-save', {
+            action: 'save_video',
+            digital_human_id: human.id,
+            prompt: line,
+            video_url: url,
+            mp4_url: url
+          });
+        } catch {}
+        toast('影片已可播放與下載');
+      } catch (err) {
+        toast(err.message || '錄製失敗');
+      } finally {
+        recordingVideo = false;
+        renderChat();
+      }
+    }
+
+    async function downloadChatClip() {
+      if (!chatClip?.url) return toast('還沒有影片');
+      try {
+        const res = await fetch(chatClip.url);
+        const blob = await res.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = (current?.name || 'digital-human') + '.mp4';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        toast('影片下載中');
+      } catch {
+        location.href = chatClip.url;
+      }
+    }
+
+    function startListen() {
+      const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!Rec) return toast('此裝置不支援語音輸入，請改打字');
+      stopTalk();
+      const r = new Rec();
+      r.lang = current?.persona_lang === 'en' ? 'en-US' : 'zh-TW';
+      r.interimResults = false;
+      toast('請開始說話…');
+      const mb = document.getElementById('btnMic'); mb && mb.classList.add('on'); r.onend = () => { const b = document.getElementById('btnMic'); b && b.classList.remove('on'); };
+      r.onresult = ev => {
+        const said = ev.results[0][0].transcript;
+        const input = document.getElementById('chatIn');
+        if (input) input.value = said;
+        sendChat();
+      };
+      r.onerror = () => toast('沒聽到，請再按一次麥克風');
+      r.start();
+    }
+
+
+    // ===== 對話與動作片段串接 =====
+    function dhWaitOnline(maxMs) {
+      if (navigator.onLine !== false) return Promise.resolve();
+      return new Promise(res => { const t = setTimeout(res, maxMs); window.addEventListener('online', () => { clearTimeout(t); res(); }, { once: true }); });
+    }
+    // 回覆好了：停掉填充排程，等正在播的動作片段結束（最多 9 秒）再顯示文字＋出聲
+    async function dhReplyGate() {
+      clearTimeout(sendChat._fillT);
+      try { dhVid.stopWaiting(); await dhVid.waitIdle(); } catch {}
+    }
+    window.addEventListener('offline', () => { try { dhVid.startWaiting('重新連線中…'); } catch {} });
+    window.addEventListener('online', () => {
+      try {
+        if (window.__dhReplyPending) dhVid.startWaiting('連接中…', 'reply'); else dhVid.stopWaiting();
+        dhVid.setStatus('已重新連線'); setTimeout(() => { try { dhVid.setStatus(window.__dhReplyPending ? '連接中…' : ''); } catch {} }, 1500);
+        if (!isSpeaking) dhVid.flash('happy', 3500);
+      } catch {}
+    });
+
+    async function sendChat() {
+      const input = document.getElementById('chatIn');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      stopTalk();
+      stopHum();
+      singing = isSingAsk(text);
+      try { dhCommand(text); } catch {}
+      chatLog.push({ role: 'user', text });
+      renderChat();
+      // When Live is running, the composer belongs to the same live conversation.
+      // Do not independently call the text gateway and generate a conflicting reply.
+      if (dhLive.active) {
+        const delivered = await dhLive.sendTyped(text);
+        if (delivered) return;
+      }
+      const h = current || {};
+      const lang = h.persona_lang === 'en' ? 'English' : h.persona_lang === 'zh-Hans' ? '简体中文' : '繁體中文';
+      let systemPrompt = singing
+        ? `你是數字人「${h.name || 'AIVAULT'}」，現在要唱歌給使用者聽。請使用${lang}。第一行只寫 [表情:樂]。
+從第二行開始只輸出歌詞，每行一句，4到8句，像隨口哼給朋友聽。不要解釋、不要標題、不要寫「歌詞如下」。`
+        : `${h.__avatar && h.__avatar.persona ? h.__avatar.persona + '\n' : ''}你是家人身邊的陪伴 AI「${h.name || 'AIVAULT'}」。用${lang}口語對話。
+規則：
+- 第一行只寫 [表情:喜] 或 [表情:怒] 或 [表情:哀] 或 [表情:樂] 或 [表情:驚] 或 [表情:思] 或 [表情:平]
+- 其後 1 到 3 句，像當面講話
+- 對方累、痛、不舒服、不想聊：只陪伴，不說教、不加油、不清單、不講道理
+- 禁止首先／再來／總結／條列
+角色：${h.persona_role || '陪伴'}。語氣：${h.persona_tone || '溫和'}。`;
+      try {
+        const history = chatLog.slice(-8).map(m => ({
+          role: m.role === 'assistant' ? 'assistant' : 'user',
+          content: m.text
+        }));
+        window.__dhReplyPending = true;
+        // 等超過 1.2 秒才開始播填充動作
+        clearTimeout(sendChat._fillT);
+        sendChat._fillT = setTimeout(() => { try { if (window.__dhReplyPending) dhVid.startWaiting(navigator.onLine === false ? '重新連線中…' : '連接中…', navigator.onLine === false ? 'net' : 'reply'); } catch {} }, 1200);
+        await thinkBrain(text, singing ? 'CREATIVE' : 'CONVERSATION');
+        let know = { prompt: '', chip: '' };
+        if (!singing && window.DHKnow && DHKnow.wantsLookup && DHKnow.wantsLookup(text)) { try { know = await DHKnow.lookup(text); } catch {} }
+        if (know.prompt) systemPrompt += `\n\n${know.prompt}\n（資料僅供參考，用自然聊天口吻回答，不要提「查到的資料」或電子書，除非被問來源。）`;
+        const body = {
+          provider: h.brain_provider || h.provider || 'groq',
+          model: h.brain_model || h.model || 'openai/gpt-oss-120b',
+          agent: h.name || 'Digital Human',
+          systemPrompt,
+          messages: [{ role: 'system', content: systemPrompt }, ...history]
+        };
+        let data, lastErr;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try { data = await callFn('ai-gateway', body); break; }
+          catch (e) {
+            lastErr = e;
+            const netErr = e instanceof TypeError || navigator.onLine === false || /network|failed to fetch|load failed/i.test(String(e && e.message));
+            if (!netErr || attempt === 2) throw e;
+            try { dhVid.startWaiting('重新連線中…'); } catch {}
+            await dhWaitOnline(15000);
+            await new Promise(r => setTimeout(r, 1200));
+          }
+        }
+        if (!data) throw lastErr || new Error('no data');
+        const raw = data.content || data.response || data.text || data.message || data.choices?.[0]?.message?.content || '（無內容）';
+        const content = stripEmotionTag(raw);
+        const emo = singing ? 'happy' : await readEmotion(content);
+        await dhReplyGate();
+        currentEmotion = emo;
+        chatLog.push({ role: 'assistant', text: content, src: know.chip || '' });
+      } catch (err) {
+        await dhReplyGate();
+        currentEmotion = 'sad';
+        chatLog.push({ role: 'assistant', text: 'AI Gateway 錯誤：' + err.message });
+      }
+      window.__dhReplyPending = false;
+      renderChat();
+    }
+
+    function renderVideo() {
+      const h = current || {};
+      setHeader('AI Video', '', null);
+      document.getElementById('app').innerHTML = `
+        <div class="card">
+          <h3>你想讓數位人做什麼？</h3>
+          <label>提示詞</label>
+          <textarea id="vPrompt" placeholder="例如：我的數位人在台北街頭介紹 AIVAULT，使用自然的語氣向使用者說明平台功能。"></textarea>
+          <label>時長</label>
+          <select id="vDur"><option>5</option><option selected>10</option><option>15</option><option>30</option></select>
+          <label>比例</label>
+          <select id="vRatio"><option>9:16</option><option>16:9</option><option>1:1</option></select>
+          <label>解析度</label>
+          <select id="vRes"><option>720p</option><option selected>1080p</option></select>
+          <label>影片 Provider</label>
+          <select id="vProv">${VIDEO_PROVIDERS.map(p => `<option value="${p.code}">${p.name}</option>`).join('')}</select>
+          <p class="muted" style="margin-top:8px;">目前可走 Magic Hour（magic-hour-test / magic-hour-result），架構可換其他 Video Provider。</p>
+          <div class="row" style="margin-top:12px;"><button class="pill" id="btnGen">產生影片</button></div>
+        </div>
+        <div class="card hidden" id="vResult"></div>`;
+      document.getElementById('btnGen').onclick = generateVideo;
+    }
+
+    async function generateVideo() {
+      const prompt = document.getElementById('vPrompt').value.trim();
+      if (!prompt) return toast('請先輸入提示詞');
+      const settings = {
+        duration: document.getElementById('vDur').value,
+        ratio: document.getElementById('vRatio').value,
+        resolution: document.getElementById('vRes').value
+      };
+      current.video_provider = document.getElementById('vProv').value;
+      toast('開始產生影片…');
+      try {
+        const job = await startVideo(current, prompt, settings);
+        const box = document.getElementById('vResult');
+        box.classList.remove('hidden');
+        box.innerHTML = `<p class="muted">生成中… job=${esc(job.job_id || job.id || '')}</p>`;
+        let result = job;
+        for (let i = 0; i < 20; i++) {
+          if (result.status === 'complete' || result.status === 'completed' || result.mp4_url || result.video_url) break;
+          await new Promise(r => setTimeout(r, 3000));
+          try { result = await pollVideo(job); } catch {}
+        }
+        const url = videoUrl(result);
+        if (!url) {
+          box.innerHTML = `<p>狀態：${esc(result.status || '未知')}</p><p class="muted">${esc(JSON.stringify(result).slice(0, 240))}</p>`;
+          return;
+        }
+        try {
+          await callFn('digital-human-save', {
+            action: 'save_video',
+            digital_human_id: current.id,
+            name: prompt.slice(0, 40),
+            storage_path: result.storage_path,
+            video_url: url,
+            status: 'complete'
+          });
+        } catch {}
+        box.innerHTML = `
+          <video id="player" controls src="${esc(url)}" playsinline></video>
+          <div class="row" style="margin-top:10px;">
+            <button class="pill" id="btnPlay">▶ 播放</button>
+            <a class="pill ghost" href="${esc(url)}" download="aivault-digital-human.mp4">⬇ 下載影片</a>
+            <button class="pill ghost" id="btnSaveVid">儲存至我的影片</button>
+          </div>`;
+        document.getElementById('btnPlay').onclick = () => document.getElementById('player').play();
+        document.getElementById('btnSaveVid').onclick = () => toast('已嘗試寫入後端影片資料');
+      } catch (err) { toast(err.message); }
+    }
+
+    function renderImages() {
+      const h = current || {};
+      setHeader('圖片管理', '', '＋ 上傳圖片', () => document.getElementById('fileImg').click());
+      document.getElementById('app').innerHTML = `
+        <input id="fileImg" class="hidden" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" />
+        <div class="grid two" id="imgGrid"></div>`;
+      document.getElementById('fileImg').onchange = async (e) => {
+        const file = e.target.files?.[0]; if (!file) return;
+        try {
+          const item = await uploadAsset('image', file, h.id);
+          assets.image.unshift(item);
+          renderImages();
+          toast('圖片已儲存');
+        } catch (err) { toast(err.message); }
+      };
+      const grid = document.getElementById('imgGrid');
+      grid.innerHTML = assets.image.length ? assets.image.map(img => `
+        <div class="asset ${String(img.id)===String(h.selected_image_id)?'selected':''}">
+          <img class="thumb" alt="" src="${esc(imageUrl(img))}"/>
+          <div style="margin-top:8px;font-weight:700;">${esc(img.name || '圖片')}</div>
+          <div class="muted">${esc(img.created_at || '')} ${String(img.id)===String(h.selected_image_id)?'· 目前使用中':''}</div>
+          <div class="row" style="margin-top:8px;">
+            <button class="pill ghost" data-pick-img="${esc(img.id)}">選擇</button>
+            <button class="pill danger" data-del-img="${esc(img.id)}">刪除</button>
+          </div>
+        </div>`).join('') : `<div class="empty">尚無圖片</div>`;
+    }
+
+    function renderVoices() {
+      const h = current || {};
+      setHeader('聲音管理', '', '＋ 上傳聲音', () => document.getElementById('fileVoice').click());
+      document.getElementById('app').innerHTML = `
+        <input id="fileVoice" class="hidden" type="file" accept="audio/mpeg,audio/wav,audio/mp4,audio/ogg,audio/webm,.mp3,.wav,.m4a,.ogg,.webm" />
+        <div class="grid" id="voiceGrid"></div>`;
+      document.getElementById('fileVoice').onchange = async (e) => {
+        const file = e.target.files?.[0]; if (!file) return;
+        try {
+          const item = await uploadAsset('voice', file, h.id);
+          assets.voice.unshift(item);
+          renderVoices();
+          toast('聲音已儲存');
+        } catch (err) { toast(err.message); }
+      };
+      document.getElementById('voiceGrid').innerHTML = assets.voice.map(v => `
+        <div class="asset ${String(v.id)===String(h.selected_voice_id)?'selected':''}">
+          <div style="font-weight:700;">${esc(v.name || '聲音')}</div>
+          <div class="muted">${esc(v.created_at || '')} ${String(v.id)===String(h.selected_voice_id)?'· 目前使用中':''}</div>
+          ${voiceUrl(v) ? `<audio controls src="${esc(voiceUrl(v))}" style="width:100%;margin-top:8px;"></audio>` : ''}
+          <div class="row" style="margin-top:8px;">
+            <button class="pill ghost" data-pick-voice="${esc(v.id)}">選擇</button>
+            <button class="pill danger" data-del-voice="${esc(v.id)}">刪除</button>
+          </div>
+        </div>`).join('') || `<div class="empty">尚無聲音</div>`;
+    }
+
+    function renderVideos() {
+      const h = current || {};
+      setHeader('影片管理', '', '產生影片', () => go(`/${h.id}/video`));
+      document.getElementById('app').innerHTML = assets.video.map(v => {
+        const st = v.status || 'complete';
+        const url = videoUrl(v);
+        return `<div class="card">
+          ${url ? `<video controls src="${esc(url)}" playsinline></video>` : `<div class="preview-ph">${esc(st)}</div>`}
+          <h3 style="margin-top:8px;">${esc(v.name || '影片')}</h3>
+          <p class="muted">${esc(v.created_at || '')} · ${st==='complete'||st==='completed'?'完成':st==='failed'?'失敗':'生成中'}</p>
+          <div class="row">
+            ${url ? `<a class="pill" href="${esc(url)}" download="aivault-video.mp4">⬇ 下載</a>` : ''}
+            <button class="pill danger" data-del-vid="${esc(v.id)}">刪除</button>
+          </div>
+        </div>`;
+      }).join('') || `<div class="empty">尚無影片</div>`;
+    }
+
+    function renderSettings() {
+      const h = current || {};
+      Object.assign(draft, {
+        name: h.name || '',
+        description: h.description || '',
+        brain_provider: h.brain_provider || h.provider || draft.brain_provider,
+        brain_model: h.brain_model || h.model || draft.brain_model,
+        persona_role: h.persona_role || 'AIVAULT AI Assistant',
+        persona_tone: h.persona_tone || '自然',
+        persona_lang: h.persona_lang || 'zh-Hant',
+        video_enabled: h.video_enabled !== false,
+        voice_enabled: h.voice_enabled !== false
+      });
+      setHeader('設定', '', '儲存設定', saveSettings);
+      document.getElementById('app').innerHTML = `
+        <div class="card">
+          <h3>基本資料</h3>
+          <label>名稱</label><input id="fName" value="${esc(draft.name)}" />
+          <label>描述</label><textarea id="fDesc">${esc(draft.description)}</textarea>
+        </div>
+        <div class="card">
+          <h3>AI 大腦</h3>
+          ${brainForm(draft)}
+        </div>
+        <div class="card">
+          ${personaForm(draft)}
+        </div>
+        <div class="card">
+          <h3>功能</h3>
+          <label>影片功能</label>
+          <select id="fVidOn"><option value="1" ${draft.video_enabled?'selected':''}>ON</option><option value="0" ${!draft.video_enabled?'selected':''}>OFF</option></select>
+          <label>聲音功能</label>
+          <select id="fVoiceOn"><option value="1" ${draft.voice_enabled?'selected':''}>ON</option><option value="0" ${!draft.voice_enabled?'selected':''}>OFF</option></select>
+        </div>
+        <div class="card danger-zone">
+          <h3>危險操作</h3>
+          <button class="pill danger" id="btnDelHuman">刪除數位人</button>
+        </div>`;
+      document.getElementById('fProvider').onchange = (e) => {
+        draft.brain_provider = e.target.value;
+        draft.brain_model = modelsOf(draft.brain_provider)[0] || draft.brain_model;
+        toast('已選擇 AI：' + draft.brain_provider);
+        renderSettings();
+      };
+      document.getElementById('fModel').onchange = (e) => {
+        draft.brain_model = e.target.value;
+        toast('已選擇 Model：' + draft.brain_model);
+      };
+      document.getElementById('btnDelHuman').onclick = async () => {
+        if (!confirm('確定刪除這個數位人？此操作需二次確認。')) return;
+        if (!confirm('再次確認：刪除後無法從這個畫面復原。')) return;
+        try {
+          await saveHuman({ action: 'delete', id: h.id });
+          toast('已刪除');
+          go('/manage');
+        } catch (err) { toast(err.message); }
+      };
+    }
+
+    async function saveSettings() {
+      const h = current;
+      try {
+        const saved = await saveHuman({
+          action: 'update',
+          id: h.id,
+          name: document.getElementById('fName').value.trim(),
+          description: document.getElementById('fDesc').value.trim(),
+          brain_provider: document.getElementById('fProvider').value,
+          provider: document.getElementById('fProvider').value,
+          brain_model: document.getElementById('fModel').value,
+          model: document.getElementById('fModel').value,
+          persona_role: document.getElementById('fRole').value,
+          persona_tone: document.getElementById('fTone').value,
+          persona_lang: document.getElementById('fLang').value,
+          video_enabled: document.getElementById('fVidOn').value === '1',
+          voice_enabled: document.getElementById('fVoiceOn').value === '1'
+        });
+        current = { ...h, ...saved };
+        toast('設定已儲存');
+        go(`/${h.id}`);
+      } catch (err) { toast(err.message); }
+    }
+
+    async function pickImage(id) {
+      draft.selected_image_id = id;
+      const hid = current?.id || draft.human_id;
+      if (hid) {
+        try {
+          await callFn('digital-human-asset', { action: 'select_image', digital_human_id: hid, image_id: id });
+          current = { ...(current || {}), id: hid, selected_image_id: id };
+          toast('已更新 selected_image_id');
+        } catch (err) { toast(err.message); }
+      }
+      await render();
+    }
+    async function pickVoice(id) {
+      draft.selected_voice_id = id;
+      const hid = current?.id || draft.human_id;
+      if (hid) {
+        try {
+          await callFn('digital-human-asset', { action: 'select_voice', digital_human_id: hid, voice_id: id });
+          current = { ...(current || {}), id: hid, selected_voice_id: id };
+          toast('已更新 selected_voice_id');
+        } catch (err) { toast(err.message); }
+      }
+      await render();
+    }
+
+    document.getElementById('btnHome').onclick = () => { location.href = 'aivault-home.html'; };
+    document.getElementById('btnBack').onclick = () => {
+      const r = route();
+      if (r.name === 'showcase') { location.href = 'aivault-home.html'; return; }
+      if (r.name === 'list') { go('/'); return; }
+      if (r.name === 'create') {
+        persistDraft();
+        const step = Number(sessionStorage.getItem('dh_step') || '1');
+        if (step > 1) {
+          sessionStorage.setItem('dh_step', String(step - 1));
+          localStorage.setItem('dh_step', String(step - 1));
+          renderCreate();
+          return;
+        }
+        go('/manage'); return;
+      }
+      if (r.name === 'dash') { go('/manage'); return; }
+      go('/' + r.id);
+    };
+
+    document.getElementById('app').addEventListener('click', async (e) => {
+      const goBtn = e.target.closest('[data-go]');
+      if (goBtn) { go(goBtn.getAttribute('data-go')); return; }
+      const vs = e.target.closest('[data-go-voice]');
+      if (vs) { location.href = 'aivault-voice-studio.html'; return; }
+      const stg = e.target.closest('[data-go-stage]');
+      if (stg) {
+        sessionStorage.setItem('AIVAULT_DH_ID', stg.getAttribute('data-go-stage'));
+        location.href = 'aivault-3d-stage.html';
+        return;
+      }
+      const wr = e.target.closest('[data-go-warroom]');
+      if (wr) {
+        sessionStorage.setItem('AIVAULT_DH_ID', wr.getAttribute('data-go-warroom'));
+        location.href = 'aivault-warroom.html';
+        return;
+      }
+      const pi = e.target.closest('[data-pick-img]');
+      if (pi) { await pickImage(pi.getAttribute('data-pick-img')); return; }
+      const pv = e.target.closest('[data-pick-voice]');
+      if (pv) { await pickVoice(pv.getAttribute('data-pick-voice')); return; }
+      const dh = e.target.closest('[data-del-human]');
+      if (dh) {
+        if (!confirm('確定刪除這位數位人？圖片與聲音會一併刪。')) return;
+        try { await deleteHuman(dh.getAttribute('data-del-human')); toast('已刪除'); go('/manage'); }
+        catch (err) { toast(err.message); }
+        return;
+      }
+      const di = e.target.closest('[data-del-img]');
+      if (di) {
+        if (!confirm('確定刪除這張圖片？')) return;
+        try { await deleteAsset(di.getAttribute('data-del-img'), 'image'); assets.image = assets.image.filter(x => String(x.id) !== di.getAttribute('data-del-img')); toast('已刪除'); render(); }
+        catch (err) { toast(err.message); }
+      }
+      const dv = e.target.closest('[data-del-voice]');
+      if (dv) {
+        if (!confirm('確定刪除這個聲音？')) return;
+        try { await deleteAsset(dv.getAttribute('data-del-voice'), 'voice'); assets.voice = assets.voice.filter(x => String(x.id) !== dv.getAttribute('data-del-voice')); toast('已刪除'); render(); }
+        catch (err) { toast(err.message); }
+      }
+      const dvid = e.target.closest('[data-del-vid]');
+      if (dvid) {
+        if (!confirm('確定刪除這部影片？')) return;
+        try {
+          await callFn('digital-human-save', { action: 'delete_video', id: dvid.getAttribute('data-del-vid') });
+          assets.video = assets.video.filter(x => String(x.id) !== dvid.getAttribute('data-del-vid'));
+          toast('已刪除'); render();
+        } catch (err) { toast(err.message); }
+      }
+    });
+
+    // ===== 展示首頁：直接就是暗星數字人（不需選紀錄）=====
+    let showcaseBrain = null;
+    async function renderShowcase() {
+      const A = AVATAR;
+      if (!showcaseBrain) {   // 有啟用中的數字人紀錄就沿用它的模型設定，否則用 avatars.json 預設
+        showcaseBrain = { provider: (A.brain && A.brain.provider) || 'groq', model: (A.brain && A.brain.model) || 'openai/gpt-oss-120b' };
+        try { const list = await Promise.race([listHumans(), new Promise(r => setTimeout(() => r([]), 4000))]); const h0 = (list || []).find(x => x.status === 'active') || (list || [])[0]; if (h0 && h0.brain_provider) showcaseBrain = { provider: h0.brain_provider, model: h0.brain_model || showcaseBrain.model }; } catch {}
+      }
+      current = { id: 'showcase', name: A.name, persona_lang: A.lang || 'zh-Hant', persona_role: '陪伴', persona_tone: '溫柔', brain_provider: showcaseBrain.provider, brain_model: showcaseBrain.model, __avatar: A };
+      assets = { image: [], voice: [], video: [] };
+      if (A.poster) document.documentElement.style.setProperty('--dh-poster', `url(${A.poster})`);
+      document.title = (A.title || A.name) + '｜AIVAULT';
+      renderChat();
+      decorateShowcase();
+    }
+    function decorateShowcase() {
+      const A = AVATAR, app = document.getElementById('app');
+      document.body.classList.add('showcase');
+      setHeader(A.title || A.name, A.tagline || '', null);
+      app.querySelector('.face-stage')?.remove();
+      app.querySelector('.dh-avatar > .muted')?.remove();
+      document.getElementById('btnRecVideo')?.closest('.row')?.remove();
+      app.querySelectorAll('p.muted').forEach(p => { if (/沒有固定台詞/.test(p.textContent)) p.remove(); });
+      const av = app.querySelector('.dh-avatar');
+      if (av && !app.querySelector('.sc-hero')) {
+        av.insertAdjacentHTML('beforebegin', `<section class="sc-hero"><div class="sc-badge">AIVAULT · AI 數位人</div><h2 class="sc-title">${esc(A.title || A.name)}</h2><p class="sc-tag">「${esc(A.tagline || '')}」</p></section>`);
+        av.insertAdjacentHTML('afterend', `<div class="sc-feats">
+          <div class="sc-f"><b>🎙️</b><span>即時語音對話</span></div>
+          <div class="sc-f"><b>📹</b><span>視訊看得到你</span></div>
+          <div class="sc-f"><b>💬</b><span>自然聊天陪伴</span></div>
+          <div class="sc-f"><b>😊</b><span>表情與動作指令</span></div></div>`);
+      }
+      const live = document.getElementById('btnLive'); if (live) live.classList.add('sc-live');
+      if (!app.querySelector('.sc-manage')) app.insertAdjacentHTML('beforeend', `<div class="sc-manage"><a href="#/manage">⚙ 管理數位人</a></div>`);
+      const m = document.getElementById('msgs'); if (m && !chatLog.length) m.innerHTML = `<div class="muted">按「▶ 開始即時語音」直接跟${esc(A.name)}聊天，或在下方打字。試試說「笑一笑」「喝口水」「摸摸貓」。</div>`;
+    }
+    async function render() {
+      document.body.classList.remove('chat-on', 'showcase');
+      const r = route();
+      if (r.name === 'showcase') return renderShowcase();
+      if (r.name === 'list') {
+        humans = await listHumans();
+        const hid = draft.human_id || localStorage.getItem('dh_human_id');
+        if (!humans.length && hid) {
+          const one = await getHuman(hid);
+          if (one?.id) humans = [one];
+        }
+        return renderList();
+      }
+      if (r.name === 'create') {
+        if (!sessionStorage.getItem('dh_step')) sessionStorage.setItem('dh_step', '1');
+        const hid = current?.id || draft.human_id;
+        assets.image = hid ? await listAssets('image', hid) : [];
+        assets.voice = hid ? await listAssets('voice', hid) : [];
+        return renderCreate();
+      }
+      current = await getHuman(r.id);
+      assets.image = await listAssets('image', r.id);
+      assets.voice = await listAssets('voice', r.id);
+      assets.video = await listAssets('video', r.id);
+      if (r.name === 'chat') return renderChat();
+      if (r.name === 'video') return renderVideo();
+      if (r.name === 'images') return renderImages();
+      if (r.name === 'voices') return renderVoices();
+      if (r.name === 'videos') return renderVideos();
+      if (r.name === 'settings') return renderSettings();
+      return renderDash();
+    }
+
+    window.addEventListener('hashchange', render);
+    await loadProviders();
+    if (!location.hash) location.hash = '#/';
+    else await render();
+  </script>
+<script src="darkstar-book-qa.js"></script>
+<script src="digital-human-real/dh-knowledge.js?v=20261021-dual-retrieval1" charset="utf-8"></script>
+<script>try { DHKnow.init({ url: "https://svtkpdmqemidlasowqew.supabase.co", anon: window.__dhAnon || "" }); } catch (e) {}</script>
+<script src="aivault-presence.js?v=20261017-pr2" defer></script></body>
+</html>
