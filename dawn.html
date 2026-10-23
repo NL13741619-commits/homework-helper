@@ -19,7 +19,7 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-sys
 .chat{padding:12px;min-height:40vh;max-height:calc(100dvh - 220px);overflow:auto}
 .msg{display:flex;gap:8px;margin:10px 0;align-items:flex-start}
 .msg.user{flex-direction:row-reverse}
-.bubble{max-width:75%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.45}
+.bubble{max-width:75%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.45;white-space:pre-wrap}
 .msg.user .bubble{background:#e8e0d6;color:var(--text)}
 .msg.ai .bubble{background:#fff;border:1px solid var(--line)}
 .sun-ico{font-size:22px;flex-shrink:0}
@@ -38,7 +38,6 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-sys
   background:radial-gradient(circle at 35% 35%,#fff 0%,#ffe9a8 30%,#ffb347 70%);
   box-shadow:0 0 16px #ffb347;
   position:relative;
-  transition:transform .3s
 }
 .face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;line-height:1}
 .eyes{letter-spacing:2px}
@@ -51,6 +50,7 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-sys
 }
 .input-bar input{flex:1;height:40px;border:1px solid var(--line);border-radius:20px;padding:0 14px;font:inherit}
 .input-bar button{height:40px;padding:0 16px;border-radius:20px;border:0;background:#1a140e;color:#fff;font-weight:700;cursor:pointer}
+.status{font-size:12px;color:var(--muted);text-align:center;margin:4px 0}
 </style>
 </head>
 <body>
@@ -63,7 +63,7 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-sys
 <div class="panel">
   <h4>🌞 曙光 <span class="dot"></span> 已連結</h4>
   <div class="stage"><div class="sun" id="sun"><div class="face"><div class="eyes">● ●</div><div class="mouth">◐</div></div></div></div>
-  <div style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:6px">👂 曙光正在聆聽</div>
+  <div class="status" id="status">準備連線 AI</div>
   <div class="grid">
     <button data-e="neutral">平靜</button>
     <button data-e="happy">開心</button>
@@ -76,6 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-sys
   <button id="send">送出</button>
 </div>
 <script>
+const GATEWAY = 'https://clcddygkaaqqtsbswgdf.supabase.co/functions/v1/ai-gateway';
 const FACES = {
   neutral: {e: '● ●', m: '◐'},
   happy: {e: '^ ^', m: '◕'},
@@ -85,6 +86,7 @@ const FACES = {
 const sun = document.getElementById('sun');
 const eyes = sun.querySelector('.eyes');
 const mouth = sun.querySelector('.mouth');
+const status = document.getElementById('status');
 function setExpr(k){
   const f = FACES[k] || FACES.neutral;
   eyes.textContent = f.e;
@@ -101,18 +103,39 @@ function add(role, text){
   m.innerHTML = '<span class="sun-ico">' + (role === 'user' ? '' : '🌞') + '</span><div class="bubble">' + text + '</div>';
   chat.appendChild(m);
   chat.scrollTop = chat.scrollHeight;
+  return m;
 }
-function reply(text){
-  setTimeout(() => add('ai', text), 400);
+async function ask(text){
+  status.textContent = '曙光思考中…';
+  setExpr('think');
+  const placeholder = add('ai', '…');
+  try{
+    const res = await fetch(GATEWAY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        agent: 'dawn-light',
+        message: text,
+        system: '你是曙光，第二基地的太陽 AI。回應簡潔、友善。'
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    const reply = data.reply || data.text || data.message || data.content || '曙光暫時無法回應。';
+    placeholder.querySelector('.bubble').textContent = reply;
+    status.textContent = '已連線';
+    setExpr('happy');
+  }catch(e){
+    placeholder.querySelector('.bubble').textContent = '連線失敗：' + (e.message || 'Gateway 無法使用');
+    status.textContent = '連線失敗';
+    setExpr('sad');
+  }
 }
 document.getElementById('send').onclick = () => {
   const t = q.value.trim();
   if(!t) return;
   add('user', t);
   q.value = '';
-  // 曙光自己的回應（後端接通後替換這段）
-  if(/1\+1|1＋1/.test(t)) reply('曙光：1+1 等於 2。');
-  else reply('曙光已收到。');
+  ask(t);
 };
 q.addEventListener('keydown', e => { if(e.key === 'Enter') document.getElementById('send').click(); });
 </script>
