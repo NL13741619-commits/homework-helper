@@ -3,6 +3,8 @@ import argparse, base64, hashlib, hmac, json, os, secrets, threading, time, urll
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from audio_engine import speech, wav_bytes, sing
+from melody import analyze,align_lyrics,rhyme_report
+from song_search import search as song_search
 
 MODEL='Qwen3-0.6B-Q8_0'
 SYSTEM='你是曙光，第二基地的小太陽 AI。用繁體中文自然聊天。沒有工具證據不得宣稱已施工或部署。不會的內容請坦白說明。/no_think'
@@ -73,7 +75,7 @@ def handler(state):
             if not hmac.compare_digest(self.headers.get('Authorization',''),'Bearer '+state.token):return self.send(401,{'error':'UNAUTHORIZED'})
             try:
                 length=int(self.headers.get('Content-Length','0'))
-                if not 0<length<=32768:return self.send(413,{'error':'BODY_LIMIT'})
+                if not 0<length<=(8_100_000 if self.path=='/analyze' else 32768):return self.send(413,{'error':'BODY_LIMIT'})
                 body=json.loads(self.rfile.read(length));request_id=body.get('request_id','')
                 uuid.UUID(request_id)
                 if not isinstance(body,dict):raise ValueError('INVALID_INPUT')
@@ -83,7 +85,7 @@ def handler(state):
                     job=state.jobs.get(request_id)
                     if job:job['cancel'].set()
                 return self.send(200,{'cancel_requested':bool(job),'request_id':request_id})
-            if self.path not in ['/chat','/speak','/sing']:return self.send(404,{'error':'NOT_FOUND'})
+            if self.path not in ['/chat','/speak','/sing','/analyze','/rhymes','/song-search']:return self.send(404,{'error':'NOT_FOUND'})
             try:job=state.reserve(request_id)
             except ValueError as error:return self.send(429,{'error':str(error),'request_id':request_id})
             started=time.monotonic();code=200
@@ -95,6 +97,15 @@ def handler(state):
                     result=state.model.chat(text,[{'role':t['role'],'content':t['content']} for t in history])
                 elif self.path=='/speak':
                     audio,rate=speech(body.get('text'));result={'wav':base64.b64encode(wav_bytes(audio,rate)).decode(),'voice_id':'flite-slt-en','engine':'local-flite','neural_tts':False}
+                elif self.path=='/analyze':
+                    result=analyze(body.get('wav'),body.get('source_kind','monophonic'))
+                    if body.get('lyrics'):
+                        result['lyric_alignment']=align_lyrics(result['notes'],body['lyrics'])
+                        result['rhymes']=rhyme_report(body['lyrics'])
+                elif self.path=='/rhymes':
+                    result=rhyme_report(body.get('lyrics'))
+                elif self.path=='/song-search':
+                    result=song_search(body.get('query'))
                 else:
                     song=sing(body.get('score'),cancelled=job['cancel'].is_set)
                     result={k:base64.b64encode(v).decode() if isinstance(v,bytes) else v for k,v in song.items()}
