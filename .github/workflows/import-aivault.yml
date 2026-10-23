@@ -1,0 +1,32 @@
+name: Import complete AIVAULT source
+on:
+  push:
+    branches: [main]
+    paths: ['migration/import_aivault.py', '.github/workflows/import-aivault.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: aivault-source-import
+  cancel-in-progress: false
+jobs:
+  import:
+    if: github.repository == 'NL13741619-commits/homework-helper'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Fetch pinned main-city source without executing it
+        run: |
+          git clone --no-checkout https://github.com/m9wmtcb782-arch/AIVAULT.git "$RUNNER_TEMP/main-city"
+          git -C "$RUNNER_TEMP/main-city" checkout --detach 6f0de4a4ecef079de83985762d6d60190264932e
+      - name: Copy all source and assets into second-base app
+        run: python3 migration/import_aivault.py --source "$RUNNER_TEMP/main-city" --dest "$GITHUB_WORKSPACE"
+      - name: Commit imported files to second base
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app migration/source-manifest.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'feat: import all 826 AIVAULT source and asset files for second base'
+          git push origin HEAD:main
