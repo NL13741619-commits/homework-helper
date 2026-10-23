@@ -81,6 +81,9 @@
     .agent-status { display: flex; align-items: center; gap: 6px; font-size: 11px; }
     .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: #1a1a1a; box-shadow: inset 0 0 2px rgba(255,255,255,.12); }
     .status-dot.standby, .status-dot.offline { background: #1a1a1a; box-shadow: 0 0 0 1px rgba(255,255,255,.14); animation: none; }
+    .status-dot.pending { background:#f59e0b; box-shadow:0 0 0 1px #b45309; animation:none; }
+    .agent-heartbeat { margin-bottom:6px; color:#15803d; font-size:11px; display:flex; gap:6px; align-items:center; }
+    .agent-heartbeat.unknown { color:#92400e; }
     .status-dot.idle, .status-dot.free { background: #22c55e; box-shadow: 0 0 10px #22c55e, 0 0 18px rgba(34,197,94,.35); animation: blink-green 1.4s ease-in-out infinite; }
     .status-dot.working, .status-dot.thinking { background: #3b82f6; box-shadow: 0 0 10px #3b82f6; animation: blink-blue .85s ease-in-out infinite; }
     .status-dot.busy { background: #eab308; box-shadow: 0 0 10px #eab308; animation: blink-yellow .75s ease-in-out infinite; }
@@ -415,7 +418,7 @@
       <div class="chat-container" style="height:380px;">
         <div class="chat-header">
           <span>測試 AI 是否聯線說話</span>
-          <span style="font-size:11px;color:var(--success)">● Gateway</span>
+          <span id="gatewayStatus" style="font-size:11px;color:var(--text-muted)">● Gateway 待檢查</span>
         </div>
         <div class="agent-pick-bar" id="homeAgentPick"></div>
         <div class="chat-messages" id="homeChatPreview" style="overflow-y:auto;-webkit-overflow-scrolling:touch;"></div>
@@ -431,7 +434,7 @@
       <div class="chat-container">
         <div class="chat-header">
           <span>AIVAULT 架構討論</span>
-          <span style="font-size:11px;color:var(--success)">● Real AI</span>
+          <span id="inferenceStatus" style="font-size:11px;color:var(--text-muted)">● 模型待驗證</span>
         </div>
         <div class="agent-pick-bar" id="chatAgentPick"></div>
         <div class="chat-messages" id="chatMessages"></div>
@@ -681,13 +684,15 @@
       return 'llama-3.3-70b-versatile';
     }
     let heartbeatChecking = false;
+    let backendAlive = false;
     async function checkGatewayConnections() {
       if (heartbeatChecking) return;
       heartbeatChecking = true;
       const panel = document.getElementById('dawnHeartbeat');
+      let heartbeatRead = false;
       try {
         const client = await window.AIVAULT_AUTH_READY;
-        if (!client) return;
+        if (!client) throw new Error('請先登入');
         const { data } = await client.auth.getSession();
         if (!data.session) throw new Error('登入已失效');
         const response = await fetch(`${SUPABASE_URL}/functions/v1/aivault-agent-status`, {
@@ -699,24 +704,32 @@
         const result = await response.json();
         if (!result.ok || !result.runtime) throw new Error('心跳回傳格式錯誤');
         const runtime = result.runtime;
+        heartbeatRead = true;
+        backendAlive = runtime.state === 'BACKEND_ALIVE';
         const states = { BACKEND_ALIVE:'正常', STALE:'已逾時', DISABLED:'已停用', UNKNOWN:'尚無紀錄', CLOCK_SKEW:'時鐘異常' };
         const stamp = runtime.last_tick_at ? new Date(runtime.last_tick_at).toLocaleString('zh-TW', {timeZone:'Asia/Taipei'}) : '無';
         panel.textContent = `曙光後端心跳：${states[runtime.state] || '未知'}｜上次回報：${stamp}（台灣時間）。每 30 秒讀取；超過 15 分鐘判為逾時。模型${runtime.model_approved ? '已核准，執行狀態需另驗證' : '尚未核准啟用'}。`;
-        panel.style.color = runtime.state === 'BACKEND_ALIVE' ? '#86efac' : '#fbbf24';
+        panel.style.color = backendAlive ? '#15803d' : '#92400e';
         const probe = await fetch(AI_GATEWAY_URL, {method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${data.session.access_token}`},body:JSON.stringify({action:'health'}),signal:AbortSignal.timeout(15000),cache:'no-store'});
         if (!probe.ok) throw new Error(`大腦網關 HTTP ${probe.status}`);
         const health = await probe.json();
+        if (!health.ok || !Array.isArray(health.agents)) throw new Error('大腦網關回傳格式錯誤');
+        const gatewayLabel = document.getElementById('gatewayStatus');
+        if (gatewayLabel) { gatewayLabel.textContent = '● Gateway 已接通'; gatewayLabel.style.color = '#15803d'; }
+        const inferenceLabel = document.getElementById('inferenceStatus');
+        if (inferenceLabel) { const verified = health.agents.some(a => a.verified === true); inferenceLabel.textContent = verified ? '● 模型推理已驗證' : '● 模型尚未驗證'; inferenceLabel.style.color = verified ? '#15803d' : '#92400e'; }
         PROVIDERS[0].status = health.agents?.some(a => a.ready) ? 'active' : 'inactive'; renderProviders();
         AGENTS.forEach(agent => {
           const item = health.agents?.find(a => a.id === agent.id);
           const rt = agentRuntime[agent.id];
           if (['working','meeting'].includes(rt.status) && rt.connected) return;
           const verified = item?.verified === true;
-          setAgentRuntime(agent.id, {status:verified?'idle':item?.ready?'standby':'offline',statusText:item?.status_text || '模型連線尚未驗證',connected:item?.ready===true,lastError:item?.error||''});
+          setAgentRuntime(agent.id, {status:verified?'idle':'pending',statusText:item?.status_text || '模型連線尚未驗證',connected:item?.ready===true,lastError:item?.error||''});
         });
       } catch (error) {
-        panel.textContent = `無法確認曙光心跳：${error.message}。稍後會自動重試。`;
-        panel.style.color = '#fbbf24';
+        if (!heartbeatRead) { backendAlive = false; panel.textContent = `無法確認曙光心跳：${error.message}。稍後會自動重試。`; panel.style.color = '#92400e'; }
+        else { panel.textContent += ` 大腦網關檢查失敗：${error.message}。`; }
+        for (const id of ['gatewayStatus','inferenceStatus']) { const label = document.getElementById(id); if (label) { label.textContent = id === 'gatewayStatus' ? '● Gateway 狀態未知' : '● 模型狀態未知'; label.style.color = '#92400e'; } }
         AGENTS.forEach(agent => setAgentRuntime(agent.id, {status:'offline',statusText:'連線狀態未知',connected:false,lastError:error.message}));
       } finally {
         heartbeatChecking = false;
@@ -729,7 +742,7 @@
       const container = document.getElementById('agentsGrid');
       container.innerHTML = AGENTS.slice(0, 6).map(raw => {
         const agent = getAgentView(raw);
-        return `<div class="agent-card" data-id="${agent.id}"><div class="agent-avatar" style="background:${agent.color}22">${agent.avatar}</div><div class="agent-name">${agent.name}</div><div class="agent-role">${agent.role}</div><div class="agent-status"><span class="status-dot ${agent.status}"></span><span>${agent.statusText}</span></div></div>`;
+        return `<div class="agent-card" data-id="${agent.id}"><div class="agent-avatar" style="background:${agent.color}22">${agent.avatar}</div><div class="agent-name">${agent.name}</div><div class="agent-role">${agent.role}</div><div class="agent-heartbeat ${backendAlive ? '' : 'unknown'}"><span class="status-dot ${backendAlive ? 'idle' : 'offline'}"></span><span>${backendAlive ? '後端心跳正常' : '後端心跳未確認'}</span></div><div class="agent-status"><span class="status-dot ${agent.status}"></span><span>${agent.statusText}</span></div></div>`;
       }).join('');
     }
     function renderTasks(containerId) {
