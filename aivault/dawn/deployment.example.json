@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "agent_id": "dawn-light",
+  "base_id": "base-002",
+  "supabase_project_ref": "svtkpdmqemidlasowqew",
+  "enabled": false,
+  "gateway_path_contract_only": "/functions/v1/aivault-dawn-text",
+  "existing_server_secret_name": "GEMINI_API_KEY",
+  "secret_value_in_this_file": false,
+  "allowed_origins": [],
+  "model_policy": {
+    "provider": "gemini",
+    "model": null,
+    "approved": false,
+    "billing_mode": "free_only",
+    "quota_evidence_id": null,
+    "valid_until": null,
+    "max_output_tokens": 128
+  },
+  "required_host_integrations": [
+    "verified_second_base_login",
+    "durable_existing_task_reservation",
+    "fenced_completion_and_usage_evidence",
+    "rate_resource_limits_and_private_audit"
+  ],
+  "note": "Reviewed template only; no automatic loader or deployment. Existing secrets are not reset."
+}

@@ -1,0 +1,399 @@
+{
+  "test_id": "dawn_live_504dc86544ab40ea8eff92eb02f5beb8",
+  "time_utc": "2026-10-22T16:13:38.565945+00:00",
+  "trigger": "engineering-controller",
+  "executor": "deployed base-002:dawn-light bounded runtime",
+  "unauthenticated": {
+    "http": 401,
+    "body": {
+      "ok": false,
+      "error": "UNAUTHORIZED"
+    }
+  },
+  "origin_denied": {
+    "http": 403,
+    "body": {
+      "ok": false,
+      "error": "ORIGIN_DENIED"
+    }
+  },
+  "status_before": {
+    "http": 200,
+    "body": {
+      "ok": true,
+      "tasks": {},
+      "memory": {
+        "ok": true,
+        "entries": 3,
+        "used_chars": 682,
+        "instance_id": "base-002:dawn-light",
+        "capacity_chars": 500000,
+        "remaining_chars": 499318
+      },
+      "outbox": {},
+      "enabled": true,
+      "instance_id": "base-002:dawn-light",
+      "last_poll_at": "2026-10-21T00:00:00+00:00",
+      "last_tick_at": null,
+      "model_policy": {
+        "model": null,
+        "approved": false,
+        "provider": "gemini",
+        "billing_mode": "free_only"
+      },
+      "deployment": "AIVAULT_DAWN_RUNTIME_V1",
+      "credentials_present": {
+        "gemini": true,
+        "qwen": false,
+        "github": false
+      },
+      "capabilities": [
+        "private_memory_status",
+        "private_memory_recall",
+        "sha256_literal_text",
+        "gated_model_qa"
+      ],
+      "shell_execution": false
+    }
+  },
+  "tasks": [
+    {
+      "kind": "memory_status",
+      "submission": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "status": "queued",
+          "task_id": "4318bcff-5f7a-4e3c-8b66-17183a7dec07"
+        }
+      },
+      "duplicate": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "task_id": "4318bcff-5f7a-4e3c-8b66-17183a7dec07",
+          "duplicate": true
+        }
+      },
+      "conflict": {
+        "http": 409,
+        "body": {
+          "ok": false,
+          "error": "IDEMPOTENCY_CONFLICT"
+        }
+      },
+      "execution": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "instance_id": "base-002:dawn-light",
+          "inbox": {
+            "status": "POLL_SKIPPED_FOR_TARGETED_TEST"
+          },
+          "task": {
+            "task_id": "4318bcff-5f7a-4e3c-8b66-17183a7dec07",
+            "fencing_token": "21",
+            "ok": true,
+            "run_id": "9be2df7d-3999-4460-b769-ecc9f15621e8",
+            "status": "succeeded",
+            "evidence": {
+              "executor": "base-002:dawn-light",
+              "inference_executed": false,
+              "tool_execution": true,
+              "tools": [
+                "private_memory_status"
+              ],
+              "result": {
+                "ok": true,
+                "entries": 3,
+                "used_chars": 682,
+                "instance_id": "base-002:dawn-light",
+                "capacity_chars": 500000,
+                "remaining_chars": 499318
+              }
+            }
+          },
+          "outbox": {
+            "status": "OUTBOX_IDLE"
+          }
+        }
+      },
+      "persisted_result": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "result": {
+            "runs": [
+              {
+                "id": "9be2df7d-3999-4460-b769-ecc9f15621e8",
+                "status": "succeeded",
+                "evidence": {
+                  "tools": [
+                    "private_memory_status"
+                  ],
+                  "result": {
+                    "ok": true,
+                    "entries": 3,
+                    "used_chars": 682,
+                    "instance_id": "base-002:dawn-light",
+                    "capacity_chars": 500000,
+                    "remaining_chars": 499318
+                  },
+                  "executor": "base-002:dawn-light",
+                  "instance_id": "base-002:dawn-light",
+                  "bounded_tools": true,
+                  "fencing_token": "21",
+                  "tool_execution": true,
+                  "inference_executed": false
+                },
+                "finished_at": "2026-10-22T16:14:43.55594+00:00"
+              }
+            ],
+            "status": "succeeded",
+            "task_id": "4318bcff-5f7a-4e3c-8b66-17183a7dec07"
+          }
+        }
+      }
+    },
+    {
+      "kind": "hash_text",
+      "submission": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "status": "queued",
+          "task_id": "4740a7f8-328d-49c2-a8ac-a7779056e009"
+        }
+      },
+      "duplicate": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "task_id": "4740a7f8-328d-49c2-a8ac-a7779056e009",
+          "duplicate": true
+        }
+      },
+      "conflict": {
+        "http": 409,
+        "body": {
+          "ok": false,
+          "error": "IDEMPOTENCY_CONFLICT"
+        }
+      },
+      "execution": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "instance_id": "base-002:dawn-light",
+          "inbox": {
+            "status": "POLL_SKIPPED_FOR_TARGETED_TEST"
+          },
+          "task": {
+            "task_id": "4740a7f8-328d-49c2-a8ac-a7779056e009",
+            "fencing_token": "22",
+            "ok": true,
+            "run_id": "3a2f2ea6-980e-420a-b412-d6cab9c4c5cd",
+            "status": "succeeded",
+            "evidence": {
+              "executor": "base-002:dawn-light",
+              "inference_executed": false,
+              "tool_execution": true,
+              "tools": [
+                "sha256_literal_text"
+              ],
+              "result": {
+                "sha256": "a39e45ff4ecefe73f90827e2422af035ebec550df5d25d0d05f092839008ae69",
+                "unicode_chars": 38
+              }
+            }
+          },
+          "outbox": {
+            "status": "OUTBOX_IDLE"
+          }
+        }
+      },
+      "persisted_result": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "result": {
+            "runs": [
+              {
+                "id": "3a2f2ea6-980e-420a-b412-d6cab9c4c5cd",
+                "status": "succeeded",
+                "evidence": {
+                  "tools": [
+                    "sha256_literal_text"
+                  ],
+                  "result": {
+                    "sha256": "a39e45ff4ecefe73f90827e2422af035ebec550df5d25d0d05f092839008ae69",
+                    "unicode_chars": 38
+                  },
+                  "executor": "base-002:dawn-light",
+                  "instance_id": "base-002:dawn-light",
+                  "bounded_tools": true,
+                  "fencing_token": "22",
+                  "tool_execution": true,
+                  "inference_executed": false
+                },
+                "finished_at": "2026-10-22T16:15:27.677177+00:00"
+              }
+            ],
+            "status": "succeeded",
+            "task_id": "4740a7f8-328d-49c2-a8ac-a7779056e009"
+          }
+        }
+      }
+    },
+    {
+      "kind": "qa",
+      "submission": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "status": "queued",
+          "task_id": "efb0e439-a041-47ab-b2fc-81e2330d5a31"
+        }
+      },
+      "duplicate": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "task_id": "efb0e439-a041-47ab-b2fc-81e2330d5a31",
+          "duplicate": true
+        }
+      },
+      "conflict": {
+        "http": 409,
+        "body": {
+          "ok": false,
+          "error": "IDEMPOTENCY_CONFLICT"
+        }
+      },
+      "execution": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "instance_id": "base-002:dawn-light",
+          "inbox": {
+            "status": "POLL_SKIPPED_FOR_TARGETED_TEST"
+          },
+          "task": {
+            "task_id": "efb0e439-a041-47ab-b2fc-81e2330d5a31",
+            "fencing_token": "23",
+            "ok": true,
+            "run_id": "f8d8cf4c-83f3-4bb3-8c11-f00b2f7ecb97",
+            "status": "blocked",
+            "evidence": {
+              "executor": "base-002:dawn-light",
+              "inference_executed": false,
+              "tool_execution": true,
+              "tools": [
+                "private_memory_recall"
+              ],
+              "error": "BLOCKED_NO_MODEL",
+              "help_request": {
+                "help_id": "DAWN-MODEL-001",
+                "task_id": "efb0e439-a041-47ab-b2fc-81e2330d5a31",
+                "error": "BLOCKED_NO_MODEL",
+                "attempted": [
+                  "private_memory_recall"
+                ],
+                "requested_action": "Provide the missing authorized runtime/model configuration through secure second-base settings; do not send secrets in Issues."
+              }
+            }
+          },
+          "outbox": {
+            "status": "BLOCKED_NO_GITHUB_CREDENTIAL",
+            "outbox_id": "d6b060f9-b72e-486b-a653-b11dd29bdeb0"
+          }
+        }
+      },
+      "persisted_result": {
+        "http": 200,
+        "body": {
+          "ok": true,
+          "result": {
+            "runs": [
+              {
+                "id": "f8d8cf4c-83f3-4bb3-8c11-f00b2f7ecb97",
+                "status": "blocked",
+                "evidence": {
+                  "error": "BLOCKED_NO_MODEL",
+                  "tools": [
+                    "private_memory_recall"
+                  ],
+                  "executor": "base-002:dawn-light",
+                  "instance_id": "base-002:dawn-light",
+                  "help_request": {
+                    "error": "BLOCKED_NO_MODEL",
+                    "help_id": "DAWN-MODEL-001",
+                    "task_id": "efb0e439-a041-47ab-b2fc-81e2330d5a31",
+                    "attempted": [
+                      "private_memory_recall"
+                    ],
+                    "requested_action": "Provide the missing authorized runtime/model configuration through secure second-base settings; do not send secrets in Issues."
+                  },
+                  "bounded_tools": true,
+                  "fencing_token": "23",
+                  "tool_execution": true,
+                  "inference_executed": false
+                },
+                "finished_at": "2026-10-22T16:15:59.839638+00:00"
+              }
+            ],
+            "status": "blocked",
+            "task_id": "efb0e439-a041-47ab-b2fc-81e2330d5a31"
+          }
+        }
+      }
+    }
+  ],
+  "status_after": {
+    "http": 200,
+    "body": {
+      "ok": true,
+      "tasks": {
+        "blocked": 1,
+        "succeeded": 2
+      },
+      "memory": {
+        "ok": true,
+        "entries": 6,
+        "used_chars": 1919,
+        "instance_id": "base-002:dawn-light",
+        "capacity_chars": 500000,
+        "remaining_chars": 498081
+      },
+      "outbox": {
+        "blocked": 1
+      },
+      "enabled": true,
+      "instance_id": "base-002:dawn-light",
+      "last_poll_at": "2026-10-21T00:00:00+00:00",
+      "last_tick_at": "2026-10-22T16:15:57.470608+00:00",
+      "model_policy": {
+        "model": null,
+        "approved": false,
+        "provider": "gemini",
+        "billing_mode": "free_only"
+      },
+      "deployment": "AIVAULT_DAWN_RUNTIME_V1",
+      "credentials_present": {
+        "gemini": true,
+        "qwen": false,
+        "github": false
+      },
+      "capabilities": [
+        "private_memory_status",
+        "private_memory_recall",
+        "sha256_literal_text",
+        "gated_model_qa"
+      ],
+      "shell_execution": false
+    }
+  },
+  "tools_live_verified": true,
+  "qa_inference_verified": false,
+  "scheduler_verification_separate": true
+}

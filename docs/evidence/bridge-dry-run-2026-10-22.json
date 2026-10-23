@@ -1,0 +1,402 @@
+{
+  "project_ref": "svtkpdmqemidlasowqew",
+  "captured_at": "2026-10-22T12:52:03Z",
+  "prototype_sha256": "879b89479ccfaadb562e1f60afde25645edd9134fc4fda1737ac9a0618cc61e7",
+  "events": [
+    {
+      "id": 26,
+      "detail": {
+        "actor": "base1",
+        "command_id": "bridge_test_30abf69e5d87453d84631bd7c4c213b9"
+      },
+      "run_id": null,
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.accepted"
+    },
+    {
+      "id": 27,
+      "detail": {
+        "action": "intake",
+        "reason": "DUPLICATE_OR_REPLAY"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 28,
+      "detail": {
+        "action": "intake",
+        "reason": "DUPLICATE_OR_REPLAY"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 29,
+      "detail": {
+        "action": "intake",
+        "reason": "EXPIRED_COMMAND"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 30,
+      "detail": {
+        "action": "intake",
+        "reason": "MALFORMED_PAYLOAD"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 31,
+      "detail": {
+        "action": "intake",
+        "reason": "UNAUTHORIZED_SENDER"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 32,
+      "detail": {
+        "action": "intake",
+        "reason": "PROTECTED_TARGET"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 33,
+      "detail": {
+        "action": "intake",
+        "reason": "PROTECTED_TARGET"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 34,
+      "detail": {
+        "action": "intake",
+        "reason": "PROTECTED_TARGET"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 35,
+      "detail": {
+        "action": "intake",
+        "reason": "DIRECT_MAIN_OR_BRANCH_DENIED"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 36,
+      "detail": {
+        "action": "intake",
+        "reason": "MODEL_REQUEST_DENIED"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 37,
+      "detail": {
+        "action": "intake",
+        "reason": "PAYLOAD_POLICY_DENIED"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 38,
+      "detail": {
+        "action": "intake",
+        "reason": "MALFORMED_PAYLOAD"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 39,
+      "detail": {
+        "expires_at": "2026-10-22T12:51:53.468638+00:00",
+        "fencing_token": "3"
+      },
+      "run_id": "c4937dcf-c091-40ec-8a73-b1bd7b9334a8",
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.claimed"
+    },
+    {
+      "id": 40,
+      "detail": {
+        "action": "claim",
+        "reason": "LEASE_CONFLICT"
+      },
+      "run_id": null,
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 41,
+      "detail": {
+        "action": "finish",
+        "reason": "STALE_FENCING_OR_LEASE"
+      },
+      "run_id": null,
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 42,
+      "detail": {
+        "action": "finish",
+        "reason": "STALE_FENCING_OR_LEASE"
+      },
+      "run_id": null,
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 43,
+      "detail": {
+        "expires_at": "2026-10-22T12:51:53.473498+00:00",
+        "fencing_token": "4"
+      },
+      "run_id": "82dafb32-d234-48a6-b96a-8cd841d09435",
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.claimed"
+    },
+    {
+      "id": 44,
+      "detail": {
+        "action": "finish",
+        "reason": "STALE_FENCING_OR_LEASE"
+      },
+      "run_id": null,
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 45,
+      "detail": {
+        "model_status": "BLOCKED_NO_MODEL",
+        "code_execution": false,
+        "inference_executed": false
+      },
+      "run_id": "82dafb32-d234-48a6-b96a-8cd841d09435",
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.dry_run_finished"
+    },
+    {
+      "id": 46,
+      "detail": {
+        "action": "finish",
+        "reason": "STALE_FENCING_OR_LEASE"
+      },
+      "run_id": null,
+      "task_id": "2a6fc6c5-2558-4ef5-8acc-af72c53c2f0d",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 47,
+      "detail": {
+        "actor": "base1",
+        "command_id": "bridge_test_30abf69e5d87453d84631bd7c4c213b9_expiry"
+      },
+      "run_id": null,
+      "task_id": "76ef2584-fa25-49de-9585-9c8bca191082",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.accepted"
+    },
+    {
+      "id": 48,
+      "detail": {
+        "action": "claim",
+        "reason": "TASK_EXPIRED"
+      },
+      "run_id": null,
+      "task_id": "76ef2584-fa25-49de-9585-9c8bca191082",
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 49,
+      "detail": {
+        "suite": "bridge_contract_v1",
+        "checks": [
+          "duplicate",
+          "expired_command",
+          "malformed",
+          "unauthorized_sender",
+          "lease_conflict",
+          "stale_fencing",
+          "replay",
+          "protected_repository",
+          "direct_main",
+          "paid_model",
+          "task_expiry",
+          "expired_lease",
+          "reclaim",
+          "arbitrary_test",
+          "shell_payload",
+          "completion_replay",
+          "rpc_acl"
+        ],
+        "dry_run": true,
+        "legacy_counts": [
+          18,
+          143,
+          175
+        ],
+        "fixture_prefix": "bridge_test_30abf69e5d87453d84631bd7c4c213b9"
+      },
+      "run_id": null,
+      "task_id": null,
+      "created_at": "2026-10-22T12:51:23.449688+00:00",
+      "event_type": "bridge.test_suite_passed"
+    },
+    {
+      "id": 50,
+      "detail": {
+        "actor": "base1",
+        "command_id": "bridge_race_de28597c-adad-4aec-8b7a-1488ad38be2d"
+      },
+      "run_id": null,
+      "task_id": "a33c6a3b-0e79-4e41-99ca-469f46d3bd87",
+      "created_at": "2026-10-22T12:51:43.79123+00:00",
+      "event_type": "bridge.accepted"
+    },
+    {
+      "id": 51,
+      "detail": {
+        "expires_at": "2026-10-22T12:52:19.418805+00:00",
+        "fencing_token": "5"
+      },
+      "run_id": "43bf14c8-a035-4f59-b8ba-c5b6254d307d",
+      "task_id": "a33c6a3b-0e79-4e41-99ca-469f46d3bd87",
+      "created_at": "2026-10-22T12:51:49.413766+00:00",
+      "event_type": "bridge.claimed"
+    },
+    {
+      "id": 52,
+      "detail": {
+        "action": "claim",
+        "reason": "LEASE_CONFLICT"
+      },
+      "run_id": null,
+      "task_id": "a33c6a3b-0e79-4e41-99ca-469f46d3bd87",
+      "created_at": "2026-10-22T12:51:50.589331+00:00",
+      "event_type": "bridge.rejected"
+    },
+    {
+      "id": 53,
+      "detail": {
+        "model_status": "BLOCKED_NO_MODEL",
+        "code_execution": false,
+        "inference_executed": false
+      },
+      "run_id": "43bf14c8-a035-4f59-b8ba-c5b6254d307d",
+      "task_id": "a33c6a3b-0e79-4e41-99ca-469f46d3bd87",
+      "created_at": "2026-10-22T12:52:03.332822+00:00",
+      "event_type": "bridge.dry_run_finished"
+    }
+  ],
+  "controls": [
+    {
+      "rls": true,
+      "table": "ai_agent_tasks",
+      "anon_select": false,
+      "authenticated_insert": false
+    },
+    {
+      "rls": true,
+      "table": "ai_agent_runs",
+      "anon_select": false,
+      "authenticated_insert": false
+    },
+    {
+      "rls": true,
+      "table": "ai_agent_events",
+      "anon_select": false,
+      "authenticated_insert": false
+    },
+    {
+      "rls": true,
+      "table": "ai_agent_leases",
+      "anon_select": false,
+      "authenticated_insert": false
+    },
+    {
+      "rls": true,
+      "table": "ai_model_usage",
+      "anon_select": false,
+      "authenticated_insert": false
+    }
+  ],
+  "rpc_definer": false,
+  "legacy_counts": [
+    18,
+    143,
+    175
+  ],
+  "bridge_task_count": 3,
+  "model_usage_count": 0,
+  "bridge_queue_exists": false,
+  "service_audit_delete": false,
+  "service_audit_update": false,
+  "race": [
+    {
+      "claim": {
+        "ok": true,
+        "run_id": "43bf14c8-a035-4f59-b8ba-c5b6254d307d",
+        "task_id": "a33c6a3b-0e79-4e41-99ca-469f46d3bd87",
+        "fencing_token": "5",
+        "lease_expires_at": "2026-10-22T12:52:19.418805+00:00"
+      }
+    },
+    {
+      "claim": {
+        "ok": false,
+        "error": "LEASE_CONFLICT"
+      }
+    }
+  ]
+}
