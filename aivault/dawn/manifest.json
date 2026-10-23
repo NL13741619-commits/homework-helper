@@ -192,7 +192,7 @@
     },
     {
       "path": "runtime.mjs",
-      "sha256": "a582e00d76e5985638ca2d089d93b176d0ab93c87d371c8f3c21c07b77594f20"
+      "sha256": "d415849525547d9d44f37525171efc96c09525bdfdbd4d9b42d4c86cbca293d6"
     },
     {
       "path": "runtime.sql",

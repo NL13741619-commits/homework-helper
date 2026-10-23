@@ -80,7 +80,8 @@ This proves receiver/control execution, not model understanding of that message.
 Outbox markers are deterministic per task/kind, persist before POST, and retain
 confirmed comment IDs. Unknown/sending outcomes reconcile the registered sender
 and marker before another send; an unconfirmed result is never blindly retried.
-Independent AIVAULT_GITHUB_TOKEN is currently absent, so actual automatic sending
+Independent DAWN_CROSSBASE_GITHUB_TOKEN (preferred; AIVAULT_GITHUB_TOKEN remains
+a compatibility alias) is currently absent, so actual automatic sending
 is BLOCKED_NO_GITHUB_CREDENTIAL. The existing engineering connector is not reused
 by the runtime. Engineering reports remain separately labeled.
 
@@ -164,7 +165,7 @@ request was made. This is separate from the successful local Qwen inference.
 
 ## Evidence and operational limits
 
-Node33/33 pass. Baseline runtime SQL and prior channel/service-role regression
+Node35/35 pass. Baseline runtime SQL and prior channel/service-role regression
 suites passed inside rollback; no fixtures retained. The later SQL context-gate
 addon was not completed because the connector returned Invalid or expired
 requestState. Its installed predicate was read back, model approval remains

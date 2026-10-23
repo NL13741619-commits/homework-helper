@@ -1,10 +1,30 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createRuntime,inspectMessage,sha256} from '../runtime.mjs';
+import {createRuntime,inspectMessage,sha256,heartbeatStatus} from '../runtime.mjs';
 const env=n=>n==='SUPABASE_SERVICE_ROLE_KEY'?'fixture-service-key':undefined;
 const url='https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-dawn-runtime';
 const req=(body,token='t'.repeat(40))=>new Request(url,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
 const json=x=>new Response(JSON.stringify(x));
+test('backend heartbeat becomes stale without refreshing time or claiming a model',()=>{
+ const now=Date.now();
+ assert.equal(heartbeatStatus(new Date(now-60000).toISOString(),true,now).backend_state,'BACKEND_ALIVE');
+ assert.equal(heartbeatStatus(new Date(now-901000).toISOString(),true,now).backend_state,'STALE');
+ assert.equal(heartbeatStatus(null,true,now).backend_state,'UNKNOWN');
+ assert.equal(heartbeatStatus(new Date(now+60000).toISOString(),true,now).backend_state,'CLOCK_SKEW');
+ assert.equal(heartbeatStatus(new Date(now).toISOString(),false,now).backend_state,'DISABLED');
+});
+test('dedicated Dawn credential preflight checks identity/repos/inbox without returning secrets',async()=>{
+ const handler=createRuntime({env:n=>n==='DAWN_CROSSBASE_GITHUB_TOKEN'?'fixture-dawn-private-github-key':env(n),fetchImpl:async(u,o)=>{
+  if(u.endsWith('/rest/v1/rpc/aivault_dawn_auth'))return json({ok:true,kind:'controller',principal:'fixture-controller',enabled:true});
+  assert.equal(o.headers.Authorization,'Bearer fixture-dawn-private-github-key');
+  if(u==='https://api.github.com/user')return json({id:305579832,login:'NL13741619-commits'});
+  if(u.includes('/issues/1/comments'))return json([]);
+  return json({permissions:{push:u.endsWith('homework-helper')}});
+ }});
+ const response=await handler(req({action:'preflight'}));const text=await response.text(),r=JSON.parse(text);
+ assert.equal(r.configured,true);assert.equal(r.inbox_read,true);assert.equal(r.repositories[0].push,true);assert.equal(r.repositories[1].push,false);
+ assert.equal(r.write_test_executed,false);assert.equal(text.includes('fixture-dawn-private-github-key'),false);
+});
 test('real inbox filter requires fixed author/base/role, instruction and current expiry',()=>{
  const e={message_id:'fixture-message-001',from_base:'base-001',to_base:'base-002',recipient_agent:'dawn-light',reply_to:'https://github.com/m9wmtcb782-arch/AIVAULT/issues/30',kind:'instruction',sent_at:new Date().toISOString()};
  const c=overrides=>({id:123,user:{id:306819786},body:'<!-- AIVAULT-MESSAGE-V1 -->\n'+JSON.stringify({...e,...overrides})+'\n\nhello'});

@@ -3,6 +3,12 @@ const BASE='https://svtkpdmqemidlasowqew.supabase.co';
 const INBOX='https://api.github.com/repos/NL13741619-commits/homework-helper/issues/1/comments';
 const OUTBOX='https://api.github.com/repos/m9wmtcb782-arch/AIVAULT/issues/30/comments';
 export const sha256=async text=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)))).map(b=>b.toString(16).padStart(2,'0')).join('');
+export function heartbeatStatus(last,enabled=true,now=Date.now()){
+ const stamp=Date.parse(last),age=Math.floor((now-stamp)/1000);
+ return {backend_state:!enabled?'DISABLED':!Number.isFinite(stamp)?'UNKNOWN':age< -30?'CLOCK_SKEW':age<=900?'BACKEND_ALIVE':'STALE',
+  last_backend_check:last||null,age_seconds:Number.isFinite(stamp)?age:null,stale_after_seconds:900,
+  meaning:'authenticated database/principal check via real Edge tick, not model or worker availability'};
+}
 export async function limitedText(stream,max=65536){
  if(!stream)return '';const r=stream.getReader(),chunks=[];let n=0;
  for(;;){const {done,value}=await r.read();if(done)break;n+=value.byteLength;if(n>max){await r.cancel();throw Error('SIZE_LIMIT');}chunks.push(value);}
@@ -36,9 +42,9 @@ export function createRuntime({env,fetchImpl=fetch}){
  };
  const control=(action,principal,body={})=>rpc('aivault_dawn',{p_action:action,p_principal:principal,p_body:body});
  const memory=(action,body={})=>rpc('aivault_memory',{p_action:action,p_principal:'dawn-runtime',p_instance:DAWN_INSTANCE.instance_id,p_body:body});
- const gitToken=()=>env('AIVAULT_GITHUB_TOKEN');
+ const gitToken=()=>env('DAWN_CROSSBASE_GITHUB_TOKEN')||env('AIVAULT_GITHUB_TOKEN');
  const git=async(url,options={})=>{
-  if(![INBOX,OUTBOX,'https://api.github.com/user'].some(base=>url===base||url.startsWith(base+'?')))throw codeError('GITHUB_TARGET_DENIED');
+  if(![INBOX,OUTBOX,'https://api.github.com/user','https://api.github.com/repos/NL13741619-commits/homework-helper','https://api.github.com/repos/m9wmtcb782-arch/AIVAULT'].some(base=>url===base||url.startsWith(base+'?')))throw codeError('GITHUB_TARGET_DENIED');
   const token=gitToken();
   return fetchImpl(url,{...options,redirect:'error',signal:AbortSignal.timeout(8000),headers:{Accept:'application/vnd.github+json','User-Agent':'AIVAULT-base-002-dawn','X-GitHub-Api-Version':'2022-11-28',...(token?{Authorization:`Bearer ${token}`}:{}) ,...options.headers}});
  };
@@ -147,9 +153,24 @@ export function createRuntime({env,fetchImpl=fetch}){
    const identity=await rpc('aivault_dawn_auth',{p_digest:await sha256(token)});
    if(!identity.ok)return json(identity.error==='DAILY_RUNTIME_LIMIT'?429:401,{ok:false,error:identity.error},origin);
    let body={action:'status'};if(request.method==='POST'){try{body=JSON.parse(await limitedText(request.body,24000));}catch{return json(400,{ok:false,error:'INVALID_REQUEST'},origin);}}
-   const actions=identity.kind==='controller'?['status','submit','run_once','result','resume']:['run_once','status'];
+   const actions=identity.kind==='controller'?['status','preflight','submit','run_once','result','resume']:['run_once','status'];
    if(!body||Array.isArray(body)||!actions.includes(body.action))return json(403,{ok:false,error:'ACTION_DENIED'},origin);
-   if(body.action==='status')return json(200,{...await control('status',identity.principal),deployment:'AIVAULT_DAWN_RUNTIME_V1',credentials_present:{gemini:!!(env('GEMINI_API_KEY')||env('AIVAULT_GEMINI_API_KEY')),qwen:!!(env('AIVAULT_QWEN_API_KEY')||env('QWEN_ACCESS_TOKEN')),github:!!gitToken()},capabilities:['private_memory_status','private_memory_recall','sha256_literal_text','gated_model_qa'],shell_execution:false},origin);
+   if(body.action==='status'){
+    const status=await control('status',identity.principal);
+    return json(200,{...status,heartbeat:heartbeatStatus(status.last_tick_at,status.enabled),deployment:'AIVAULT_DAWN_RUNTIME_V1',credentials_present:{gemini:!!(env('GEMINI_API_KEY')||env('AIVAULT_GEMINI_API_KEY')),qwen:!!(env('AIVAULT_QWEN_API_KEY')||env('QWEN_ACCESS_TOKEN')),github:!!gitToken(),dawn_crossbase_github:!!env('DAWN_CROSSBASE_GITHUB_TOKEN')},capabilities:['private_memory_status','private_memory_recall','sha256_literal_text','gated_model_qa'],shell_execution:false},origin);
+   }
+   if(body.action==='preflight'){
+    if(!gitToken())return json(200,{ok:true,configured:false,error:'BLOCKED_NO_GITHUB_CREDENTIAL',secret_slot:'DAWN_CROSSBASE_GITHUB_TOKEN'},origin);
+    const userResponse=await git('https://api.github.com/user');if(!userResponse.ok)return json(200,{ok:false,configured:true,error:'GITHUB_CREDENTIAL_INVALID',http:userResponse.status},origin);
+    const user=JSON.parse(await limitedText(userResponse.body));
+    if(String(user.id)!=='305579832')return json(200,{ok:false,configured:true,error:'GITHUB_IDENTITY_MISMATCH',token_owner_id:user.id},origin);
+    const repos=[];for(const name of ['NL13741619-commits/homework-helper','m9wmtcb782-arch/AIVAULT']){
+     const response=await git('https://api.github.com/repos/'+name);const data=response.ok?JSON.parse(await limitedText(response.body)):{};
+     repos.push({repository:name,read:response.ok,push:data.permissions?.push===true,http:response.status});
+    }
+    const inbox=await git(INBOX+'?per_page=1');
+    return json(200,{ok:true,configured:true,token_owner_id:user.id,token_owner_login:user.login,repositories:repos,inbox_read:inbox.ok,inbox_http:inbox.status,write_test_executed:false},origin);
+   }
    if(!identity.enabled)return json(503,{ok:false,error:'KILL_SWITCH'},origin);
    if(body.action==='submit'){
     if(Object.keys(body).some(k=>!['action','kind','question','idempotency_key'].includes(k)))return json(400,{ok:false,error:'INVALID_REQUEST'},origin);
