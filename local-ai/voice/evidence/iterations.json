@@ -1,0 +1,33 @@
+{
+  "note": "Sequential development runs with changed segmentation and warmup; not a same-build latency distribution.",
+  "runs": [
+    {
+      "run": "dawn-voice-delivery",
+      "first_audio_seconds_after_end_of_input": 3.046,
+      "reply": "累不累？有話說就說吧。",
+      "audio_chunks": 2
+    },
+    {
+      "run": "dawn-voice-delivery-v2",
+      "first_audio_seconds_after_end_of_input": 6.628,
+      "reply": "今天太累，我陪你聊聊天吧。",
+      "audio_chunks": 1
+    },
+    {
+      "run": "dawn-voice-delivery-v3",
+      "first_audio_seconds_after_end_of_input": 2.586,
+      "reply": "累著呢，聊得是不是太久了？",
+      "audio_chunks": 2
+    }
+  ],
+  "final_voice_tests": {
+    "passed": 14,
+    "failed": 0
+  },
+  "tts_probe": {
+    "phrase": "先休息一下，慢慢聊就好。",
+    "int8_model_seconds": 5.377,
+    "float32_model_seconds": 1.132,
+    "note": "Single local CPU probe; not a general hardware benchmark."
+  }
+}
