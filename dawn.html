@@ -35,13 +35,16 @@ header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:
 .cap.user{background:#2a2018}
 .cap.ai{background:#1f1812}
 textarea{width:100%;min-height:68px;border:1px solid var(--line);border-radius:10px;background:#120e0a;color:var(--text);padding:9px 10px;font:inherit;resize:vertical}
-.row{display:flex;gap:8px;margin-top:8px}
+.row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 button{
   height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--line);
   background:#241c16;color:var(--text);font-size:13px;font-weight:700;cursor:pointer
 }
 button.primary{background:linear-gradient(135deg,#ffe9a8,#ffb347);color:#1a1008;border:0}
 .status{font-size:12px;color:var(--muted);padding:8px 10px;border-radius:10px;background:#120e0a;margin-top:8px;white-space:pre-wrap}
+.pool{margin-top:12px;padding:10px;background:#120e0a;border-radius:10px;font-size:13px}
+.pool h3{margin:0 0 8px;font-size:14px;color:var(--glow)}
+.pool a{color:var(--sun);text-decoration:none}
 </style>
 </head>
 <body>
@@ -55,6 +58,9 @@ button.primary{background:linear-gradient(135deg,#ffe9a8,#ffb347);color:#1a1008;
     <div class="stage" aria-label="曙光數字人">
       <div class="sun"></div>
     </div>
+    <div class="row">
+      <button class="primary" id="createDH">建立數字人</button>
+    </div>
     <div class="status" id="status">曙光就緒</div>
   </div>
   <div class="card">
@@ -63,6 +69,10 @@ button.primary{background:linear-gradient(135deg,#ffe9a8,#ffb347);color:#1a1008;
     <div class="row">
       <button class="primary" id="send">送出</button>
       <button id="clear">清除</button>
+    </div>
+    <div class="pool">
+      <h3>協作池</h3>
+      <a href="https://m9wmtcb782-arch.github.io/AIVAULT/aivault-agent-collaboration.html" target="_blank">進入 AI 協作池</a>
     </div>
   </div>
 </div>
@@ -74,6 +84,13 @@ function cap(role,text){
   d.textContent=text
   caps.appendChild(d)
   caps.scrollTop=caps.scrollHeight
+}
+document.getElementById('createDH').onclick=()=>{
+  status.textContent='數字人建立中…'
+  setTimeout(()=>{
+    cap('ai','曙光數字人已建立（骨架）。後端開通後可接真實引擎。')
+    status.textContent='數字人就緒'
+  },500)
 }
 document.getElementById('send').onclick=()=>{
   const t=q.value.trim()
