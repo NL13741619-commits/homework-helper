@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>曙光城｜AI 聊天與即時語音</title>
+<script>document.documentElement.style.visibility='hidden';</script><script src="../shared-auth-config.js"></script><script src="../shared-auth.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fffdf8;color:#25221e;font:16px/1.6 -apple-system,system-ui,sans-serif}button,select,textarea{font:inherit}button,a,select{touch-action:manipulation}button,select{background:white;border:1px solid #dfd7c9;border-radius:12px;padding:10px;color:inherit}button:disabled{opacity:.5}header{background:#fff;border-bottom:1px solid #eee5d5;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}h1{font-size:20px;margin:0}a{color:#76531e}main{max-width:850px;margin:auto;padding:16px}.characters{display:flex;align-items:center;justify-content:center;gap:24px}.character{display:flex;flex-direction:column;align-items:center;border:2px solid transparent;background:none}.character[aria-pressed=true]{border-color:#dfb65c;background:#fff7df}.character span{display:block}.tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px 0}#status{padding:12px;background:#f6f1e8;border-radius:12px;overflow-wrap:anywhere}#status[data-state=ready]{background:#e5f5e9}#camera{width:100%;max-height:280px;object-fit:contain;border-radius:16px;background:#171717;margin-top:12px}#messages{min-height:28vh;padding:18px 0 145px}.message{background:#fff;border:1px solid #eee6d8;padding:12px 16px;border-radius:16px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}.message.user{background:#fff0cd;margin-left:12%}.message b{display:block;color:#79551a}form{position:fixed;bottom:0;left:0;right:0;background:#fffdf8;padding:10px 14px max(12px,env(safe-area-inset-bottom));border-top:1px solid #e9e0d2;display:flex;gap:8px}textarea{flex:1;min-width:0;max-height:140px;border:1px solid #ded6c7;border-radius:15px;padding:12px;resize:vertical}details{margin:12px 0;padding:12px;border:1px solid #e5dccb;border-radius:12px}details label{display:block;margin:10px 0}details select{width:100%}#history{max-height:45vh;overflow:auto}.history-row{display:block;width:100%;text-align:left;margin:6px 0}.note{font-size:13px;color:#756b5b}
+</style></head><body>
+<header><h1>☀️ 曙光城 AI</h1><a href="aivault-home.html">返回首頁</a></header>
+<main>
+<div class="characters" aria-label="選擇聊天角色">
+<button class="character" id="chooseDawn" aria-pressed="true"><span id="dawnOrb"></span><strong>曙光 ☀️</strong><small>曙光城主體</small></button>
+<button class="character" id="chooseDark" aria-pressed="false"><span id="darkOrb"></span><strong>暗星</strong><small>協作助理</small></button>
+</div>
+<div class="tools"><button id="voice">🎙️ 即時語音</button><button id="video">📹 即時視訊</button><button id="stop" disabled>結束連線</button><button id="newChat">＋ 新聊天</button></div>
+<div id="status" role="status" aria-live="polite">正在檢查曙光城 AI 服務…</div>
+<video id="camera" hidden autoplay muted playsinline></video>
+<details id="settings"><summary>⚙️ 設定：曙光與暗星的聲音</summary><label>曙光的 Gemini 聲音<select id="dawnVoice"></select></label><label>暗星的 Gemini 聲音<select id="darkVoice"></select></label><p class="note">與第一基地相同的 30 種聲音；兩位角色分別保存。變更後在下次連線生效。視訊會開啟相機與麥克風，送出畫面給目前選擇的 AI。</p><button id="switchCamera" disabled>切換前後相機</button><button id="retryHealth">重新檢查服務</button></details>
+<details><summary>對話記錄</summary><div id="history"></div><p class="note">此頁記錄保存在目前裝置。原版頁面的對話記錄仍保留。</p><a href="technical-dark-star.html">開啟原版雙角色聊天與原有記錄</a></details>
+<div id="messages" aria-live="polite"></div>
+</main><form id="composer"><textarea id="input" aria-label="訊息" placeholder="傳訊息給曙光…" rows="2" required maxlength="7000"></textarea><button id="send">送出</button></form>
+<script src="darkstar-orb.js?v=20261016-expr2"></script><script type="module" src="dawn-city-chat.js?v=1"></script>
+</body></html>
