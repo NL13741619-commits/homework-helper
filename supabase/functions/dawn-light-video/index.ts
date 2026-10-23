@@ -89,7 +89,7 @@ serve(async (req: Request) => {
         end_seconds: seconds,
         aspect_ratio: "16:9",
         resolution: "480p",
-        model: "default",
+        model: "wan-2.2",
         audio: false,
         style: { prompt },
       }),

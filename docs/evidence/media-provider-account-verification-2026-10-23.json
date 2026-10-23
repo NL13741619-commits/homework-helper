@@ -1,0 +1,16 @@
+{
+  "project": "svtkpdmqemidlasowqew",
+  "provider": "magic_hour",
+  "provider_authenticated": true,
+  "http_status": 200,
+  "account_endpoint": "GET /v1/account",
+  "generation_executed": false,
+  "secret_values_exported": false,
+  "account_identifiers_exported": false,
+  "generation_model": "wan-2.2",
+  "max_duration_seconds": 5,
+  "resolution": "480p",
+  "audio": false,
+  "existing_authorization_gate_preserved": true,
+  "engineering_probe_closed": true
+}
