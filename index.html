@@ -63,7 +63,7 @@ button.secondary{background:transparent;border:1px solid var(--line);color:var(-
     <input id="email" type="email" autocomplete="username" placeholder="name@example.com">
     <label for="password">密碼</label>
     <input id="password" type="password" autocomplete="current-password">
-    <label class="remember"><input id="remember" type="checkbox"> 記住帳號密碼</label>
+    <label class="remember"><input id="remember" type="checkbox"> 記住帳號</label>
     <div class="msg" id="msg"></div>
     <button id="go"><strong>登入</strong></button>
     <button class="secondary" id="switch">沒有帳號？立即註冊</button>
@@ -77,47 +77,79 @@ button.secondary{background:transparent;border:1px solid var(--line);color:var(-
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+(function(){
 const SUPABASE_URL='https://svtkpdmqemidlasowqew.supabase.co'
 const SUPABASE_ANON='sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf'
-const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON)
 const auth=document.getElementById('auth'),ai=document.getElementById('ai'),msg=document.getElementById('msg')
 const emailEl=document.getElementById('email'),passEl=document.getElementById('password'),remEl=document.getElementById('remember')
+const go=document.getElementById('go'),switchBtn=document.getElementById('switch')
 let mode='login'
 function showAuth(){auth.style.display='block';ai.style.display='none'}
-function showAI(email){auth.style.display='none';ai.style.display='block';document.getElementById('who').textContent='已登入：'+email}
+function showAI(email){
+  auth.style.display='none';ai.style.display='block'
+  document.getElementById('who').textContent='已登入：'+(email||'')
+  window.location.replace(new URL('dawn-city.html',window.location.href).href)
+}
+function fail(error){msg.className='msg';msg.textContent=error?.message||'連線失敗，請稍後重試。'}
+if(!window.supabase?.createClient){
+  fail(new Error('登入元件載入失敗，請重新整理頁面。'));go.disabled=true;switchBtn.disabled=true;return
+}
+let dawnClient
+try{dawnClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON)}
+catch(error){fail(error);go.disabled=true;switchBtn.disabled=true;return}
 function setMode(m){
   mode=m
   const reg=mode==='register'
-  document.getElementById('go').innerHTML=reg?'<strong>註冊</strong>':'<strong>登入</strong>'
-  document.getElementById('switch').textContent=reg?'已有帳號？返回登入':'沒有帳號？立即註冊'
+  go.innerHTML=reg?'<strong>註冊</strong>':'<strong>登入</strong>'
+  switchBtn.textContent=reg?'已有帳號？返回登入':'沒有帳號？立即註冊'
   msg.textContent=''
 }
 async function boot(){
-  const saved=localStorage.getItem('dawn_remember_email')
-  if(saved){emailEl.value=saved;remEl.checked=true}
-  const {data:{session}}=await supabase.auth.getSession()
-  if(session?.user)showAI(session.user.email);else showAuth()
+  try{
+    const saved=localStorage.getItem('dawn_remember_email')
+    if(saved){emailEl.value=saved;remEl.checked=true}
+  }catch{}
+  try{
+    const {data,error}=await dawnClient.auth.getSession()
+    if(error)throw error
+    if(data.session?.user)showAI(data.session.user.email);else showAuth()
+  }catch(error){showAuth();fail(error)}
 }
-boot()
-document.getElementById('switch').onclick=()=>setMode(mode==='login'?'register':'login')
-document.getElementById('go').onclick=async()=>{
+switchBtn.onclick=()=>setMode(mode==='login'?'register':'login')
+go.onclick=async()=>{
+  if(go.disabled)return
   msg.textContent=mode==='register'?'註冊中…':'登入中…';msg.className='msg'
   const email=emailEl.value.trim(),password=passEl.value
   if(!email||!password){msg.textContent='請輸入 Email 與密碼';return}
-  if(remEl.checked)localStorage.setItem('dawn_remember_email',email);else localStorage.removeItem('dawn_remember_email')
-  if(mode==='register'){
-    if(password.length<6){msg.textContent='密碼至少 6 字';return}
-    const {data,error}=await supabase.auth.signUp({email,password})
-    if(error){msg.textContent=error.message||'註冊失敗';return}
-    if(data.session){showAI(data.user.email);return}
-    msg.textContent='註冊成功，請至信箱驗證後再登入。';msg.className='msg ok'
-    setMode('login');return
-  }
-  const {data,error}=await supabase.auth.signInWithPassword({email,password})
-  if(error){msg.textContent=error.message||'登入失敗';return}
-  showAI(data.user.email)
+  if(mode==='register'&&password.length<6){msg.textContent='密碼至少 6 字';return}
+  go.disabled=true;switchBtn.disabled=true
+  try{
+    try{
+      if(remEl.checked)localStorage.setItem('dawn_remember_email',email)
+      else localStorage.removeItem('dawn_remember_email')
+    }catch{}
+    if(mode==='register'){
+      const {data,error}=await dawnClient.auth.signUp({email,password})
+      if(error)throw error
+      if(data.session?.user){showAI(data.session.user.email);return}
+      setMode('login')
+      msg.textContent='註冊成功，請至信箱驗證後再登入。';msg.className='msg ok'
+      return
+    }
+    const {data,error}=await dawnClient.auth.signInWithPassword({email,password})
+    if(error)throw error
+    if(!data.session?.user)throw new Error('登入未取得有效工作階段，請重試。')
+    showAI(data.session.user.email)
+  }catch(error){fail(error)}
+  finally{go.disabled=false;switchBtn.disabled=false}
 }
-document.getElementById('out').onclick=async()=>{await supabase.auth.signOut();showAuth()}
+passEl.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();go.click()}})
+document.getElementById('out').onclick=async()=>{
+  try{const {error}=await dawnClient.auth.signOut();if(error)throw error;showAuth()}
+  catch(error){fail(error)}
+}
+boot()
+})()
 </script>
 </body>
 </html>
