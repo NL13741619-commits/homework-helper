@@ -2,179 +2,120 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>曙光城 · AIVAULT 第二基地</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c0a08">
+<title>曙光城 · AIVAULT</title>
 <style>
 :root{
-  --bg:#070b14;
-  --card:#101826;
-  --accent:#7eb6ff;
-  --glow:#c9e4ff;
-  --text:#e8f0ff;
-  --muted:#8aa0c0;
+  --bg:#0c0a08;--panel:#1a1410;--line:#3a2e24;--text:#f5efe6;--muted:#b8a48a;
+  --sun:#ffb347;--glow:#ffe9a8;--accent:#ffd27a;
 }
 *{box-sizing:border-box}
-body{
-  margin:0;
-  min-height:100vh;
-  background:radial-gradient(ellipse at top,#1a2744 0%,var(--bg) 60%);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-}
-.wrap{
-  max-width:560px;
-  width:100%;
-  background:var(--card);
-  border:1px solid rgba(126,182,255,.25);
-  border-radius:20px;
-  padding:36px 28px;
-  box-shadow:0 0 60px rgba(126,182,255,.08);
-  text-align:center;
-}
+html,body{margin:0;min-height:100dvh;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}
+body{background:radial-gradient(ellipse at top,#2a1f14 0%,var(--bg) 55%)}
+header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(12,10,8,.92);z-index:5}
+.logo{font-weight:800;letter-spacing:.18em;font-size:14px;background:linear-gradient(90deg,var(--glow),var(--sun));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.grow{flex:1}
+.nav a{color:var(--accent);text-decoration:none;font-size:13px;margin-left:12px}
+.wrap{max-width:640px;margin:0 auto;padding:32px 20px}
 .sun{
-  width:72px;height:72px;margin:0 auto 16px;
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 35%,#fff 0%,#ffe9a8 25%,#ffb347 60%,transparent 70%);
-  box-shadow:0 0 40px #ffb347;
-  animation:rise 4s ease-in-out infinite alternate;
+  width:88px;height:88px;margin:0 auto 18px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#fff 0%,#ffe9a8 28%,#ffb347 62%,transparent 72%);
+  box-shadow:0 0 48px #ffb347,0 0 90px rgba(255,179,71,.35);
+  animation:pulse 3.2s ease-in-out infinite alternate;
 }
-@keyframes rise{
-  from{transform:translateY(6px);opacity:.85}
-  to{transform:translateY(-4px);opacity:1}
+@keyframes pulse{from{transform:scale(.96);opacity:.9}to{transform:scale(1.04);opacity:1}}
+h1{text-align:center;margin:0 0 6px;font-size:28px;letter-spacing:1px}
+.sub{text-align:center;color:var(--muted);margin-bottom:28px;font-size:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input[type=email],input[type=password]{
+  width:100%;height:46px;padding:0 12px;border-radius:10px;border:1px solid var(--line);
+  background:#120e0a;color:var(--text);font:inherit
 }
-h1{
-  margin:0 0 6px;
-  font-size:32px;
-  letter-spacing:2px;
-  background:linear-gradient(90deg,var(--glow),var(--accent));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+.remember{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:13px;color:var(--muted);cursor:pointer}
+.remember input{width:16px;height:16px;accent-color:var(--sun)}
+button{
+  width:100%;height:48px;margin-top:8px;border:0;border-radius:12px;
+  background:linear-gradient(135deg,#ffe9a8,#ffb347);color:#1a1008;font-weight:700;font-size:15px;cursor:pointer
 }
-.sub{color:var(--muted);margin-bottom:16px;font-size:14px}
-input{
-  width:100%;height:44px;margin:6px 0;padding:0 12px;
-  border-radius:10px;border:1px solid rgba(126,182,255,.3);
-  background:#0b1220;color:var(--text);font:inherit;
-}
-button.btn{
-  display:block;width:100%;padding:14px 18px;margin-top:8px;
-  border-radius:12px;color:var(--text);
-  background:rgba(126,182,255,.08);border:1px solid rgba(126,182,255,.3);
-  font:inherit;cursor:pointer;
-}
-button.btn:hover{background:rgba(126,182,255,.18)}
-.primary{background:rgba(126,182,255,.2);border-color:var(--accent)}
-.link{background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;margin-top:10px}
-.msg{font-size:13px;color:#ffb4b4;min-height:18px;margin:8px 0}
+button.secondary{background:transparent;border:1px solid var(--line);color:var(--accent);margin-top:10px}
+.msg{font-size:13px;min-height:18px;margin:8px 0;color:#ffb4b4}
 .ok{color:#86efac}
-#ai-panel{display:none;margin-top:16px;text-align:left}
-#ai-panel textarea{width:100%;min-height:80px;background:#0b1220;color:var(--text);border:1px solid rgba(126,182,255,.3);border-radius:8px;padding:10px;font:inherit}
-#ai-panel .out{margin-top:10px;padding:10px;background:#0b1220;border-radius:8px;font-size:14px;white-space:pre-wrap}
-.note{margin-top:20px;font-size:12px;color:var(--muted)}
+#ai{display:none;margin-top:16px}
+#ai .who{font-size:13px;color:var(--muted);margin-bottom:8px}
 </style>
 </head>
 <body>
+<header>
+  <div class="logo">AIVAULT</div>
+  <div class="grow"></div>
+  <nav class="nav"><a href="dawn.html">曙光頁面</a></nav>
+</header>
 <div class="wrap">
   <div class="sun"></div>
   <h1>曙光城</h1>
-  <div class="sub">AIVAULT 第二基地 · Dawn Light</div>
-
-  <div id="auth-box">
-    <div class="sub" id="mode-label">登入進入曙光</div>
-    <input id="email" type="email" placeholder="Email" autocomplete="username">
-    <input id="password" type="password" placeholder="密碼" autocomplete="current-password">
-    <input id="confirm" type="password" placeholder="再次輸入密碼" style="display:none" autocomplete="new-password">
+  <div class="sub">AIVAULT 第二基地 · 曙光控管</div>
+  <div class="card" id="auth">
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="username" placeholder="name@example.com">
+    <label for="password">密碼</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <label class="remember"><input id="remember" type="checkbox"> 記住帳號密碼</label>
     <div class="msg" id="msg"></div>
-    <button class="btn primary" id="btn-go"><strong>登入</strong></button>
-    <button class="link" id="btn-switch">沒有帳號？立即註冊</button>
+    <button id="go"><strong>登入</strong></button>
+    <button class="secondary" id="switch">沒有帳號？立即註冊</button>
   </div>
-
-  <div id="ai-panel">
-    <div class="sub" id="who"></div>
-    <textarea id="q" placeholder="對曙光說…"></textarea>
-    <button class="btn" id="send"><strong>送出</strong></button>
-    <div class="out" id="out">曙光待命。</div>
-    <button class="btn" id="btn-out">登出</button>
+  <div class="card" id="ai">
+    <div class="who" id="who"></div>
+    <p style="text-align:center;margin:12px 0">已進入曙光城</p>
+    <a href="dawn.html" style="display:block;text-align:center;color:var(--accent);text-decoration:none;font-weight:700">前往曙光頁面 →</a>
+    <button class="secondary" id="out" style="margin-top:16px">登出</button>
   </div>
-
-  <div class="note">新使用者可在此註冊。帳號與主城共用。安全團聚不受影響。</div>
 </div>
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-const SUPABASE_URL='https://clcddygkaaqqtsbswgdf.supabase.co'
-const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsY2RkeWdrYWFxcXRzYnN3Z2RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzUwNjQsImV4cCI6MjEwMjMxMTA2NH0.kYg6h7n74CtbiIjNjZ2xxJj16SV42INZVzQ9dLNUfKE'
-const supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY)
-const msg=document.getElementById('msg')
-const authBox=document.getElementById('auth-box')
-const panel=document.getElementById('ai-panel')
-const confirmEl=document.getElementById('confirm')
-const modeLabel=document.getElementById('mode-label')
-const btnGo=document.getElementById('btn-go')
-const btnSwitch=document.getElementById('btn-switch')
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://svtkpdmqemidlasowqew.supabase.co'
+const SUPABASE_ANON='sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf'
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON)
+const auth=document.getElementById('auth'),ai=document.getElementById('ai'),msg=document.getElementById('msg')
+const emailEl=document.getElementById('email'),passEl=document.getElementById('password'),remEl=document.getElementById('remember')
 let mode='login'
-function showAuth(){authBox.style.display='block';panel.style.display='none'}
-function showAI(email){
-  authBox.style.display='none';panel.style.display='block'
-  document.getElementById('who').textContent='已登入：'+email
-}
-function setMode(next){
-  mode=next
+function showAuth(){auth.style.display='block';ai.style.display='none'}
+function showAI(email){auth.style.display='none';ai.style.display='block';document.getElementById('who').textContent='已登入：'+email}
+function setMode(m){
+  mode=m
   const reg=mode==='register'
-  modeLabel.textContent=reg?'註冊後進入曙光':'登入進入曙光'
-  confirmEl.style.display=reg?'block':'none'
-  btnGo.innerHTML=reg?'<strong>註冊</strong>':'<strong>登入</strong>'
-  btnSwitch.textContent=reg?'已有帳號？返回登入':'沒有帳號？立即註冊'
+  document.getElementById('go').innerHTML=reg?'<strong>註冊</strong>':'<strong>登入</strong>'
+  document.getElementById('switch').textContent=reg?'已有帳號？返回登入':'沒有帳號？立即註冊'
   msg.textContent=''
 }
 async function boot(){
+  const saved=localStorage.getItem('dawn_remember_email')
+  if(saved){emailEl.value=saved;remEl.checked=true}
   const {data:{session}}=await supabase.auth.getSession()
   if(session?.user)showAI(session.user.email);else showAuth()
 }
 boot()
-btnSwitch.onclick=()=>setMode(mode==='login'?'register':'login')
-btnGo.onclick=async()=>{
+document.getElementById('switch').onclick=()=>setMode(mode==='login'?'register':'login')
+document.getElementById('go').onclick=async()=>{
   msg.textContent=mode==='register'?'註冊中…':'登入中…';msg.className='msg'
-  const email=document.getElementById('email').value.trim()
-  const password=document.getElementById('password').value
+  const email=emailEl.value.trim(),password=passEl.value
   if(!email||!password){msg.textContent='請輸入 Email 與密碼';return}
+  if(remEl.checked)localStorage.setItem('dawn_remember_email',email);else localStorage.removeItem('dawn_remember_email')
   if(mode==='register'){
-    if(password!==confirmEl.value){msg.textContent='兩次密碼不一致';return}
     if(password.length<6){msg.textContent='密碼至少 6 字';return}
-    const {data,error}=await supabase.auth.signUp({email,password,options:{data:{role:'user'}}})
+    const {data,error}=await supabase.auth.signUp({email,password})
     if(error){msg.textContent=error.message||'註冊失敗';return}
     if(data.session){showAI(data.user.email);return}
     msg.textContent='註冊成功，請至信箱驗證後再登入。';msg.className='msg ok'
-    setMode('login')
-    return
+    setMode('login');return
   }
   const {data,error}=await supabase.auth.signInWithPassword({email,password})
   if(error){msg.textContent=error.message||'登入失敗';return}
   showAI(data.user.email)
 }
-document.getElementById('btn-out').onclick=async()=>{
-  await supabase.auth.signOut();showAuth()
-}
-document.getElementById('send').onclick=async()=>{
-  const q=document.getElementById('q').value.trim()
-  if(!q)return
-  const out=document.getElementById('out')
-  out.textContent='曙光處理中…'
-  const {data:{session}}=await supabase.auth.getSession()
-  if(!session){out.textContent='請先登入';return}
-  try{
-    const r=await fetch('https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-dawn-runtime',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
-      body:JSON.stringify({action:'status'})
-    })
-    const j=await r.json()
-    out.textContent=j.ok?('曙光在線。\n'+JSON.stringify(j,null,2)):('無法連線：'+(j.error||r.status))
-  }catch{out.textContent='連線失敗'}
-}
+document.getElementById('out').onclick=async()=>{await supabase.auth.signOut();showAuth()}
 </script>
 </body>
 </html>
