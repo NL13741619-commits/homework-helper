@@ -280,7 +280,7 @@
 
   <main class="content">
     <div class="panel active" id="panel-home">
-      <a id="dawnDigitalHumanEntry" class="agent-card" href="dawn-digital-human.html" style="margin-bottom:12px;display:block;text-decoration:none;border-color:#ffb347;background:linear-gradient(135deg,#422a12,#1e293b)">
+      <a id="dawnDigitalHumanEntry" class="agent-card" href="technical-dark-star.html" style="margin-bottom:12px;display:block;text-decoration:none;border-color:#ffb347;background:linear-gradient(135deg,#422a12,#1e293b)">
         <div class="agent-name" style="font-size:18px;color:#ffd27a">☀ 曙光數字人 · 第二基地主角</div>
         <div class="agent-role" style="margin:8px 0">曙光 Dawn Light｜對話、任務與數字人入口</div>
         <span style="color:#ffd27a">進入曙光 →</span>
@@ -291,7 +291,7 @@
             <div class="agent-name" style="font-size:15px;">曙光 · 第二基地數字人</div>
             <div class="agent-role" style="margin-bottom:0;">即時工程引擎 · AI Gateway · Sandbox · 測試／評估 · 語音通道</div>
           </div>
-          <div style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 5px; border-radius:20px; background:#111; color:#fff; font-size:12px; font-weight:700;"><span class="dawn-orb" role="img" aria-label="曙光太陽動畫">☀</span>進入曙光</div>
+          <div style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 5px; border-radius:20px; background:#111; color:#fff; font-size:12px; font-weight:700;"><span id="homeDawnOrb" data-size="36" title="曙光動畫"></span>進入曙光</div>
         </div>
       </div>
 
@@ -1029,7 +1029,7 @@
     document.getElementById('btnEnterRoom').addEventListener('click', () => { markAgentsInMeeting(); location.href = 'aivault-warroom.html'; });
     document.getElementById('warroomEntry')?.addEventListener('click', () => { markAgentsInMeeting(); location.href = 'aivault-warroom.html'; });
     document.getElementById('proposalWsEntry')?.addEventListener('click', () => { location.href = 'aivault-proposal-workspace.html'; });
-    document.getElementById('darkStarEntry')?.addEventListener('click', () => { location.href = 'dawn-digital-human.html'; });
+    document.getElementById('darkStarEntry')?.addEventListener('click', () => { location.href = 'technical-dark-star.html'; });
     document.getElementById('researchWsEntry')?.addEventListener('click', () => { location.href = 'aivault-research-warroom.html'; });
     document.getElementById('videoStudioEntry')?.addEventListener('click', () => { location.href = 'aivault-video-studio.html'; });
     document.getElementById('digitalHumanEntry')?.addEventListener('click', () => { location.href = 'aivault-digital-human.html'; });
@@ -1150,5 +1150,6 @@
 
   </script>
 <script src="darkstar-orb.js?v=20261016-expr2"></script>
+<script>if(window.DarkStarOrb){window.DarkStarOrb.mount(document.getElementById("homeDawnOrb"),{size:36,theme:"dawn"});}</script>
 <script src="aivault-presence.js?v=20261017-pr2" defer></script></body>
 </html>
