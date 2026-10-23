@@ -1,0 +1,347 @@
+{
+  "model_downloaded": true,
+  "model_loaded": true,
+  "inference_pass": true,
+  "arithmetic_pass": true,
+  "text_http_end_to_end_pass": true,
+  "cloud_end_to_end_pass": false,
+  "persistent_host": false,
+  "external_ai_api_calls": 0,
+  "model_lock": {
+    "model_repo": "Qwen/Qwen3-0.6B-GGUF",
+    "model_revision": "23749fefcc72300e3a2ad315e1317431b06b590a",
+    "model_filename": "Qwen3-0.6B-Q8_0.gguf",
+    "model_size": 639446688,
+    "model_sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+    "license": "Apache-2.0",
+    "runtime_repo": "ggml-org/llama.cpp",
+    "runtime_tag": "b11669",
+    "runtime_commit": "620d2225cc436ab0b001e3200e590e3b286ef9ab",
+    "runtime_asset": "llama-b11669-bin-ubuntu-x64.tar.gz",
+    "runtime_size": 17851611,
+    "runtime_sha256": "cf07c1c112d709bd67e522017471de57ed0ec8bea031d732c5422351c07f65ac"
+  },
+  "chat": [
+    {
+      "question": "17加25是多少？再說一句你是誰。",
+      "text": "17加25等于42。我是曙光，第二基地的小太阳AI。",
+      "model": "Qwen3-0.6B-Q8_0",
+      "provider_request_id": "chatcmpl-DgcTfmDWOKgLl7K2uKsJlAaFoddoG5e5",
+      "usage": {
+        "completion_tokens": 19,
+        "prompt_tokens": 75,
+        "total_tokens": 94,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "inference_executed": true,
+      "request_id": "ce90b45a-ef00-443c-a17d-f34c21addab3",
+      "latency_seconds": 2.2731
+    },
+    {
+      "question": "我今天很累，請用一句繁體中文鼓勵我。",
+      "text": "今天太累啦，好好休息，明天再來加油！",
+      "model": "Qwen3-0.6B-Q8_0",
+      "provider_request_id": "chatcmpl-pLY0tstLQiPoPUGVIJoS02XCViioW16T",
+      "usage": {
+        "completion_tokens": 14,
+        "prompt_tokens": 78,
+        "total_tokens": 92,
+        "prompt_tokens_details": {
+          "cached_tokens": 49
+        }
+      },
+      "inference_executed": true,
+      "request_id": "04059afb-a229-42aa-9265-e3f788e9ef38",
+      "latency_seconds": 1.1187
+    }
+  ],
+  "singing": {
+    "timeline": [
+      {
+        "lyric": "Dawn",
+        "midi": 60,
+        "beats": 1,
+        "start_seconds": 0,
+        "end_seconds": 0.6,
+        "target_hz": 261.6255653005986
+      },
+      {
+        "lyric": "shines",
+        "midi": 64,
+        "beats": 1,
+        "start_seconds": 0.6,
+        "end_seconds": 1.2,
+        "target_hz": 329.6275569128699
+      },
+      {
+        "lyric": "bright",
+        "midi": 67,
+        "beats": 1,
+        "start_seconds": 1.2,
+        "end_seconds": 1.8,
+        "target_hz": 391.99543598174927
+      },
+      {
+        "lyric": "now",
+        "midi": 64,
+        "beats": 1,
+        "start_seconds": 1.8,
+        "end_seconds": 2.4,
+        "target_hz": 329.6275569128699
+      },
+      {
+        "lyric": "We",
+        "midi": 62,
+        "beats": 1,
+        "start_seconds": 2.4,
+        "end_seconds": 3.0,
+        "target_hz": 293.6647679174076
+      },
+      {
+        "lyric": "sing",
+        "midi": 65,
+        "beats": 1,
+        "start_seconds": 3.0,
+        "end_seconds": 3.6,
+        "target_hz": 349.2282314330039
+      },
+      {
+        "lyric": "with",
+        "midi": 69,
+        "beats": 1,
+        "start_seconds": 3.6,
+        "end_seconds": 4.2,
+        "target_hz": 440.0
+      },
+      {
+        "lyric": "joy",
+        "midi": 67,
+        "beats": 1,
+        "start_seconds": 4.2,
+        "end_seconds": 4.8,
+        "target_hz": 391.99543598174927
+      },
+      {
+        "lyric": "A",
+        "midi": 64,
+        "beats": 1,
+        "start_seconds": 4.8,
+        "end_seconds": 5.4,
+        "target_hz": 329.6275569128699
+      },
+      {
+        "lyric": "new",
+        "midi": 67,
+        "beats": 1,
+        "start_seconds": 5.4,
+        "end_seconds": 6.0,
+        "target_hz": 391.99543598174927
+      },
+      {
+        "lyric": "day",
+        "midi": 72,
+        "beats": 1,
+        "start_seconds": 6.0,
+        "end_seconds": 6.6,
+        "target_hz": 523.2511306011972
+      },
+      {
+        "lyric": "comes",
+        "midi": 71,
+        "beats": 1,
+        "start_seconds": 6.6,
+        "end_seconds": 7.2,
+        "target_hz": 493.8833012561241
+      },
+      {
+        "lyric": "We",
+        "midi": 69,
+        "beats": 1,
+        "start_seconds": 7.2,
+        "end_seconds": 7.8,
+        "target_hz": 440.0
+      },
+      {
+        "lyric": "share",
+        "midi": 67,
+        "beats": 1,
+        "start_seconds": 7.8,
+        "end_seconds": 8.4,
+        "target_hz": 391.99543598174927
+      },
+      {
+        "lyric": "our",
+        "midi": 64,
+        "beats": 1,
+        "start_seconds": 8.4,
+        "end_seconds": 9.0,
+        "target_hz": 329.6275569128699
+      },
+      {
+        "lyric": "light",
+        "midi": 60,
+        "beats": 1,
+        "start_seconds": 9.0,
+        "end_seconds": 9.6,
+        "target_hz": 261.6255653005986
+      }
+    ],
+    "duration_seconds": 9.6,
+    "engine": "dawn-score-world-v1",
+    "status": "EXPERIMENTAL_DSP_SINGING",
+    "trained_singing_model": false,
+    "voice_id": "flite-slt-en",
+    "rights": "original",
+    "request_id": "fb4ceeea-bf67-40be-85c0-31a152e90170",
+    "latency_seconds": 2.3064
+  },
+  "pitch_measurements": [
+    {
+      "lyric": "Dawn",
+      "midi": 60,
+      "target_hz": 261.6255653005986,
+      "measured_hz": 261.2324428589573,
+      "absolute_cents_error": 2.6033342668513555
+    },
+    {
+      "lyric": "shines",
+      "midi": 64,
+      "target_hz": 329.6275569128699,
+      "measured_hz": 328.79107190213995,
+      "absolute_cents_error": 4.398879520883409
+    },
+    {
+      "lyric": "bright",
+      "midi": 67,
+      "target_hz": 391.99543598174927,
+      "measured_hz": 392.2902089470256,
+      "absolute_cents_error": 1.301365188972042
+    },
+    {
+      "lyric": "now",
+      "midi": 64,
+      "target_hz": 329.6275569128699,
+      "measured_hz": 329.80777587367584,
+      "absolute_cents_error": 0.9462677945505603
+    },
+    {
+      "lyric": "We",
+      "midi": 62,
+      "target_hz": 293.6647679174076,
+      "measured_hz": 293.2705358490267,
+      "absolute_cents_error": 2.3256671673134424
+    },
+    {
+      "lyric": "sing",
+      "midi": 65,
+      "target_hz": 349.2282314330039,
+      "measured_hz": 348.4833109897501,
+      "absolute_cents_error": 3.6967487186678727
+    },
+    {
+      "lyric": "with",
+      "midi": 69,
+      "target_hz": 440.0,
+      "measured_hz": 439.56576956762785,
+      "absolute_cents_error": 1.7093765963801488
+    },
+    {
+      "lyric": "joy",
+      "midi": 67,
+      "target_hz": 391.99543598174927,
+      "measured_hz": 392.4056016628787,
+      "absolute_cents_error": 1.810535232798544
+    },
+    {
+      "lyric": "A",
+      "midi": 64,
+      "target_hz": 329.6275569128699,
+      "measured_hz": 328.7594552662273,
+      "absolute_cents_error": 4.565363446877154
+    },
+    {
+      "lyric": "new",
+      "midi": 67,
+      "target_hz": 391.99543598174927,
+      "measured_hz": 392.1370847949134,
+      "absolute_cents_error": 0.6254739971355692
+    },
+    {
+      "lyric": "day",
+      "midi": 72,
+      "target_hz": 523.2511306011972,
+      "measured_hz": 523.0030391406863,
+      "absolute_cents_error": 0.8210326021930788
+    },
+    {
+      "lyric": "comes",
+      "midi": 71,
+      "target_hz": 493.8833012561241,
+      "measured_hz": 492.70338398330875,
+      "absolute_cents_error": 4.14097202456113
+    },
+    {
+      "lyric": "We",
+      "midi": 69,
+      "target_hz": 440.0,
+      "measured_hz": 439.8163788116308,
+      "absolute_cents_error": 0.7226309164186829
+    },
+    {
+      "lyric": "share",
+      "midi": 67,
+      "target_hz": 391.99543598174927,
+      "measured_hz": 392.41984471721355,
+      "absolute_cents_error": 1.8733722897355656
+    },
+    {
+      "lyric": "our",
+      "midi": 64,
+      "target_hz": 329.6275569128699,
+      "measured_hz": 329.24333114499325,
+      "absolute_cents_error": 2.019165877070471
+    },
+    {
+      "lyric": "light",
+      "midi": 60,
+      "target_hz": 261.6255653005986,
+      "measured_hz": 261.1996893860946,
+      "absolute_cents_error": 2.8204109894325935
+    }
+  ],
+  "artifacts": [
+    {
+      "filename": "dawn-vocal.wav",
+      "size_bytes": 423404,
+      "sha256": "2b8201e7ee4626de77c9d2528ecd174472f7ef1430fa77c1e3719b2e9f5f1adf"
+    },
+    {
+      "filename": "dawn-backing.wav",
+      "size_bytes": 423404,
+      "sha256": "933aa48d0778380d6c58aecb632e7df5b354517d497cc4321853e69c8d129220"
+    },
+    {
+      "filename": "dawn-song.wav",
+      "size_bytes": 423404,
+      "sha256": "681207bb72bcae26882c1fcabe351d68ea29c23d61f0f56bc2075a25b123bc00"
+    },
+    {
+      "filename": "dawn-melody.mid",
+      "size_bytes": 300,
+      "sha256": "cfe8156158db7c462cb496e80e6d2fe929cb7661252595ebc9ea5fdc2919ad2e"
+    }
+  ],
+  "peak_child_rss_kib": null,
+  "trained_singing_model": false,
+  "asr": "NOT_IMPLEMENTED",
+  "chinese_voice": "NOT_IMPLEMENTED",
+  "listening_quality_review": "NOT_PERFORMED",
+  "memory_measurement_note": "Not recorded after child exit; do not infer model memory from the pre-exit child-rusage field.",
+  "unit_tests": {
+    "command": "python3 -m unittest discover -s local-ai/tests -v",
+    "passed": 8,
+    "failed": 0
+  }
+}
