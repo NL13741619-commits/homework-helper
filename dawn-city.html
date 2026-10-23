@@ -1,82 +1,216 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>曙光城 · 協作池</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>曙光城 · 3D 立體</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{background:#1a2744;color:#fff;font-family:-apple-system,"Noto Sans TC",sans-serif;overflow:hidden;height:100vh}
-#hud{position:fixed;top:8px;left:8px;background:rgba(20,30,50,.85);border:1px solid #4a5a7a;border-radius:12px;padding:10px 14px;font-size:12px;z-index:10}
-#hud b{font-size:16px;color:#f4d7a4}#count{font-size:20px;color:#f4d7a4}
-#hud a{color:#f4d7a4;text-decoration:none;margin-left:8px}
-#bar{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10;flex-wrap:wrap;justify-content:center;max-width:90vw}
-button{background:#1a2744;border:1px solid #4a5a7a;color:#fff;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer}
-.sun-wrap{position:absolute;top:16%;left:50%;transform:translateX(-50%);z-index:5;text-align:center}
-.sun{width:160px;height:160px;position:relative;margin:0 auto}
-.sun svg{width:100%;height:100%;overflow:visible}
-.rays{animation:spin 20s linear infinite;transform-origin:50% 50%}
-@keyframes spin{to{transform:rotate(360deg)}}
-.bubble{position:absolute;top:-36px;left:50%;transform:translateX(-50%);background:#fff;color:#1a2744;border-radius:12px;padding:6px 10px;font-size:12px;white-space:nowrap;opacity:0;transition:opacity .3s}
-.bubble.show{opacity:1}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a1020;font-family:-apple-system,"Noto Sans TC",sans-serif}
+#ui{position:absolute;top:12px;left:12px;color:#f4d7a4;z-index:10;pointer-events:none}
+#ui h1{font-size:18px;letter-spacing:.1em;text-shadow:0 0 8px #f4d7a4}
+#ui .sub{font-size:12px;opacity:.8;margin-top:4px}
+#controls{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10}
+#controls button{background:#1a2744;border:1px solid #4a5a7a;color:#e8eef4;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer}
+#controls button:hover{border-color:#f4d7a4}
 </style>
 </head>
 <body>
-<div id="hud"><b>曙光城</b><div>來自主城 <span id="count">8</span> 人 <a href="dawn-sandbox.html">沙盒</a></div></div>
-<div class="sun-wrap">
-  <div class="bubble" id="bubble"></div>
-  <div class="sun" id="sun"></div>
-  <div style="margin-top:6px;font-size:13px;letter-spacing:.1em">曙光</div>
+<div id="ui">
+  <h1>曙光城</h1>
+  <div class="sub">3D 立體 · 第二基地</div>
 </div>
-<div id="bar">
-  <button data-e="neutral">平靜</button><button data-e="happy">開心</button><button data-e="thinking">思考</button>
-  <button data-e="surprised">驚訝</button><button data-e="love">喜歡</button><button data-e="sleepy">想睡</button>
-  <button id="speak">說話</button>
+<div id="controls">
+  <button id="day">白天</button>
+  <button id="night">夜晚</button>
+  <button id="reset">重置視角</button>
 </div>
-<script>
-const SUN_SVG = `<svg viewBox="0 0 200 200">
-  <defs>
-    <radialGradient id="sg" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#fff6"/><stop offset=".4" stop-color="#f4d7a4"/><stop offset="1" stop-color="#e8a84a"/></radialGradient>
-  </defs>
-  <g class="rays"><polygon points="100,10 108,40 92,40" fill="#f4d7a4"/><polygon points="100,190 108,160 92,160" fill="#f4d7a4"/>
-    <polygon points="10,100 40,108 40,92" fill="#f4d7a4"/><polygon points="190,100 160,108 160,92" fill="#f4d7a4"/>
-    <polygon points="30,30 55,45 45,55" fill="#f4d7a4"/><polygon points="170,30 155,55 145,45" fill="#f4d7a4"/>
-    <polygon points="30,170 55,155 45,145" fill="#f4d7a4"/><polygon points="170,170 155,145 145,155" fill="#f4d7a4"/></g>
-  <circle cx="100" cy="100" r="58" fill="url(#sg)"/>
-  <ellipse cx="78" cy="88" rx="8" ry="10" fill="#3a2a1a" class="eye-l"/>
-  <ellipse cx="122" cy="88" rx="8" ry="10" fill="#3a2a1a" class="eye-r"/>
-  <ellipse cx="74" cy="84" rx="3" ry="3" fill="#fff"/>
-  <ellipse cx="118" cy="84" rx="3" ry="3" fill="#fff"/>
-  <path d="M82 112 Q100 122 118 112" stroke="#c58b4a" stroke-width="3" fill="none" stroke-linecap="round" class="mouth"/>
-  <ellipse cx="70" cy="108" rx="6" ry="4" fill="#f4a4a4" opacity=".6"/>
-  <ellipse cx="130" cy="108" rx="6" ry="4" fill="#f4a4a4" opacity=".6"/>
-</svg>`;
-document.getElementById("sun").innerHTML = SUN_SVG;
-const mouth = document.querySelector(".mouth"), bubble = document.getElementById("bubble");
-const MOUTHS = {
-  neutral: "M82 112 Q100 122 118 112",
-  happy: "M78 110 Q100 128 122 110",
-  thinking: "M88 114 Q100 118 112 114",
-  surprised: "M90 108 Q100 120 110 108",
-  love: "M78 110 Q100 128 122 110",
-  sleepy: "M86 116 Q100 120 114 116",
-  open: "M88 108 Q100 124 112 108"
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0a1020, 0.012);
+scene.background = new THREE.Color(0x0a1020);
+
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(40, 25, 40);
+
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.maxPolarAngle = Math.PI / 2.1;
+controls.minDistance = 10;
+controls.maxDistance = 120;
+controls.target.set(0, 5, 0);
+
+// Lights
+const ambient = new THREE.AmbientLight(0x334466, 0.4);
+scene.add(ambient);
+
+const sunLight = new THREE.DirectionalLight(0xffd7a4, 1.2);
+sunLight.position.set(30, 40, 20);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.set(2048, 2048);
+sunLight.shadow.camera.left = -50;
+sunLight.shadow.camera.right = 50;
+sunLight.shadow.camera.top = 50;
+sunLight.shadow.camera.bottom = -50;
+scene.add(sunLight);
+
+const fill = new THREE.DirectionalLight(0x8899bb, 0.3);
+fill.position.set(-20, 15, -10);
+scene.add(fill);
+
+// Ground
+const groundGeo = new THREE.PlaneGeometry(200, 200);
+const groundMat = new THREE.MeshStandardMaterial({color:0x1a2a3a, roughness:0.9});
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI/2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// Road
+const roadGeo = new THREE.PlaneGeometry(12, 80);
+const roadMat = new THREE.MeshStandardMaterial({color:0x2a3540});
+const road = new THREE.Mesh(roadGeo, roadMat);
+road.rotation.x = -Math.PI/2;
+road.position.y = 0.02;
+road.receiveShadow = true;
+scene.add(road);
+
+// Buildings
+function createBuilding(w, d, h, x, z, color=0x3d5a73){
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const mat = new THREE.MeshStandardMaterial({color, roughness:0.6, metalness:0.1});
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, h/2, z);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  // Windows
+  const winGeo = new THREE.PlaneGeometry(w*0.7, h*0.6);
+  const winMat = new THREE.MeshBasicMaterial({color:0xf4d7a4, transparent:true, opacity:0.35});
+  const win = new THREE.Mesh(winGeo, winMat);
+  win.position.set(0, 0, d/2 + 0.01);
+  mesh.add(win);
+  scene.add(mesh);
+  return mesh;
+}
+
+const buildings = [];
+buildings.push(createBuilding(6, 6, 18, -18, -10));
+buildings.push(createBuilding(5, 5, 12, -10, -12));
+buildings.push(createBuilding(8, 7, 24, 0, -15, 0x4a6a8a));
+buildings.push(createBuilding(5, 5, 14, 12, -8));
+buildings.push(createBuilding(6, 6, 16, 20, -14));
+buildings.push(createBuilding(4, 4, 10, -22, 5));
+buildings.push(createBuilding(7, 5, 15, 15, 8));
+
+// Sun (emissive sphere)
+const sunGeo = new THREE.SphereGeometry(4, 32, 32);
+const sunMat = new THREE.MeshStandardMaterial({
+  color:0xffe9a8,
+  emissive:0xffb347,
+  emissiveIntensity:0.8,
+  roughness:0.3
+});
+const sun = new THREE.Mesh(sunGeo, sunMat);
+sun.position.set(0, 18, 0);
+scene.add(sun);
+
+// Face on sun (simple)
+const faceGroup = new THREE.Group();
+sun.add(faceGroup);
+const eyeGeo = new THREE.SphereGeometry(0.4, 16, 16);
+const eyeMat = new THREE.MeshBasicMaterial({color:0x1a1020});
+const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+eyeL.position.set(-1.1, 0.6, 3.6);
+const eyeR = eyeL.clone();
+eyeR.position.x = 1.1;
+faceGroup.add(eyeL, eyeR);
+
+const mouthGeo = new THREE.TorusGeometry(0.8, 0.15, 8, 16, Math.PI);
+const mouthMat = new THREE.MeshBasicMaterial({color:0x1a1020});
+const mouth = new THREE.Mesh(mouthGeo, mouthMat);
+mouth.position.set(0, -0.8, 3.6);
+mouth.rotation.x = Math.PI;
+faceGroup.add(mouth);
+
+// Stars (night)
+const starsGeo = new THREE.BufferGeometry();
+const starCount = 800;
+const positions = new Float32Array(starCount * 3);
+for(let i=0;i<starCount;i++){
+  positions[i*3] = (Math.random()-0.5)*200;
+  positions[i*3+1] = Math.random()*80 + 10;
+  positions[i*3+2] = (Math.random()-0.5)*200;
+}
+starsGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const starsMat = new THREE.PointsMaterial({color:0xffffff, size:0.15, transparent:true, opacity:0.6});
+const stars = new THREE.Points(starsGeo, starsMat);
+stars.visible = false;
+scene.add(stars);
+
+// Day/Night
+let isNight = false;
+function setNight(night){
+  isNight = night;
+  if(night){
+    scene.background = new THREE.Color(0x050810);
+    scene.fog.color.set(0x050810);
+    ambient.intensity = 0.15;
+    sunLight.intensity = 0.15;
+    sun.material.emissiveIntensity = 0.2;
+    stars.visible = true;
+  }else{
+    scene.background = new THREE.Color(0x0a1020);
+    scene.fog.color.set(0x0a1020);
+    ambient.intensity = 0.4;
+    sunLight.intensity = 1.2;
+    sun.material.emissiveIntensity = 0.8;
+    stars.visible = false;
+  }
+}
+
+document.getElementById('day').onclick = () => setNight(false);
+document.getElementById('night').onclick = () => setNight(true);
+document.getElementById('reset').onclick = () => {
+  camera.position.set(40, 25, 40);
+  controls.target.set(0, 5, 0);
 };
-function setExpr(k){
-  const m = MOUTHS[k] || MOUTHS.neutral;
-  mouth.setAttribute("d", m);
+
+// Animation
+const clock = new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  sun.rotation.y = t * 0.1;
+  sun.position.y = 18 + Math.sin(t * 0.4) * 0.5;
+  controls.update();
+  renderer.render(scene, camera);
 }
-document.querySelectorAll("#bar button[data-e]").forEach(b => b.onclick = () => setExpr(b.dataset.e));
-setExpr("neutral");
-const lines = ["來自主城的人來了", "協作池有人在做事", "曙光在這裡"];
-let speaking = false;
-function speak(text){
-  if(speaking) return; speaking = true;
-  bubble.textContent = text; bubble.classList.add("show");
-  let open = false;
-  const iv = setInterval(() => { open = !open; mouth.setAttribute("d", open ? MOUTHS.open : MOUTHS.neutral); }, 160);
-  setTimeout(() => { clearInterval(iv); mouth.setAttribute("d", MOUTHS.neutral); bubble.classList.remove("show"); speaking = false; }, 2400);
-}
-document.getElementById("speak").onclick = () => speak(lines[Math.floor(Math.random()*lines.length)]);
-setInterval(() => { if(!speaking && Math.random() > .6) speak(lines[Math.floor(Math.random()*lines.length)]); }, 7000);
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
 </script>
 </body>
 </html>
