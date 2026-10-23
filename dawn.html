@@ -12,47 +12,39 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;min-height:100dvh}
-header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.tabs{display:flex;gap:8px;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line)}
-.tab{padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:#fff;font-size:13px;color:var(--muted)}
-.tab.active{background:#fff8e8;border-color:var(--sun);color:#a06a20}
-.bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff}
-.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ffe9a8,#ffb347);display:grid;place-items:center;font-size:14px}
-.title{font-weight:700;font-size:14px;flex:1}
+.bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line)}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#ffe9a8,#ffb347);display:grid;place-items:center;font-size:18px}
+.title{font-weight:700;font-size:15px;flex:1}
 .back{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:4px 8px;border-radius:12px}
-.chat{padding:12px;min-height:40vh;max-height:50vh;overflow:auto}
-.msg{display:flex;gap:8px;margin:8px 0;align-items:flex-start}
+.chat{padding:12px;min-height:40vh;max-height:calc(100dvh - 220px);overflow:auto}
+.msg{display:flex;gap:8px;margin:10px 0;align-items:flex-start}
 .msg.user{flex-direction:row-reverse}
-.bubble{max-width:70%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.4}
+.bubble{max-width:75%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.45}
 .msg.user .bubble{background:#e8e0d6;color:var(--text)}
 .msg.ai .bubble{background:#fff;border:1px solid var(--line)}
-.sun-ico{font-size:20px}
+.sun-ico{font-size:22px;flex-shrink:0}
 .panel{
-  position:fixed;right:12px;bottom:90px;width:200px;background:#fff;border:1px solid var(--line);
+  position:fixed;right:12px;bottom:80px;width:180px;background:#fff;border:1px solid var(--line);
   border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:10px;z-index:10
 }
-.panel h4{margin:0 0 8px;font-size:13px;display:flex;align-items:center;gap:4px}
+.panel h4{margin:0 0 6px;font-size:13px;display:flex;align-items:center;gap:4px}
 .dot{width:8px;height:8px;border-radius:50%;background:#86efac}
 .stage{
-  height:100px;background:linear-gradient(180deg,#fff8e8,#fff);border-radius:12px;
-  display:grid;place-items:center;margin-bottom:8px
+  height:90px;background:linear-gradient(180deg,#fff8e8,#fff);border-radius:12px;
+  display:grid;place-items:center;margin-bottom:6px
 }
 .sun{
-  width:64px;height:64px;border-radius:50%;
+  width:60px;height:60px;border-radius:50%;
   background:radial-gradient(circle at 35% 35%,#fff 0%,#ffe9a8 30%,#ffb347 70%);
-  box-shadow:0 0 20px #ffb347;
-  animation:pulse 2.5s ease-in-out infinite alternate;
-  position:relative
+  box-shadow:0 0 16px #ffb347;
+  position:relative;
+  transition:transform .3s
 }
-.sun:before{
-  content:"";position:absolute;inset:-8px;border-radius:50%;
-  background:conic-gradient(from 0deg,transparent,rgba(255,179,71,.4),transparent);
-  animation:spin 6s linear infinite
-}
-@keyframes pulse{from{transform:scale(.95)}to{transform:scale(1.05)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.grid button{height:32px;font-size:11px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;line-height:1}
+.eyes{letter-spacing:2px}
+.mouth{font-size:14px;margin-top:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.grid button{height:30px;font-size:11px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
 .input-bar{
   position:fixed;bottom:0;left:0;right:0;padding:10px 12px;background:#fff;border-top:1px solid var(--line);
   display:flex;gap:8px;align-items:center
@@ -62,25 +54,21 @@ header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;
 </style>
 </head>
 <body>
-<div class="tabs">
-  <div class="tab active">🤝 AI 協作</div>
-</div>
 <div class="bar">
   <div class="avatar">🌞</div>
   <div class="title">曙光</div>
-  <span class="sun-ico">🌞</span>
   <a class="back" href="index.html">← 返回</a>
 </div>
 <div class="chat" id="chat"></div>
 <div class="panel">
   <h4>🌞 曙光 <span class="dot"></span> 已連結</h4>
-  <div class="stage"><div class="sun"></div></div>
-  <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:8px">👂 曙光正在聆聽</div>
+  <div class="stage"><div class="sun" id="sun"><div class="face"><div class="eyes">● ●</div><div class="mouth">◐</div></div></div></div>
+  <div style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:6px">👂 曙光正在聆聽</div>
   <div class="grid">
-    <button id="expr">▶ 表情</button>
-    <button id="happy">開心</button>
-    <button id="sad">難過</button>
-    <button id="think">思考</button>
+    <button data-e="neutral">平靜</button>
+    <button data-e="happy">開心</button>
+    <button data-e="sad">難過</button>
+    <button data-e="think">思考</button>
   </div>
 </div>
 <div class="input-bar">
@@ -88,25 +76,45 @@ header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;
   <button id="send">送出</button>
 </div>
 <script>
-const chat=document.getElementById('chat'),q=document.getElementById('q')
-function add(role,text){
-  const m=document.createElement('div')
-  m.className='msg '+(role==='user'?'user':'ai')
-  m.innerHTML='<span class="sun-ico">'+(role==='user'?'':'🌞')+'</span><div class="bubble">'+text+'</div>'
-  chat.appendChild(m)
-  chat.scrollTop=chat.scrollHeight
+const FACES = {
+  neutral: {e: '● ●', m: '◐'},
+  happy: {e: '^ ^', m: '◕'},
+  sad: {e: '› ‹', m: '◔'},
+  think: {e: '● ◐', m: '—'}
+};
+const sun = document.getElementById('sun');
+const eyes = sun.querySelector('.eyes');
+const mouth = sun.querySelector('.mouth');
+function setExpr(k){
+  const f = FACES[k] || FACES.neutral;
+  eyes.textContent = f.e;
+  mouth.textContent = f.m;
 }
-document.getElementById('send').onclick=()=>{
-  const t=q.value.trim()
-  if(!t)return
-  add('user',t)
-  q.value=''
-  setTimeout(()=>add('ai','曙光已收到。'),300)
+document.querySelectorAll('.grid button').forEach(b => b.onclick = () => setExpr(b.dataset.e));
+setExpr('neutral');
+
+const chat = document.getElementById('chat');
+const q = document.getElementById('q');
+function add(role, text){
+  const m = document.createElement('div');
+  m.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+  m.innerHTML = '<span class="sun-ico">' + (role === 'user' ? '' : '🌞') + '</span><div class="bubble">' + text + '</div>';
+  chat.appendChild(m);
+  chat.scrollTop = chat.scrollHeight;
 }
-document.getElementById('expr').onclick=()=>add('ai','曙光表情：平靜')
-document.getElementById('happy').onclick=()=>add('ai','曙光表情：開心')
-document.getElementById('sad').onclick=()=>add('ai','曙光表情：難過')
-document.getElementById('think').onclick=()=>add('ai','曙光表情：思考')
+function reply(text){
+  setTimeout(() => add('ai', text), 400);
+}
+document.getElementById('send').onclick = () => {
+  const t = q.value.trim();
+  if(!t) return;
+  add('user', t);
+  q.value = '';
+  // 曙光自己的回應（後端接通後替換這段）
+  if(/1\+1|1＋1/.test(t)) reply('曙光：1+1 等於 2。');
+  else reply('曙光已收到。');
+};
+q.addEventListener('keydown', e => { if(e.key === 'Enter') document.getElementById('send').click(); });
 </script>
 </body>
 </html>
