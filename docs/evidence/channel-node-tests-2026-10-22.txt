@@ -1,0 +1,18 @@
+✔ exactly 1000 bounded logical channel routes (1.130989ms)
+✔ credentials are distinct per service principal (1.087673ms)
+✔ channel route, principal binding, feedback, limits and fail-closed outage (91.077089ms)
+✔ channel RPC pins backend and carries no caller-selected authority (0.636091ms)
+✔ strict allowlist and untrusted payload policy (1.832189ms)
+{"event":"bridge.transport_rejected","reason":"UNAUTHORIZED_SENDER"}
+✔ HTTP auth, kill switch, limits, actor binding and RPC flow (60.360947ms)
+✔ backend outage fails closed; protected endpoint never contacted (0.903765ms)
+✔ private per-task/fence workspace; no execution or model activation (25.000715ms)
+✔ symlink workspace root is refused (2.388659ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 220.559636

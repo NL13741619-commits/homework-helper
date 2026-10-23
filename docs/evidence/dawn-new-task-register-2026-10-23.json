@@ -1,0 +1,61 @@
+{
+  "source_repository": "NL13741619-commits/homework-helper",
+  "inbox": 1,
+  "verified_author_id": 306819786,
+  "registered_at": "2026-10-23T01:10:46.227Z",
+  "queue": "ai_agent_tasks",
+  "tasks": [
+    {
+      "id": "DAWN-CREDENTIAL-CONNECT-001",
+      "ids": [
+        6353530871,
+        6353556948,
+        6353575369
+      ],
+      "status": "PARTIAL_SECRET_SLOT_IMPLEMENTED_CREDENTIAL_ABSENT",
+      "task_id": "be46924d-c129-4262-98dd-38024243907a",
+      "registered_by": "engineering-controller",
+      "autonomous_agent_claimed": false
+    },
+    {
+      "id": "OFFLINE-COMIC-PRODUCTION-001",
+      "ids": [
+        6353680287,
+        6353877700,
+        6353951930
+      ],
+      "status": "BACKLOG_NO_VERIFIED_MEDIA_EXECUTOR",
+      "task_id": "c9c78161-94ae-4cef-a060-6afc8e44bb72",
+      "registered_by": "engineering-controller",
+      "autonomous_agent_claimed": false
+    },
+    {
+      "id": "AIVAULT-DAWN-MODEL-PORTAL-RD-001",
+      "ids": [
+        6353970032,
+        6353999717
+      ],
+      "status": "BACKLOG_MEDIA_MODEL_AND_PORTAL_NOT_IMPLEMENTED",
+      "task_id": "09ff6bc7-b10d-444d-b04b-25c590ba7c63",
+      "registered_by": "engineering-controller",
+      "autonomous_agent_claimed": false
+    },
+    {
+      "id": "DAWN-BACKEND-HEARTBEAT-001",
+      "ids": [
+        6354300780
+      ],
+      "status": "BACKEND_TICKS_AND_STALENESS_VERIFIED_NOT_MODEL_ONLINE",
+      "task_id": "1b2502ec-8283-496c-83e6-b94ab3b753d6",
+      "registered_by": "engineering-controller",
+      "autonomous_agent_claimed": false
+    }
+  ],
+  "reported_collaborator_invitation": {
+    "id": 338820845,
+    "state": "ACCEPTED",
+    "source_comment": 6353575369,
+    "independently_verified_here": false
+  },
+  "zero_actual_media_workers_verified": true
+}

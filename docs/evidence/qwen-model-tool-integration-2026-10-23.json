@@ -1,0 +1,192 @@
+{
+  "executor": "finite local Dawn model planner + deployed bounded cloud tool runtime",
+  "model_lock": {
+    "model_repo": "Qwen/Qwen3-0.6B-GGUF",
+    "model_revision": "23749fefcc72300e3a2ad315e1317431b06b590a",
+    "model_filename": "Qwen3-0.6B-Q8_0.gguf",
+    "model_size": 639446688,
+    "model_sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+    "license": "Apache-2.0",
+    "runtime_repo": "ggml-org/llama.cpp",
+    "runtime_tag": "b11669",
+    "runtime_commit": "620d2225cc436ab0b001e3200e590e3b286ef9ab",
+    "runtime_asset": "llama-b11669-bin-ubuntu-x64.tar.gz",
+    "runtime_size": 17851611,
+    "runtime_sha256": "cf07c1c112d709bd67e522017471de57ed0ec8bea031d732c5422351c07f65ac"
+  },
+  "models": {
+    "models": [
+      {
+        "name": "Qwen3-0.6B-Q8_0",
+        "model": "Qwen3-0.6B-Q8_0",
+        "modified_at": "",
+        "size": "",
+        "digest": "",
+        "type": "model",
+        "description": "",
+        "tags": [
+          ""
+        ],
+        "capabilities": [
+          "completion"
+        ],
+        "parameters": "",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "",
+          "families": [
+            ""
+          ],
+          "parameter_size": "",
+          "quantization_level": ""
+        }
+      }
+    ],
+    "object": "list",
+    "data": [
+      {
+        "id": "Qwen3-0.6B-Q8_0",
+        "aliases": [
+          "Qwen3-0.6B-Q8_0"
+        ],
+        "tags": [],
+        "object": "model",
+        "architecture": {
+          "input_modalities": [
+            "text"
+          ],
+          "output_modalities": [
+            "text"
+          ]
+        },
+        "created": 1792686413,
+        "owned_by": "llamacpp",
+        "meta": {
+          "vocab_type": 2,
+          "n_vocab": 151936,
+          "n_ctx": 4096,
+          "n_ctx_train": 40960,
+          "n_embd": 1024,
+          "n_params": 596049920,
+          "size": 633495552,
+          "ftype": "Q8_0"
+        }
+      }
+    ]
+  },
+  "responses": [
+    {
+      "label": "tool_plan",
+      "request_id": "chatcmpl-OjPrj05jE1DlXXq0oKn0B6Oqzm50vCaJ",
+      "model": "Qwen3-0.6B-Q8_0",
+      "answer": "{\n  \"tool\": \"hash_text\",\n  \"text\": \"AIVAULT\"\n}",
+      "usage": {
+        "completion_tokens": 20,
+        "prompt_tokens": 511,
+        "total_tokens": 531,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "latency_seconds": 4.937
+    },
+    {
+      "label": "tool_result_report",
+      "request_id": "chatcmpl-aP3fZsoDje5Ssyo4oEtRcOC0gxj6I2FB",
+      "model": "Qwen3-0.6B-Q8_0",
+      "answer": "工具實際回傳資料：已完成。",
+      "usage": {
+        "completion_tokens": 9,
+        "prompt_tokens": 598,
+        "total_tokens": 607,
+        "prompt_tokens_details": {
+          "cached_tokens": 439
+        }
+      },
+      "latency_seconds": 1.799
+    }
+  ],
+  "integration": {
+    "submission": {
+      "ok": true,
+      "status": "queued",
+      "task_id": "9aa4990c-4f1f-481f-8df6-d6f8f2769e73"
+    },
+    "execution": {
+      "ok": true,
+      "instance_id": "base-002:dawn-light",
+      "inbox": {
+        "status": "POLL_SKIPPED_FOR_TARGETED_TEST"
+      },
+      "task": {
+        "task_id": "9aa4990c-4f1f-481f-8df6-d6f8f2769e73",
+        "fencing_token": "25",
+        "ok": true,
+        "run_id": "1522e472-74d6-403d-a1a6-b783dd20ba60",
+        "status": "succeeded",
+        "evidence": {
+          "executor": "base-002:dawn-light",
+          "inference_executed": false,
+          "tool_execution": true,
+          "tools": [
+            "sha256_literal_text"
+          ],
+          "result": {
+            "sha256": "f02402a09679597f87467de38b1c5155af4add6a6f4896fa554b8bd96a87bf44",
+            "unicode_chars": 7
+          }
+        }
+      },
+      "outbox": {
+        "status": "BLOCKED_NO_GITHUB_CREDENTIAL",
+        "outbox_id": "d6b060f9-b72e-486b-a653-b11dd29bdeb0"
+      }
+    },
+    "persisted_result": {
+      "ok": true,
+      "result": {
+        "runs": [
+          {
+            "id": "1522e472-74d6-403d-a1a6-b783dd20ba60",
+            "status": "succeeded",
+            "evidence": {
+              "tools": [
+                "sha256_literal_text"
+              ],
+              "result": {
+                "sha256": "f02402a09679597f87467de38b1c5155af4add6a6f4896fa554b8bd96a87bf44",
+                "unicode_chars": 7
+              },
+              "executor": "base-002:dawn-light",
+              "instance_id": "base-002:dawn-light",
+              "bounded_tools": true,
+              "fencing_token": "25",
+              "tool_execution": true,
+              "inference_executed": false
+            },
+            "finished_at": "2026-10-22T16:27:15.024834+00:00"
+          }
+        ],
+        "status": "succeeded",
+        "task_id": "9aa4990c-4f1f-481f-8df6-d6f8f2769e73"
+      }
+    },
+    "independent_hash_verified": true,
+    "model_copied_hash_exactly": false,
+    "model_report_acceptance": "REJECTED_MISSING_EXACT_HASH",
+    "verified_report": {
+      "task_id": "9aa4990c-4f1f-481f-8df6-d6f8f2769e73",
+      "status": "succeeded",
+      "sha256": "f02402a09679597f87467de38b1c5155af4add6a6f4896fa554b8bd96a87bf44",
+      "model_summary_untrusted": "工具實際回傳資料：已完成。",
+      "evidence_source": "deployed tool result checked independently"
+    }
+  },
+  "cloud_model_endpoint_connected": false,
+  "persistent_model_host": false,
+  "secret_values_in_report": false,
+  "inference_executed": true,
+  "peak_child_rss_kib": 1174268,
+  "report_acceptance_evaluated_after_run": true
+}

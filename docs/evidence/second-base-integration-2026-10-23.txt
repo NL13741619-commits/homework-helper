@@ -1,0 +1,15 @@
+2026-10-23 Asia/Taipei
+
+Source backend: f1fb422f9584a3ac674b4add1e37953001abfd0f
+Integration: 417a2e9dff2628556d2c7ca84e393f29d80f5566
+93 previously absent files consolidated; existing default-branch frontend preserved.
+
+node --test aivault/dawn/test/*.test.mjs aivault/bridge/test/*.test.mjs
+Node v24.19.0
+35 tests; 35 pass; 0 fail.
+
+These are unit/fixture regression tests. They do not prove live inference, a persistent host, automatic GitHub replies, or a complete frontend/backend migration.
+
+Read-only cloud inventory: second-base project svtkpdmqemidlasowqew ACTIVE_HEALTHY; aivault-dawn-runtime ACTIVE version 6. Model credentials/host and runtime configuration were not read or changed in this integration.
+
+Upstream main-city frontend inspection shows project-specific auth configuration and dependent pages. Directly copying it as the active frontend would send second-base users to first-base resources. Full port is unfinished.
