@@ -16,12 +16,10 @@ button{background:#1a2744;border:1px solid #4a5a7a;color:#fff;border-radius:8px;
 @keyframes spin{to{transform:rotate(360deg)}}
 .bubble{position:absolute;top:-36px;left:50%;transform:translateX(-50%);background:#fff;color:#1a2744;border-radius:12px;padding:6px 10px;font-size:12px;white-space:nowrap;opacity:0;transition:opacity .3s}
 .bubble.show{opacity:1}
-.darkstar{position:absolute;top:20%;left:12%;width:56px;height:56px;z-index:5}
 </style>
 </head>
 <body>
 <div id="hud"><b>曙光城</b><div>來自主城 <span id="count">8</span> 人</div></div>
-<div class="darkstar" id="ds"></div>
 <div class="sun-wrap">
   <div class="bubble" id="bubble"></div>
   <div class="sun" id="sun"></div>
@@ -50,18 +48,8 @@ const SUN_SVG = `<svg viewBox="0 0 200 200">
   <ellipse cx="70" cy="108" rx="6" ry="4" fill="#f4a4a4" opacity=".6"/>
   <ellipse cx="130" cy="108" rx="6" ry="4" fill="#f4a4a4" opacity=".6"/>
 </svg>`;
-const DS_SVG = `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#111"/><circle cx="38" cy="42" r="6" fill="#fff"/><circle cx="62" cy="42" r="6" fill="#fff"/><path d="M38 62 Q50 70 62 62" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
 document.getElementById("sun").innerHTML = SUN_SVG;
-document.getElementById("ds").innerHTML = DS_SVG;
 const mouth = document.querySelector(".mouth"), bubble = document.getElementById("bubble");
-const EYES = {
-  neutral: {l:"M78 88 Q78 78 78 88", r:"M122 88 Q122 78 122 88"},
-  happy: {l:"M70 86 Q78 78 86 86", r:"M114 86 Q122 78 130 86"},
-  thinking: {l:"M78 88 Q78 78 78 88", r:"M122 84 Q122 74 122 84"},
-  surprised: {l:"M78 88 Q78 76 78 88", r:"M122 88 Q122 76 122 88"},
-  love: {l:"M70 86 Q78 80 86 86", r:"M114 86 Q122 80 130 86"},
-  sleepy: {l:"M70 90 Q78 92 86 90", r:"M114 90 Q122 92 130 90"}
-};
 const MOUTHS = {
   neutral: "M82 112 Q100 122 118 112",
   happy: "M78 110 Q100 128 122 110",
