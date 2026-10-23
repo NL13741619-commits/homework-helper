@@ -1,5 +1,6 @@
 {
   "approved": false,
+  "context_transfer_authorized": false,
   "provider": "qwen_self_hosted",
   "billing_mode": "free_only",
   "model": "Qwen3-0.6B-Q8_0",

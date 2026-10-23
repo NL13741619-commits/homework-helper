@@ -31,5 +31,13 @@ begin
  run:=public.aivault_dawn('tick_end','fixture-dawn-scheduler',jsonb_build_object('tick_token',r->>'tick_token'));assert run->>'ok'='true';
  insert into public.ai_agent_events(event_type,detail) values('dawn.runtime_database_suite_passed','{"fixture_only":true,"live_control":true,"inference_executed":false,"rolled_back":true}');
 end $$;
+reset role;
+update public.ai_agent_runtime_config set model_policy=jsonb_build_object('approved',true,'provider','gemini','model','fixture-only','billing_mode','free_only','quota_evidence_id','fixture-only','license_evidence_id','fixture-only','valid_until',clock_timestamp()+interval '5 minutes','context_transfer_authorized',false);
+set local role service_role;
+do $$ declare r jsonb;l jsonb;t text;begin
+ r:=public.aivault_dawn('intake','fixture-dawn-controller',jsonb_build_object('kind','qa','question','private fixture','idempotency_key','context_gate_'||replace(gen_random_uuid()::text,'-',''),'source','controller'));t:=r->>'task_id';assert r->>'ok'='true';
+ l:=public.aivault_dawn('claim','fixture-dawn-controller',jsonb_build_object('task_id',t));assert l->>'ok'='true';
+ r:=public.aivault_dawn('model_reserve','fixture-dawn-controller',jsonb_build_object('task_id',t,'fencing_token',l->>'fencing_token'));assert r->>'error'='EXTERNAL_MODEL_CONTEXT_NOT_AUTHORIZED';
+end $$;
 select event_type,detail from public.ai_agent_events where event_type='dawn.runtime_database_suite_passed' order by id desc limit 1;
 rollback;

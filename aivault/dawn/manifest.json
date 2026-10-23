@@ -192,11 +192,11 @@
     },
     {
       "path": "runtime.mjs",
-      "sha256": "b24ae916e62e8c4cd51a7108adc50918273c7511bd12175289b3c73bafdeece6"
+      "sha256": "a582e00d76e5985638ca2d089d93b176d0ab93c87d371c8f3c21c07b77594f20"
     },
     {
       "path": "runtime.sql",
-      "sha256": "a1da5f404c274710cd86755366cc07242aee8b1c924567e32767e8cec946762a"
+      "sha256": "ce19073c0c354e2cab87938aadbab485695f4c1642f6f8e4e9b971083dd7d56b"
     },
     {
       "path": "edge-index.ts",
@@ -224,7 +224,7 @@
     },
     {
       "path": "qwen-policy.example.json",
-      "sha256": "19c1529170ea628077f7efc0502d8dc9f6ecc9f6b1861e32fab9978b6342be07"
+      "sha256": "19f592fa6c953db77ee2f6b3ffde145f802980a6af13f5c00f441229c46ceb79"
     },
     {
       "path": "qwen-cpu.service.example",

@@ -169,6 +169,7 @@ begin
     or coalesce(c.model_policy->>'quota_evidence_id','')='' or coalesce(c.model_policy->>'license_evidence_id','')=''
     or coalesce(c.model_policy->>'valid_until','') !~ '^[0-9]{4}-' then return '{"ok":false,"error":"BLOCKED_NO_MODEL"}';end if;
    if (c.model_policy->>'valid_until')::timestamptz<=clock_timestamp() then return '{"ok":false,"error":"BLOCKED_NO_MODEL"}';end if;
+   if c.model_policy->>'context_transfer_authorized' is distinct from 'true' then return '{"ok":false,"error":"EXTERNAL_MODEL_CONTEXT_NOT_AUTHORIZED"}';end if;
    if c.model_day<>current_date then c.model_calls:=0;end if;
    if c.model_calls>=16 then return '{"ok":false,"error":"MODEL_DAILY_LIMIT"}';end if;
    if exists(select 1 from public.ai_agent_events where task_id=t.id and event_type='dawn.model_reserved') then return '{"ok":false,"error":"MODEL_ALREADY_RESERVED_REVIEW_REQUIRED"}';end if;

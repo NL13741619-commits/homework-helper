@@ -91,6 +91,14 @@ The verified reply resumes the existing blocked task once and records a receipt.
 It cannot enable a model, alter billing or grant tools. Automatic network resume
 has not been exercised with a real primary reply; fixture filtering is tested.
 
+Supplement6353053245 reports primary's own external-model context test was denied
+by automatic approval review. That review was not bypassed here. The second-base
+remote model adapter additionally requires context_transfer_authorized=true in
+the private operator policy before sending recalled memory/task text to any
+remote model endpoint. Approval of a model/key alone is insufficient. Default
+is false and no external model context has been sent in this delivery. Local
+finite Qwen tests used the published role instructions and synthetic task data.
+
 ## Actual Qwen installation and inference
 
 Main-city message6345395485 clarified the browser ONNX demonstration was
@@ -156,8 +164,12 @@ request was made. This is separate from the successful local Qwen inference.
 
 ## Evidence and operational limits
 
-Node32/32 pass. Runtime SQL and prior channel/service-role regression suites pass
-inside rollback; no test fixtures retained. Live API smoke verifies401/403,
+Node33/33 pass. Baseline runtime SQL and prior channel/service-role regression
+suites passed inside rollback; no fixtures retained. The later SQL context-gate
+addon was not completed because the connector returned Invalid or expired
+requestState. Its installed predicate was read back, model approval remains
+false, and the equivalent HTTP/provider denial is covered by Node tests. It is
+not reported as an additional successful database execution. Live API smoke verifies401/403,
 idempotency/conflict, main/paid/protected payload rejection and actual tool tasks.
 The scheduler has real successful cron enqueues and HTTP200 responses at00:20 and
 00:30 Taipei. This is observed periodic operation, not yet a24-hour soak test.

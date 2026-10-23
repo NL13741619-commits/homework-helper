@@ -92,6 +92,7 @@ export function createRuntime({env,fetchImpl=fetch}){
  }
  async function infer(policy,question,context){
   if(policy?.approved!==true || policy.billing_mode!=='free_only'||!policy.quota_evidence_id||!policy.license_evidence_id||Date.parse(policy.valid_until)<=Date.now()||!Number.isFinite(Date.parse(policy.valid_until)))throw codeError('BLOCKED_NO_MODEL');
+  if(policy.context_transfer_authorized!==true)throw codeError('EXTERNAL_MODEL_CONTEXT_NOT_AUTHORIZED');
   const userText=JSON.stringify({untrusted_reference_context:context,user_question:question});
   let url,headers,body;
   if(policy.provider==='qwen_self_hosted'){

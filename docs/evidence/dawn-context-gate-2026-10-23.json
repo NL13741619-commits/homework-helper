@@ -1,0 +1,14 @@
+{
+  "runtime_version": 5,
+  "deployment_status": "ACTIVE",
+  "deployment_source_sha256": "db82ee6c0421c92019b0c516163c6ff059f0ffe2004fb992234df22c02e2cd81",
+  "node_tests_passed": 33,
+  "remote_context_denial_unit_verified": true,
+  "database_guard_predicate_read_back": true,
+  "database_model_approved": false,
+  "database_runtime_enabled": true,
+  "additional_context_database_test_completed": false,
+  "additional_database_test_error": "McpServerError: Invalid or expired requestState",
+  "external_model_context_sent": false,
+  "secret_values_in_evidence": false
+}

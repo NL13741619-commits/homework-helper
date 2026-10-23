@@ -65,6 +65,25 @@ test('correlated resume requires a valid task and fixed help ID',()=>{
  assert.equal(inspectMessage(c({task_id:'arbitrary'})).accept,false);
  assert.equal(inspectMessage(c({help_id:'paid-upgrade'})).accept,false);
 });
+test('model approval does not authorize sending private context to its endpoint',async()=>{
+ let external=0;
+ const handler=createRuntime({env:n=>n==='GEMINI_API_KEY'?'fixture-provider-secret':env(n),fetchImpl:async(u,o)=>{
+  if(!u.startsWith('https://svtkpdmqemidlasowqew.supabase.co/')){external++;throw Error('must not send context');}
+  const b=JSON.parse(o.body);
+  if(u.endsWith('aivault_dawn_auth'))return json({ok:true,kind:'controller',principal:'fixture-controller',enabled:true});
+  if(u.endsWith('aivault_memory'))return json({ok:true,untrusted_memory:true,entries:[{content:'private fixture'}]});
+  switch(b.p_action){
+   case 'tick_start':return json({ok:true,tick_token:'fixture-tick'});
+   case 'claim':return json({ok:true,task_id:'fixture-task',fencing_token:'14',kind:'qa',question:'question'});
+   case 'renew':case 'finish':case 'tick_end':return json({ok:true});
+   case 'model_reserve':return json({ok:true,request_id:'fixture-reservation',policy:{approved:true,billing_mode:'free_only',provider:'gemini',model:'fixture-model',quota_evidence_id:'fixture-free',license_evidence_id:'fixture-license',valid_until:new Date(Date.now()+60000).toISOString(),context_transfer_authorized:false}});
+   case 'outbox_next':return json({ok:true,item:null});
+   default:throw Error('unexpected');
+  }
+ }});
+ const r=await (await handler(req({action:'run_once',poll:false}))).json();
+ assert.equal(r.task.evidence.error,'EXTERNAL_MODEL_CONTEXT_NOT_AUTHORIZED');assert.equal(external,0);
+});
 test('unknown outbound POST is reconciled by marker without another POST',async()=>{
  const states=[];let posts=0;
  const handler=createRuntime({env:n=>n==='AIVAULT_GITHUB_TOKEN'?'fixture-communication-key':env(n),fetchImpl:async(u,o={})=>{
