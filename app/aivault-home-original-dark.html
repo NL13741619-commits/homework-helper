@@ -282,10 +282,10 @@
       <div id="darkStarEntry" class="agent-card" style="margin-bottom:12px; grid-column:1/-1; display:block; border-color:rgba(17,17,17,.55); background:linear-gradient(135deg,#0f0f12,#1e293b);">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
           <div>
-            <div class="agent-name" style="font-size:15px;">暗星 · 第二數字人</div>
+            <div class="agent-name" style="font-size:15px;">曙光 · 第二基地數字人</div>
             <div class="agent-role" style="margin-bottom:0;">即時工程引擎 · AI Gateway · Sandbox · 測試／評估 · 語音通道</div>
           </div>
-          <div style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 5px; border-radius:20px; background:#111; color:#fff; font-size:12px; font-weight:700;"><span data-darkstar-orb data-size="24" title="暗星"></span>進入暗星</div>
+          <div style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 5px; border-radius:20px; background:#111; color:#fff; font-size:12px; font-weight:700;"><span class="dawn-orb" role="img" aria-label="曙光太陽動畫">☀</span>進入曙光</div>
         </div>
       </div>
 
@@ -321,7 +321,7 @@
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
           <div>
             <div class="agent-name" style="font-size:15px;">專案研討會議</div>
-            <div class="agent-role" style="margin-bottom:0;">6 位 AI 技術協作 · Chief / Engineer / Auditor / Strategist / Creator / Coordinator</div>
+            <div class="agent-role" style="margin-bottom:0;">6 位 AI 技術協作 · 曙光・首席 / 曙光・工程 / 曙光・審核 / 曙光・策略 / 曙光・創作 / 曙光・協調</div>
           </div>
           <div style="flex-shrink:0; padding:8px 12px; border-radius:20px; background:linear-gradient(135deg,#3b82f6,#6366f1); color:#fff; font-size:12px; font-weight:700;">進入會議</div>
         </div>
@@ -535,7 +535,7 @@
 
     const SUPABASE_URL = 'https://svtkpdmqemidlasowqew.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf';
-    const AI_GATEWAY_URL = `${SUPABASE_URL}/functions/v1/ai-gateway`;
+    const AI_GATEWAY_URL = `${SUPABASE_URL}/functions/v1/aivault-brain-gateway`;
     let currentUser = null;
     let isAdmin = false;
     function readRole(user) {
@@ -567,12 +567,12 @@
       { id: 'p3', code: 'groq', name: 'Groq', status: 'active', models: ['llama-3.3-70b-versatile'] }
     ];
     const AGENTS = [
-      { id: 'a1', name: 'Chief', role: '首席分析師', avatar: '🧠', color: 'var(--agent-gpt)', provider: 'gemini3', model: 'gemini-2.5-flash' },
-      { id: 'a2', name: 'Engineer', role: '技術架構師', avatar: '🧠', color: 'var(--agent-coding)', provider: 'gemini2', model: 'gemini-2.5-flash' },
-      { id: 'a3', name: 'Auditor', role: '風險審查官', avatar: '🧠', color: 'var(--agent-grok)', provider: 'groq', model: 'llama-3.3-70b-versatile' },
-      { id: 'a4', name: 'Strategist', role: '策略研究員', avatar: '🧠', color: 'var(--agent-research)', provider: 'groq', model: 'llama-3.3-70b-versatile' },
-      { id: 'a5', name: 'Creator', role: '解決方案設計師', avatar: '🧠', color: 'var(--agent-design)', provider: 'gemini3', model: 'gemini-2.5-flash' },
-      { id: 'a6', name: 'Coordinator', role: '整合協調官', avatar: '🧠', color: 'var(--agent-teacher)', provider: 'gemini2', model: 'gemini-2.5-flash' }
+      { id: 'a1', name: '曙光・首席', role: '首席分析師', avatar: '🧠', color: 'var(--agent-gpt)', provider: 'gemini3', model: 'gemini-2.5-flash' },
+      { id: 'a2', name: '曙光・工程', role: '技術架構師', avatar: '🧠', color: 'var(--agent-coding)', provider: 'gemini2', model: 'gemini-2.5-flash' },
+      { id: 'a3', name: '曙光・審核', role: '風險審查官', avatar: '🧠', color: 'var(--agent-grok)', provider: 'groq', model: 'llama-3.3-70b-versatile' },
+      { id: 'a4', name: '曙光・策略', role: '策略研究員', avatar: '🧠', color: 'var(--agent-research)', provider: 'groq', model: 'llama-3.3-70b-versatile' },
+      { id: 'a5', name: '曙光・創作', role: '解決方案設計師', avatar: '🧠', color: 'var(--agent-design)', provider: 'gemini3', model: 'gemini-2.5-flash' },
+      { id: 'a6', name: '曙光・協調', role: '整合協調官', avatar: '🧠', color: 'var(--agent-teacher)', provider: 'gemini2', model: 'gemini-2.5-flash' }
     ];
     const agentRuntime = {};
     AGENTS.forEach(a => {
@@ -631,37 +631,41 @@
       renderAgentPickBars();
     }
     const TASKS = [
-      { id: 't1', title: '分析產品架構', status: 'done', agent: 'Chief' },
-      { id: 't2', title: 'AI 協作討論', status: 'active', agent: 'Chief + Engineer' },
-      { id: 't3', title: '建立 Demo 介面', status: 'pending', agent: 'Creator' },
-      { id: 't4', title: '設計 Permission Engine', status: 'pending', agent: 'Engineer' },
+      { id: 't1', title: '分析產品架構', status: 'done', agent: '曙光・首席' },
+      { id: 't2', title: 'AI 協作討論', status: 'active', agent: '曙光・首席 + 曙光・工程' },
+      { id: 't3', title: '建立 Demo 介面', status: 'pending', agent: '曙光・創作' },
+      { id: 't4', title: '設計 Permission Engine', status: 'pending', agent: '曙光・工程' },
       { id: 't5', title: 'Owner 最終審批（產出企劃 PDF）', status: 'pending', agent: 'Owner' }
     ];
     const WORKFLOW = [
-      { step: 1, title: '架構分析', agent: 'Chief', status: 'done' },
-      { step: 2, title: '批判與補強', agent: 'Auditor', status: 'active' },
-      { step: 3, title: '前端設計建議', agent: 'Creator', status: 'pending' },
-      { step: 4, title: '程式實作規劃', agent: 'Engineer', status: 'pending' },
-      { step: 5, title: '法律合規檢查', agent: 'Strategist', status: 'pending' },
+      { step: 1, title: '架構分析', agent: '曙光・首席', status: 'done' },
+      { step: 2, title: '批判與補強', agent: '曙光・審核', status: 'active' },
+      { step: 3, title: '前端設計建議', agent: '曙光・創作', status: 'pending' },
+      { step: 4, title: '程式實作規劃', agent: '曙光・工程', status: 'pending' },
+      { step: 5, title: '法律合規檢查', agent: '曙光・策略', status: 'pending' },
       { step: 6, title: 'Owner 批准', agent: 'Owner', status: 'pending' }
     ];
     let approvals = [
-      { id: 'ap1', agent: 'Auditor', action: '修改資料庫 Schema：新增 agent_capabilities 關聯表', risk: 'medium', time: '剛剛' },
-      { id: 'ap2', agent: 'Engineer', action: '請求執行 Terminal 指令：建立專案目錄結構', risk: 'high', time: '2 分鐘前' }
+      { id: 'ap1', agent: '曙光・審核', action: '修改資料庫 Schema：新增 agent_capabilities 關聯表', risk: 'medium', time: '剛剛' },
+      { id: 'ap2', agent: '曙光・工程', action: '請求執行 Terminal 指令：建立專案目錄結構', risk: 'high', time: '2 分鐘前' }
     ];
     let messages = [
-      { sender: 'Chief', role: '首席分析師', type: 'agent', text: '我已分析目前需求。建議採用 Provider Adapter + Agent Registry 架構，確保未來可自由新增 AI。', time: '14:32' },
-      { sender: 'Auditor', role: '風險審查官', type: 'agent', text: '我不同意把第一版做得太複雜。應該先用 Mock 快速驗證協作流程，再逐步替換真實 Provider。', time: '14:33' },
-      { sender: 'Chief', role: '首席分析師', type: 'agent', text: '重新評估後，我同意 Grok 的觀點。先建立可展示的協作原型，架構保持可擴充即可。', time: '14:34' },
+      { sender: '曙光・首席', role: '首席分析師', type: 'agent', text: '我已分析目前需求。建議採用 Provider Adapter + Agent Registry 架構，確保未來可自由新增 AI。', time: '14:32' },
+      { sender: '曙光・審核', role: '風險審查官', type: 'agent', text: '我不同意把第一版做得太複雜。應該先用 Mock 快速驗證協作流程，再逐步替換真實 Provider。', time: '14:33' },
+      { sender: '曙光・首席', role: '首席分析師', type: 'agent', text: '重新評估後，我同意 Grok 的觀點。先建立可展示的協作原型，架構保持可擴充即可。', time: '14:34' },
       { sender: 'Owner', type: 'owner', text: '採用第二方案。先做可操作 Demo，架構不能寫死。', time: '14:35' }
     ];
     async function callAIGateway({ provider, model, agentName, userMessage }) {
       const systemPrompt = `你是 AIVAULT 平台中的「${agentName}」。請使用繁體中文。專業、直接、清楚。不要虛構已完成的操作。`;
+      const client = await window.AIVAULT_AUTH_READY;
+      const {data:sessionData} = await client.auth.getSession();
+      if (!sessionData.session) throw new Error('請重新登入');
+      const brain = AGENTS.find(a => a.name === agentName);
       const response = await fetch(AI_GATEWAY_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, 'Authorization': `Bearer ${sessionData.session.access_token}` },
         body: JSON.stringify({
-          provider, model, agent: agentName, systemPrompt,
+          action: 'chat', agent_id: brain?.id, userMessage,
           messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }]
         })
       });
@@ -700,8 +704,16 @@
         const stamp = runtime.last_tick_at ? new Date(runtime.last_tick_at).toLocaleString('zh-TW', {timeZone:'Asia/Taipei'}) : '無';
         panel.textContent = `曙光後端心跳：${states[runtime.state] || '未知'}｜上次回報：${stamp}（台灣時間）。每 30 秒讀取；超過 15 分鐘判為逾時。模型${runtime.model_approved ? '已核准，執行狀態需另驗證' : '尚未核准啟用'}。`;
         panel.style.color = runtime.state === 'BACKEND_ALIVE' ? '#86efac' : '#fbbf24';
-        const message = result.gateway === 'NOT_DEPLOYED' ? '模型網關尚未部署' : '模型連線尚未驗證';
-        AGENTS.forEach(agent => setAgentRuntime(agent.id, {status:'offline',statusText:message,connected:false,lastError:message}));
+        const probe = await fetch(AI_GATEWAY_URL, {method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${data.session.access_token}`},body:JSON.stringify({action:'health'}),signal:AbortSignal.timeout(15000),cache:'no-store'});
+        if (!probe.ok) throw new Error(`大腦網關 HTTP ${probe.status}`);
+        const health = await probe.json();
+        AGENTS.forEach(agent => {
+          const item = health.agents?.find(a => a.id === agent.id);
+          const rt = agentRuntime[agent.id];
+          if (['working','meeting'].includes(rt.status) && rt.connected) return;
+          const verified = item?.verified === true;
+          setAgentRuntime(agent.id, {status:verified?'idle':item?.ready?'standby':'offline',statusText:item?.status_text || '模型連線尚未驗證',connected:item?.ready===true,lastError:item?.error||''});
+        });
       } catch (error) {
         panel.textContent = `無法確認曙光心跳：${error.message}。稍後會自動重試。`;
         panel.style.color = '#fbbf24';
@@ -828,7 +840,7 @@
     function persistCurrentProposal(meta) {
       if (!finalProposalText) return null;
       const id = currentProposalId || ('prop-' + Date.now().toString(36)); currentProposalId = id;
-      const item = { id, title: meta?.title || 'AIVAULT 最終企劃方案', text: finalProposalText, stats: collectSystemStats(), author: meta?.author || 'Coordinator', createdAt: meta?.createdAt || new Date().toLocaleString('zh-TW'), approved: !!meta?.approved };
+      const item = { id, title: meta?.title || 'AIVAULT 最終企劃方案', text: finalProposalText, stats: collectSystemStats(), author: meta?.author || '曙光・協調', createdAt: meta?.createdAt || new Date().toLocaleString('zh-TW'), approved: !!meta?.approved };
       const list = loadProposalLibrary().filter(x => x.id !== id); list.unshift(item); saveProposalLibrary(list); return item;
     }
     async function openFinalProposalPage() {
@@ -971,6 +983,7 @@
           messages.push({ sender: agent.name, role: agent.role, type: 'agent', text: reply, time: nowTime() });
         } catch (error) {
           messages.push({ sender: agent.name, role: agent.role, type: 'agent', text: `AI Gateway 錯誤：${error.message}`, time: nowTime() });
+          setAgentRuntime(agent.id,{status:'offline',statusText:'推理失敗',connected:false});renderAgents();
         }
         renderMessages('chatMessages'); renderMessages('homeChatPreview', 4);
       }
@@ -1002,7 +1015,7 @@
     document.getElementById('btnEnterRoom').addEventListener('click', () => { markAgentsInMeeting(); location.href = 'aivault-warroom.html'; });
     document.getElementById('warroomEntry')?.addEventListener('click', () => { markAgentsInMeeting(); location.href = 'aivault-warroom.html'; });
     document.getElementById('proposalWsEntry')?.addEventListener('click', () => { location.href = 'aivault-proposal-workspace.html'; });
-    document.getElementById('darkStarEntry')?.addEventListener('click', () => { location.href = 'technical-dark-star.html'; });
+    document.getElementById('darkStarEntry')?.addEventListener('click', () => { location.href = 'dawn-digital-human.html'; });
     document.getElementById('researchWsEntry')?.addEventListener('click', () => { location.href = 'aivault-research-warroom.html'; });
     document.getElementById('videoStudioEntry')?.addEventListener('click', () => { location.href = 'aivault-video-studio.html'; });
     document.getElementById('digitalHumanEntry')?.addEventListener('click', () => { location.href = 'aivault-digital-human.html'; });
@@ -1087,14 +1100,15 @@
         const agentId = toggleEl.dataset.id; const providerCode = toggleEl.dataset.code;
         if (agentId) {
           toggleEl.classList.toggle('on'); const nowOn = toggleEl.classList.contains('on');
-          setAgentRuntime(agentId, { connected: nowOn, status: nowOn ? 'idle' : 'offline', statusText: nowOn ? '空閒（手動啟用）' : '已停用' });
+          if (nowOn) { checkGatewayConnections(); showToast('正在向後端驗證連線'); return; }
+          setAgentRuntime(agentId, {connected:false,status:'offline',statusText:'已停用'});
           if (!nowOn) selectedChatAgents = selectedChatAgents.filter(id => id !== agentId);
           renderAgents(); renderAgentPickBars(); showToast(nowOn ? 'Agent 已啟用' : 'Agent 已停用'); return;
         }
         if (providerCode) {
           const provider = PROVIDERS.find(p => p.code === providerCode);
           if (provider) {
-            const nowOn = !toggleEl.classList.contains('on'); toggleEl.classList.toggle('on'); provider.status = nowOn ? 'active' : 'inactive';
+            const nowOn = !toggleEl.classList.contains('on'); if (nowOn) {checkGatewayConnections();showToast('連線以後端驗證為準');return;} toggleEl.classList.toggle('on'); provider.status = 'inactive';
             AGENTS.forEach(a => { if (a.provider === providerCode) setAgentRuntime(a.id, { connected: nowOn, status: nowOn ? 'idle' : 'offline', statusText: nowOn ? (`空閒`) : 'Provider 已關閉' }); });
             renderAgents(); renderAgentRegistry(); renderAgentPickBars();
           }
