@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>曙光城 · 第二基地</title>
+<style>
+:root{--sky:#1a2744;--ground:#2a3a4a;--build:#3d5a73;--win:#f4d7a4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--sky);color:#e8eef4;font-family:-apple-system,"Noto Sans TC",sans-serif;overflow:hidden;height:100vh}
+.city{position:relative;width:100%;height:100%}
+.sky{position:absolute;inset:0;background:linear-gradient(#0e1a30,#1a2744 40%,#2a3a5a)}
+.ground{position:absolute;bottom:0;left:0;right:0;height:28%;background:linear-gradient(#3a4a5a,#2a3a4a);border-top:2px solid #4a5a6a}
+.road{position:absolute;bottom:8%;left:0;right:0;height:12%;background:#2a3540;border-top:1px dashed #6a7a8a}
+.buildings{position:absolute;bottom:28%;left:0;right:0;height:42%;display:flex;align-items:flex-end;justify-content:space-around;padding:0 4%}
+.b{background:var(--build);border-radius:4px 4px 0 0;position:relative;animation:glow 4s ease-in-out infinite}
+.b::before{content:"";position:absolute;inset:8% 12%;background:repeating-linear-gradient(0deg,transparent,transparent 8px,rgba(244,215,164,.3) 8px,rgba(244,215,164,.3) 10px);border-radius:2px}
+.b1{width:12%;height:70%}.b2{width:9%;height:50%}.b3{width:14%;height:85%}.b4{width:10%;height:60%}.b5{width:11%;height:75%}
+@keyframes glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.15)}}
+.center{position:absolute;top:18%;left:50%;transform:translateX(-50%);z-index:5;text-align:center}
+.sun-wrap{width:140px;height:140px;margin:0 auto}
+.sun{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 36% 30%,#fff6,#f4d7a4 40%,#c58b4a);box-shadow:0 0 40px #f4d7a488,0 0 80px #f4d7a444;animation:pulse 3s ease-in-out infinite;cursor:pointer;position:relative}
+.sun .face{position:absolute;inset:18%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:42px;line-height:1}
+.sun .eyes{font-size:28px;letter-spacing:8px}
+.sun .mouth{font-size:24px;margin-top:2px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.pop{position:absolute;top:16px;right:16px;background:rgba(20,30,50,.85);border:1px solid #4a5a7a;border-radius:12px;padding:10px 14px;font-size:13px;z-index:10}
+.pop b{font-size:22px;display:block;color:#f4d7a4}
+.people{position:absolute;bottom:10%;left:0;right:0;height:18%;pointer-events:none}
+.person{position:absolute;bottom:0;width:18px;height:32px;animation:walk 8s linear infinite}
+.person .head{width:10px;height:10px;background:#f4d7a4;border-radius:50%;margin:0 auto}
+.person .body{width:14px;height:16px;background:#5a7a9a;border-radius:3px;margin:1px auto}
+@keyframes walk{0%{left:-5%;transform:scaleX(1)}45%{transform:scaleX(1)}50%{left:105%;transform:scaleX(-1)}95%{transform:scaleX(-1)}100%{left:-5%;transform:scaleX(1)}}
+.zones{position:absolute;bottom:32%;left:0;right:0;display:flex;justify-content:space-between;padding:0 8%;z-index:4}
+.zone{background:rgba(20,30,50,.7);border:1px solid #4a5a7a;border-radius:10px;padding:8px 12px;font-size:12px;text-align:center}
+.zone b{display:block;color:#f4d7a4;margin-bottom:2px}
+.expr-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10}
+.expr-bar button{background:#1a2744;border:1px solid #4a5a7a;color:#e8eef4;border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="city">
+  <div class="sky"></div>
+  <div class="buildings">
+    <div class="b b1"></div><div class="b b2"></div><div class="b b3"></div><div class="b b4"></div><div class="b b5"></div>
+  </div>
+  <div class="ground"></div>
+  <div class="road"></div>
+  <div class="people" id="people"></div>
+  <div class="zones">
+    <div class="zone"><b>數字人</b>模型組</div>
+    <div class="zone"><b>影片</b>模型組</div>
+  </div>
+  <div class="center">
+    <div class="sun-wrap"><div class="sun" id="sun" title="暑光"><div class="face"><div class="eyes">● ●</div><div class="mouth">◐</div></div></div></div>
+    <div style="margin-top:8px;font-size:13px;letter-spacing:.1em">曙光城</div>
+  </div>
+  <div class="pop"><span>來自主城</span><b id="count">0</b><span>人在協作</span></div>
+  <div class="expr-bar">
+    <button data-e="neutral">平靜</button><button data-e="happy">開心</button><button data-e="thinking">思考</button>
+    <button data-e="surprised">驚訝</button><button data-e="love">喜歡</button><button data-e="sleepy">想睡</button>
+  </div>
+</div>
+<script>
+const FACES={neutral:{e:"● ●",m:"◐"},happy:{e:"^ ^",m:"◕"},thinking:{e:"● ◐",m:"—"},surprised:{e:"○ ○",m:"o"},love:{e:"♥ ♥",m:"◕"},sleepy:{e:"- -",m:"◐"}};
+const sun=document.getElementById("sun"),eyes=sun.querySelector(".eyes"),mouth=sun.querySelector(".mouth");
+function setExpr(k){const f=FACES[k]||FACES.neutral;eyes.textContent=f.e;mouth.textContent=f.m}
+document.querySelectorAll(".expr-bar button").forEach(b=>b.onclick=()=>setExpr(b.dataset.e));
+setExpr("neutral");
+let pop=3;const countEl=document.getElementById("count"),people=document.getElementById("people");
+function renderPeople(){people.innerHTML="";for(let i=0;i<Math.min(pop,12);i++){const p=document.createElement("div");p.className="person";p.style.animationDelay=(-i*0.7)+"s";p.style.bottom=(Math.random()*20)+"px";p.innerHTML='<div class="head"></div><div class="body"></div>';people.appendChild(p)}}
+function setPop(n){pop=Math.max(0,n);countEl.textContent=pop;renderPeople()}
+setPop(3);
+setInterval(()=>{if(Math.random()>.6)setPop(pop+(Math.random()>.5?1:-1))},8000);
+window.DawnCity={setExpr,setPop};
+</script>
+</body>
+</html>
