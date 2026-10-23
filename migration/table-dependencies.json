@@ -1,0 +1,263 @@
+{
+  "digital_humans": [
+    "app/aivault-digital-human.html",
+    "app/aivault-voice-studio.html"
+  ],
+  "digital_human_voices": [
+    "app/aivault-voice-studio.html",
+    "app/aivault-voice-studio.html",
+    "app/aivault-voice-studio.html",
+    "app/aivault-voice-studio.html"
+  ],
+  "aivault_file_assets": [
+    "app/aivault-file-vault.html",
+    "app/aivault-file-vault.html",
+    "app/aivault-file-vault.html",
+    "app/aivault-file-vault.html",
+    "app/aivault-file-vault.html",
+    "app/aivault-file-vault.html"
+  ],
+  "aivault_classroom_sessions": [
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts"
+  ],
+  "dark_star_ebooks": [
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts"
+  ],
+  "dark_star_ebook_pages": [
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts"
+  ],
+  "dark_star_ebook_toc": [
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts"
+  ],
+  "dark_star_ebook_ingestion_jobs": [
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts"
+  ],
+  "dark_star_ebook_ingest_chunks": [
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts"
+  ],
+  "dark_star_ebook_reading_progress": [
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts"
+  ],
+  "dark_star_study_books": [
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts",
+    "app/supabase/functions/dark-star-ebook-ingest/index.ts"
+  ],
+  "aivault_compute_nodes": [
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts"
+  ],
+  "aivault_compute_tasks": [
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts"
+  ],
+  "aivault_compute_results": [
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts",
+    "app/backups/compute-registration/mesh-v10.ts"
+  ],
+  "aivault_compute_node_events": [
+    "app/supabase/functions/aivault-compute-mesh/index.ts",
+    "app/backups/compute-registration/mesh-v10.ts"
+  ],
+  "dark_star_bot_proposals": [
+    "app/supabase/functions/aivault-bot-pr/index.ts",
+    "app/supabase/functions/aivault-bot-pr/index.ts",
+    "app/supabase/functions/aivault-bot-pr/index.ts"
+  ],
+  "compute_mesh_tasks": [
+    "app/supabase/functions/aivault-compute-coordinator/tensor-pipeline.ts",
+    "app/supabase/functions/aivault-compute-coordinator/tensor-pipeline.ts",
+    "app/supabase/functions/aivault-compute-coordinator/tensor-pipeline.ts",
+    "app/supabase/functions/aivault-compute-coordinator/tensor-pipeline.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts"
+  ],
+  "compute_mesh_nodes": [
+    "app/supabase/functions/aivault-compute-coordinator/tensor-pipeline.ts",
+    "app/supabase/functions/aivault-compute-coordinator/tensor-pipeline.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts"
+  ],
+  "compute_mesh_assignments": [
+    "app/supabase/functions/aivault-compute-coordinator/tensor-pipeline.ts",
+    "app/supabase/functions/aivault-compute-coordinator/tensor-pipeline.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/supabase/functions/aivault-compute-coordinator/index.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts",
+    "app/backups/compute-pool/coordinator-v16.ts"
+  ],
+  "aivault_tasks": [
+    "app/aivault-task-001/supabase/functions/aivault-task-verify/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-result/index.ts",
+    "app/aivault-task-001/supabase/functions/_shared/db.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-submit/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-submit/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-submit/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-submit/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-coordinator/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-coordinator/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-coordinator/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-router/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts"
+  ],
+  "aivault_task_results": [
+    "app/aivault-task-001/supabase/functions/aivault-task-verify/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-verify/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-result/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts"
+  ],
+  "aivault_task_verifications": [
+    "app/aivault-task-001/supabase/functions/aivault-task-verify/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts"
+  ],
+  "aivault_task_attempts": [
+    "app/aivault-task-001/supabase/functions/aivault-task-result/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-result/index.ts",
+    "app/aivault-task-001/supabase/functions/_shared/router.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-coordinator/index.ts"
+  ],
+  "aivault_task_events": [
+    "app/aivault-task-001/supabase/functions/_shared/db.ts"
+  ],
+  "aivault_task_transition_guard": [
+    "app/aivault-task-001/supabase/functions/_shared/db.ts"
+  ],
+  "aivault_task_ledger": [
+    "app/aivault-task-001/supabase/functions/_shared/db.ts"
+  ],
+  "aivault_compute_capabilities": [
+    "app/aivault-task-001/supabase/functions/_shared/router.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts"
+  ],
+  "aivault_task_settlements": [
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts"
+  ],
+  "aivault_capability_result_window": [
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts",
+    "app/aivault-task-001/supabase/functions/aivault-task-settle/index.ts"
+  ]
+}

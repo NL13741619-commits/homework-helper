@@ -1,0 +1,27 @@
+{
+  "source_commit": "6f0de4a4ecef079de83985762d6d60190264932e",
+  "import_commit": "3f9717cfe2515ffd980bf19ff8f3ab0d42a6a54b",
+  "source_files": 826,
+  "adapted_configuration_files": 153,
+  "full_source_import": true,
+  "backend_runtime_source_files": 59,
+  "complete_backend_deployment": false,
+  "private_pages_missing": [
+    "aivault-agent-collaboration",
+    "aivault-compute-mesh"
+  ],
+  "upstream_backend_read_permission": "DENIED",
+  "models": {
+    "qwen": "VERIFIED_ISSUE_TRIGGERED",
+    "digital_human": "SOURCE_AND_ASSETS_COPIED_GENERATIVE_MODEL_NOT_CONNECTED",
+    "short_video": "SOURCE_COPIED_NO_PROVIDER_KEY"
+  },
+  "media_catalog": {
+    "project": "svtkpdmqemidlasowqew",
+    "function": "aivault-media-catalog",
+    "status": "ACTIVE",
+    "generation_executed": false
+  },
+  "grok_changes": "Replaced current entry/navigation with migrated AIVAULT and verified Qwen routes; no unverified author attribution or blanket history deletion.",
+  "protected_systems_unchanged": true
+}

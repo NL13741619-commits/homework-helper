@@ -1,0 +1,28 @@
+[Unit]
+Description=AIVAULT private Qwen3-0.6B CPU inference
+After=network.target
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=aivault
+Group=aivault
+WorkingDirectory=/opt/aivault
+ExecStart=/usr/bin/python3 /opt/aivault/aivault/dawn/qwen-host.py serve --root /var/lib/aivault-qwen --key-file /etc/aivault/qwen-access-token --port 18081
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=10
+MemoryMax=2G
+CPUQuota=200%
+TasksMax=64
+LimitNOFILE=512
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/var/lib/aivault-qwen /etc/aivault/qwen-access-token
+
+[Install]
+WantedBy=multi-user.target

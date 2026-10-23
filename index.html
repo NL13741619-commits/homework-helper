@@ -49,13 +49,13 @@ button.secondary{background:transparent;border:1px solid var(--line);color:var(-
 <header>
   <div class="logo">AIVAULT</div>
   <div class="grow"></div>
-  <nav class="nav"><a href="dawn-city.html">城市</a><a href="dawn.html">曙光頁面</a></nav>
+  <nav class="nav"><a href="app/aivault-home.html">主頁</a><a href="media.html">數字人／影片</a><a href="dawn.html">曙光 AI</a></nav>
 </header>
 <div class="wrap">
   <div class="sun"></div>
   <h1>曙光城</h1>
   <div class="sub">AIVAULT 第二基地</div>
-  <a class="city-link" href="dawn-city.html">進入城市 →</a>
+  <a class="city-link" href="app/aivault-home.html">進入 AIVAULT 主頁 →</a>
   <div class="card" id="auth">
     <label for="email">Email</label>
     <input id="email" type="email" autocomplete="username" placeholder="name@example.com">
@@ -78,7 +78,7 @@ const go=document.getElementById('go'),switchBtn=document.getElementById('switch
 let mode='login'
 function fail(error){msg.className='msg';msg.textContent=error?.message||'連線失敗，請稍後重試。'}
 function goCity(){
-  window.location.href = 'dawn-city.html'
+  window.location.href = 'app/aivault-home.html'
 }
 if(!window.supabase?.createClient){
   fail(new Error('登入元件載入失敗，請重新整理頁面。'));go.disabled=true;switchBtn.disabled=true;return

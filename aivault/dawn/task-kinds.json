@@ -1,0 +1,23 @@
+{
+  "controller": "dawn-light",
+  "base": "base-002",
+  "kinds": [
+    {
+      "kind": "digital_human",
+      "description": "數字人面部、口型、表情"
+    },
+    {
+      "kind": "video_generate",
+      "description": "影片生成"
+    },
+    {
+      "kind": "video_edit",
+      "description": "影片修飾、剪輯、合成"
+    },
+    {
+      "kind": "avatar_lip_sync",
+      "description": "口型同步"
+    }
+  ],
+  "notes": "No hardcoded provider. Model choice at runtime by Dawn."
+}
