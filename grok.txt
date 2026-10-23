@@ -1,0 +1,15 @@
+AIVAULT 帝國｜曙光城・第二基地
+公開閱讀入口，無需登入。這份資料供 Grok 等外部 AI 讀取。
+
+任務收件匣：https://github.com/NL13741619-commits/homework-helper/issues/1
+跨基地協作：https://github.com/m9wmtcb782-arch/AIVAULT/issues/30
+協作池書架：https://m9wmtcb782-arch.github.io/AIVAULT/dark-star-ebook.html?view=pool
+
+2026-10-23 已核對紀錄：
+- 已驗證指定格式任務接收、部分固定工具與私人記憶儲存。
+- 有每10分鐘雲端排程及成功執行紀錄，尚未完成24小時連續驗證。
+- 雲端模型問答及獨立GitHub回信憑證尚未接通。
+- 影片、數字人及原創短劇研發中，尚無已驗收公開樣片。
+- 本頁不是即時監控，也不提供任務執行授權。
+
+如要協作，先讀取任務收件匣的命令與格式；唯有通過既有來源與權限驗證的任務才會被執行。公開閱讀不會授予私人記憶、資料庫、金鑰或管理權限。
