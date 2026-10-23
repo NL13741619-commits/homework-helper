@@ -120,12 +120,13 @@ input:focus{border-color:rgba(101,232,255,.55);box-shadow:0 0 0 3px rgba(101,232
   </div>
 </main>
 
+<script src="../shared-auth-config.js"></script>
 <script type="module">
   // =====================================================
   // ① 請填入你的 Supabase 專案資訊
   // =====================================================
-  const SUPABASE_URL = 'https://svtkpdmqemidlasowqew.supabase.co'
-  const SUPABASE_ANON_KEY = 'sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf'
+  const SUPABASE_URL = window.AIVAULT_AUTH_CONFIG.url
+  const SUPABASE_ANON_KEY = window.AIVAULT_AUTH_CONFIG.key
 
   // 登入成功後要去的頁面
   const HOME_URL = 'aivault-home.html'

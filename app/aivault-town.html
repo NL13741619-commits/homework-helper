@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>🏰 AIVAULT 協作城</title><meta name="theme-color" content="#06080c">
-<!-- 公開頁：協作城動畫（匿名彙總）。名冊、任務內容、成果、審核、指揮台、算力池仍只限擁有者。 -->
+<html lang="zh-Hant"><head><script>document.documentElement.style.visibility="hidden"</script><script src="../shared-auth-config.js"></script><script src="../shared-auth.js"></script><noscript>請啟用 JavaScript 並登入。</noscript><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>🏰 AIVAULT 協作城</title><meta name="theme-color" content="#06080c">
+<!-- 共用第一基地登入後讀取原協作城；不向不存在的第二基地資料表查詢。 -->
 </head><body style="margin:0;background:#06080c"><p style="font-family:system-ui;color:#888;padding:24px">載入中…</p>
 <script>
 (function(){
-  var U='https://svtkpdmqemidlasowqew.supabase.co',A='sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf';
-  fetch(U+'/rest/v1/aivault_private_pages?select=html&slug=eq.agent-floor',{headers:{apikey:A,Authorization:'Bearer '+A},cache:'no-store'})
+  var U=window.AIVAULT_AUTH_CONFIG.url,A=window.AIVAULT_AUTH_CONFIG.key;
+  window.AIVAULT_AUTH_READY.then(async function(client){
+  if(!client)return;
+  var session=(await client.auth.getSession()).data.session;
+  return fetch(U+'/rest/v1/aivault_private_pages?select=html&slug=eq.agent-floor',{headers:{apikey:A,Authorization:'Bearer '+session.access_token},cache:'no-store'})
    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
    .then(function(rows){if(!rows.length)throw new Error('尚未開放');document.open();document.write(rows[0].html);document.close()})
+  })
    .catch(function(e){document.body.innerHTML='<p style="font-family:system-ui;color:#ccc;padding:24px">協作城載入失敗：'+String(e.message).replace(/[<>&]/g,'')+' <a style="color:#a78bfa" href="">重試</a></p>'});
 })();
 </script>

@@ -54,7 +54,7 @@ button.secondary{background:transparent;border:1px solid var(--line);color:var(-
 <div class="wrap">
   <div class="sun"></div>
   <h1>曙光城</h1>
-  <div class="sub">AIVAULT 第二基地</div>
+  <div class="sub">AIVAULT 第二基地 · 與第一基地共用帳號</div>
   <a class="city-link" href="app/aivault-home.html">進入 AIVAULT 主頁 →</a>
   <div class="card" id="auth">
     <label for="email">Email</label>
@@ -67,18 +67,22 @@ button.secondary{background:transparent;border:1px solid var(--line);color:var(-
     <button class="secondary" id="switch">沒有帳號？立即註冊</button>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared-auth-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.0"></script>
 <script>
 (function(){
-const SUPABASE_URL='https://svtkpdmqemidlasowqew.supabase.co'
-const SUPABASE_ANON='sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf'
+const SUPABASE_URL=window.AIVAULT_AUTH_CONFIG.url
+const SUPABASE_ANON=window.AIVAULT_AUTH_CONFIG.key
 const msg=document.getElementById('msg')
 const emailEl=document.getElementById('email'),passEl=document.getElementById('password'),remEl=document.getElementById('remember')
 const go=document.getElementById('go'),switchBtn=document.getElementById('switch')
 let mode='login'
-function fail(error){msg.className='msg';msg.textContent=error?.message||'連線失敗，請稍後重試。'}
+function fail(error){msg.className='msg';msg.textContent=(error?.message==='Invalid login credentials'?'第一基地帳號或密碼不正確，請使用第一基地的登入資料。':error?.message)||'連線失敗，請稍後重試。'}
 function goCity(){
-  window.location.href = 'app/aivault-home.html'
+  const target = new URL(new URLSearchParams(location.search).get('next') || 'app/aivault-home.html', location.href)
+  const base = new URL('.', location.href)
+  const allowed = target.origin === base.origin && target.pathname.startsWith(base.pathname) && !target.pathname.endsWith('/index.html') && target.pathname.endsWith('.html')
+  window.location.replace(allowed ? target.href : new URL('app/aivault-home.html', base).href)
 }
 if(!window.supabase?.createClient){
   fail(new Error('登入元件載入失敗，請重新整理頁面。'));go.disabled=true;switchBtn.disabled=true;return
@@ -99,9 +103,9 @@ async function boot(){
     if(saved){emailEl.value=saved;remEl.checked=true}
   }catch{}
   try{
-    const {data,error}=await dawnClient.auth.getSession()
+    const {data,error}=await dawnClient.auth.getUser()
     if(error)throw error
-    if(data.session?.user) goCity()
+    if(data.user && !data.user.is_anonymous) goCity()
   }catch(error){fail(error)}
 }
 switchBtn.onclick=()=>setMode(mode==='login'?'register':'login')

@@ -10,11 +10,11 @@ export function protect(handler, {env = n => Deno.env.get(n), fetchImpl = fetch}
   if(!/^Bearer [A-Za-z0-9_.-]{32,8192}$/.test(auth))return fail(401,"LOGIN_REQUIRED");
   let response,user;
   try {
-   response=await fetchImpl("https://svtkpdmqemidlasowqew.supabase.co/auth/v1/user",{headers:{Authorization:auth,apikey:env("SUPABASE_ANON_KEY")||""},redirect:"error",signal:AbortSignal.timeout(8000)});
+   response=await fetchImpl("https://clcddygkaaqqtsbswgdf.supabase.co/auth/v1/user",{headers:{Authorization:auth,apikey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsY2RkeWdrYWFxcXRzYnN3Z2RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzUwNjQsImV4cCI6MjEwMjMxMTA2NH0.kYg6h7n74CtbiIjNjZ2xxJj16SV42INZVzQ9dLNUfKE"},redirect:"error",signal:AbortSignal.timeout(8000)});
    if(!response.ok)return fail(401,"INVALID_SESSION");
    user=await response.json();
   }catch{return fail(503,"AUTH_UNAVAILABLE");}
-  if(!user.id||!["owner","admin"].includes(user.app_metadata?.role))return fail(403,"OWNER_ROLE_REQUIRED");
+  if(!user.id||user.is_anonymous||!["owner","admin"].includes(user.app_metadata?.role))return fail(403,"OWNER_ROLE_REQUIRED");
   try{return await handler(req);}catch{return fail(502,"GENERATION_REQUEST_FAILED_NO_AUTOMATIC_RETRY");}
  };
 }

@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head>
+<head><script>document.documentElement.style.visibility="hidden"</script><script src="../shared-auth-config.js"></script><script src="../shared-auth.js"></script><noscript>請啟用 JavaScript 並登入。</noscript>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>曙光照片短視頻測試</title>
@@ -49,9 +49,13 @@
     });
   }
   async function call(body) {
+    var client = await window.AIVAULT_AUTH_READY;
+    if (!client) throw new Error('請先登入第一基地帳號');
+    var session = (await client.auth.getSession()).data.session;
+    if (!session) throw new Error('登入已失效，請重新登入');
     var response = await fetch(SUPABASE + "/functions/v1/dawn-light-photo-video", {
       method: "POST",
-      headers: { "Content-Type": "application/json", apikey: ANON, authorization: "Bearer " + ANON },
+      headers: { "Content-Type": "application/json", apikey: ANON, authorization: "Bearer " + session.access_token },
       body: JSON.stringify(body)
     });
     var data = await response.json();

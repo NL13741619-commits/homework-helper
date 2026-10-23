@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head>
+<head><script>document.documentElement.style.visibility="hidden"</script><script src="../shared-auth-config.js"></script><script src="../shared-auth.js"></script><noscript>請啟用 JavaScript 並登入。</noscript>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -261,6 +261,8 @@
       auth: { persistSession: true, autoRefreshToken: true, storage: window.localStorage }
     });
 
+    const commonAuth = await window.AIVAULT_AUTH_READY;
+    if (!commonAuth) throw new Error("請先登入");
     let session = null;
     let humans = [];
     let current = null;
@@ -350,7 +352,7 @@
     }
 
     async function authHeader() {
-      const { data } = await sb.auth.getSession();
+      const { data } = await commonAuth.auth.getSession();
       session = data.session;
       const token = session?.access_token || SUPABASE_ANON_KEY;
       return {
@@ -378,7 +380,7 @@
     }
 
     async function callFnForm(name, form) {
-      const { data } = await sb.auth.getSession();
+      const { data } = await commonAuth.auth.getSession();
       session = data.session;
       const token = session?.access_token || SUPABASE_ANON_KEY;
       const res = await fetch(FN(name), {
@@ -1374,7 +1376,7 @@
     }
 
     async function accountId() {
-      const { data } = await sb.auth.getSession();
+      const { data } = await commonAuth.auth.getSession();
       session = data.session;
       return session?.user?.id || null;
     }
@@ -1929,7 +1931,7 @@
       let wsState = '未連線', micSent = 0, rx = 0, played = 0, lastErr = '', dbgEl = null, waitingAudio = false;
       window.__dhLiveCam = false;
       function token() {   // 同其他 live 頁：Supabase session（localStorage sb-…-auth-token）
-        try { const j = JSON.parse(localStorage.getItem('sb-svtkpdmqemidlasowqew-auth-token') || 'null'); const t = String((j && (j.access_token || (j.currentSession && j.currentSession.access_token))) || '').trim(); if (t) return t; } catch {}
+        try { const j = JSON.parse(localStorage.getItem('sb-clcddygkaaqqtsbswgdf-auth-token') || 'null'); const t = String((j && (j.access_token || (j.currentSession && j.currentSession.access_token))) || '').trim(); if (t) return t; } catch {}
         try { return (session && session.access_token) || ''; } catch { return ''; }
       }
       // 獨立頻道：數字人用自己的 agent id 與 aivault-dh- 命名空間；後端若不接受自訂 agent，才退回暗星 agent（但 topic/conversation 仍是數字人專用 key，不碰暗星/曙光的 key）

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head>
+<head><script>document.documentElement.style.visibility="hidden"</script><script src="../shared-auth-config.js"></script><script src="../shared-auth.js"></script><noscript>請啟用 JavaScript 並登入。</noscript>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -533,14 +533,13 @@
     let isAdmin = false;
     function readRole(user) {
       if (!user) return '';
-      return user.app_metadata?.role || user.user_metadata?.role || '';
+      return user.app_metadata?.role || '';
     }
     async function bootstrapAuth() {
       try {
         const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-          auth: { persistSession: true, autoRefreshToken: true, storage: window.localStorage }
-        });
+        const sb = await window.AIVAULT_AUTH_READY;
+        if (!sb) return;
         const { data: { session } } = await sb.auth.getSession();
         currentUser = session?.user || null;
         const role = readRole(currentUser);
@@ -1031,7 +1030,7 @@
     const ADMIN_EMAILS = ['n_950143@hotmail.com'];
     async function getSb() {
       const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-      return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, storage: window.localStorage } });
+      return await window.AIVAULT_AUTH_READY;
     }
     async function openAccountPanel() {
       const mask = document.getElementById('accountMask');
