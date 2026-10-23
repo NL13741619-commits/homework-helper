@@ -44,18 +44,20 @@ button.secondary{background:transparent;border:1px solid var(--line);color:var(-
 .ok{color:#86efac}
 #ai{display:none;margin-top:16px}
 #ai .who{font-size:13px;color:var(--muted);margin-bottom:8px}
+.city-link{display:block;text-align:center;margin:16px 0;color:var(--accent);font-weight:700;text-decoration:none}
 </style>
 </head>
 <body>
 <header>
   <div class="logo">AIVAULT</div>
   <div class="grow"></div>
-  <nav class="nav"><a href="dawn.html">曙光頁面</a></nav>
+  <nav class="nav"><a href="dawn-city.html">城市</a><a href="dawn.html">曙光頁面</a></nav>
 </header>
 <div class="wrap">
   <div class="sun"></div>
   <h1>曙光城</h1>
   <div class="sub">AIVAULT 第二基地 · 曙光控管</div>
+  <a class="city-link" href="dawn-city.html">進入城市 →</a>
   <div class="card" id="auth">
     <label for="email">Email</label>
     <input id="email" type="email" autocomplete="username" placeholder="name@example.com">
@@ -69,7 +71,7 @@ button.secondary{background:transparent;border:1px solid var(--line);color:var(-
   <div class="card" id="ai">
     <div class="who" id="who"></div>
     <p style="text-align:center;margin:12px 0">已進入曙光城</p>
-    <a href="dawn.html" style="display:block;text-align:center;color:var(--accent);text-decoration:none;font-weight:700">前往曙光頁面 →</a>
+    <a href="dawn-city.html" style="display:block;text-align:center;color:var(--accent);text-decoration:none;font-weight:700">前往城市 →</a>
     <button class="secondary" id="out" style="margin-top:16px">登出</button>
   </div>
 </div>
