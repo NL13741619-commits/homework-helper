@@ -1,20 +1,8 @@
-# 作業輔助系統 (Homework Helper)
+# 曙光城 · AIVAULT 第二基地
 
-國小～高中・數學 / 英文 / 化學 作業輔助系統
+第二基地入口：https://nl13741619-commits.github.io/homework-helper/
 
-### 功能說明
-- 支援數學、英文、化學科目
-- 使用 Email + 密碼登入
-- 學生可上傳作業、查看批改結果
-- 老師可批改作業並給予回饋
+控管者：dawn-light（曙光）
 
-### 網站網址
-**https://nl13741619-commits.github.io/homework-helper/**
-
-### 使用方式
-1. 用 Email 註冊 / 登入
-2. 選擇科目
-3. 上傳作業或查看已批改的作業
-
----
-本系統為學習用途開發。
+舊作業輔助系統入口已替換。
+安全團聚（safe-reunion）未動。
