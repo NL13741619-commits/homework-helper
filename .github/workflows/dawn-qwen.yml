@@ -1,0 +1,43 @@
+name: Second-base Qwen CPU
+on:
+  push:
+    branches: [main]
+    paths: ['model/**', '.github/workflows/dawn-qwen.yml']
+  workflow_dispatch:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: dawn-qwen
+  cancel-in-progress: false
+jobs:
+  inference:
+    if: >-
+      github.repository == 'NL13741619-commits/homework-helper' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch' ||
+      ((github.event.sender.id == 305579832 || github.event.sender.id == 306819786) &&
+      !github.event.issue.pull_request &&
+      (startsWith(github.event.comment.body, '/dawn ') ||
+      (github.event_name == 'issues' && startsWith(github.event.issue.body, '/dawn ')))))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install hash-verified Qwen and llama.cpp
+        run: python3 model/install-qwen.py --root "$RUNNER_TEMP/dawn-qwen"
+      - name: Real inference acceptance
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: python3 model/runner.py --root "$RUNNER_TEMP/dawn-qwen" --self-test
+      - name: Answer authorized task using local model
+        if: github.event_name == 'issues' || github.event_name == 'issue_comment'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 model/runner.py --root "$RUNNER_TEMP/dawn-qwen"
