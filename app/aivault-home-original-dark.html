@@ -223,6 +223,9 @@
 #darkStarEntry > div > div:last-child *{
   color:#111 !important;
 }
+.dawn-orb{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;color:#7c4300;background:radial-gradient(circle at 35% 30%,#fffde9,#ffd66b 55%,#ef991b);box-shadow:0 0 12px #fbbf2480;animation:dawn-breathe 3s ease-in-out infinite}
+@keyframes dawn-breathe{50%{transform:scale(1.12) rotate(20deg);box-shadow:0 0 20px #fbbf24b0}}
+@media(prefers-reduced-motion:reduce){.dawn-orb,.status-dot{animation:none!important}}
 </style>
 </head>
 <body>
