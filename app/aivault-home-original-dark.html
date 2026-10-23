@@ -561,18 +561,14 @@
     }
     bootstrapAuth();
 
-    const PROVIDERS = [
-      { id: 'p1', code: 'gemini3', name: 'Gemini 3', status: 'active', models: ['gemini-2.5-flash'] },
-      { id: 'p2', code: 'gemini2', name: 'Gemini 2', status: 'active', models: ['gemini-2.5-flash'] },
-      { id: 'p3', code: 'groq', name: 'Groq', status: 'active', models: ['llama-3.3-70b-versatile'] }
-    ];
+    const PROVIDERS = [{id:'p1',code:'dawn',name:'曙光模型網關',status:'inactive',models:['依後端實際模型設定']}];
     const AGENTS = [
-      { id: 'a1', name: '曙光・首席', role: '首席分析師', avatar: '🧠', color: 'var(--agent-gpt)', provider: 'gemini3', model: 'gemini-2.5-flash' },
-      { id: 'a2', name: '曙光・工程', role: '技術架構師', avatar: '🧠', color: 'var(--agent-coding)', provider: 'gemini2', model: 'gemini-2.5-flash' },
-      { id: 'a3', name: '曙光・審核', role: '風險審查官', avatar: '🧠', color: 'var(--agent-grok)', provider: 'groq', model: 'llama-3.3-70b-versatile' },
-      { id: 'a4', name: '曙光・策略', role: '策略研究員', avatar: '🧠', color: 'var(--agent-research)', provider: 'groq', model: 'llama-3.3-70b-versatile' },
-      { id: 'a5', name: '曙光・創作', role: '解決方案設計師', avatar: '🧠', color: 'var(--agent-design)', provider: 'gemini3', model: 'gemini-2.5-flash' },
-      { id: 'a6', name: '曙光・協調', role: '整合協調官', avatar: '🧠', color: 'var(--agent-teacher)', provider: 'gemini2', model: 'gemini-2.5-flash' }
+      { id: 'a1', name: '曙光・首席', role: '首席分析師', avatar: '🧠', color: 'var(--agent-gpt)', provider: 'dawn', model: null },
+      { id: 'a2', name: '曙光・工程', role: '技術架構師', avatar: '🧠', color: 'var(--agent-coding)', provider: 'dawn', model: null },
+      { id: 'a3', name: '曙光・審核', role: '風險審查官', avatar: '🧠', color: 'var(--agent-grok)', provider: 'dawn', model: null },
+      { id: 'a4', name: '曙光・策略', role: '策略研究員', avatar: '🧠', color: 'var(--agent-research)', provider: 'dawn', model: null },
+      { id: 'a5', name: '曙光・創作', role: '解決方案設計師', avatar: '🧠', color: 'var(--agent-design)', provider: 'dawn', model: null },
+      { id: 'a6', name: '曙光・協調', role: '整合協調官', avatar: '🧠', color: 'var(--agent-teacher)', provider: 'dawn', model: null }
     ];
     const agentRuntime = {};
     AGENTS.forEach(a => {
@@ -707,6 +703,7 @@
         const probe = await fetch(AI_GATEWAY_URL, {method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${data.session.access_token}`},body:JSON.stringify({action:'health'}),signal:AbortSignal.timeout(15000),cache:'no-store'});
         if (!probe.ok) throw new Error(`大腦網關 HTTP ${probe.status}`);
         const health = await probe.json();
+        PROVIDERS[0].status = health.agents?.some(a => a.ready) ? 'active' : 'inactive'; renderProviders();
         AGENTS.forEach(agent => {
           const item = health.agents?.find(a => a.id === agent.id);
           const rt = agentRuntime[agent.id];
@@ -775,8 +772,9 @@
           messages.push({ sender: agent.name, role: agent.role, type: 'agent', text: reply, time: nowTime() });
         } catch (err) {
           messages.push({ sender: agent.name, role: agent.role, type: 'agent', text: `任務執行失敗：${err.message || err}`, time: nowTime() });
+          setAgentRuntime(agent.id,{status:'offline',statusText:'推理失敗',connected:false});
         }
-        setAgentRuntime(agent.id, { status: 'idle', statusText: '空閒', connected: true });
+        if (agentRuntime[agent.id].connected) setAgentRuntime(agent.id, { status: 'idle', statusText: '推理完成', connected: true });
         renderAgents(); renderMessages('chatMessages'); renderMessages('homeChatPreview', 6);
       }
     }
