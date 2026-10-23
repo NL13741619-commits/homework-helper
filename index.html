@@ -104,7 +104,7 @@ async function boot(){
   }catch{}
   try{
     const {data,error}=await dawnClient.auth.getUser()
-    if(error)throw error
+    if(error && error.name!=='AuthSessionMissingError')throw error
     if(data.user && !data.user.is_anonymous) goCity()
   }catch(error){fail(error)}
 }
