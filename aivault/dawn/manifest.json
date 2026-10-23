@@ -1,0 +1,237 @@
+{
+  "repository": "m9wmtcb782-arch/AIVAULT",
+  "commit": "36559f3ac8c7af9d37e51d5130df06dd45bc63ae",
+  "sources": [
+    {
+      "path": "dawn-light.html",
+      "bytes": 7186,
+      "git_blob_sha": "2ad20981b1283bedc81a7807644282c9f8411a01",
+      "sha256": "de12d40a06c83138b3f5e2e53fa7412ecc0823bcd94fc26eb223fe6bf187e74a",
+      "status": "downloaded_read_only",
+      "purpose": "Dawn identity and sun-style UI",
+      "disposition": "adapted",
+      "target": "dawn-light.html",
+      "required_changes": "Exclude original live/multimodal controls and all primary script connections",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "dawn-light-runtime.js",
+      "bytes": 5615,
+      "git_blob_sha": "791056454f39381ce1ed48d4011e21cfb4bd940e",
+      "sha256": "676fb84e9ee33d63e478cfbe98f13ef537378a0163537b8df8f6820bc49fa900",
+      "status": "downloaded_read_only",
+      "purpose": "Capability transport and status conventions",
+      "disposition": "adapted",
+      "target": "client.mjs",
+      "required_changes": "Remove hardcoded primary URL, ANON_KEY and headers; text-only authenticated second-base client",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "dawn-light-dark-star-bridge.js",
+      "bytes": 17872,
+      "git_blob_sha": "47f936d33965fea84307b1c7eff2417dae8cdee3",
+      "sha256": "76338ad1eb944f1a952489999606940c7173247289464d55e7885872071c07f7",
+      "status": "downloaded_read_only",
+      "purpose": "Dawn text prompt and agent identity",
+      "disposition": "adapted",
+      "target": "profile.mjs",
+      "required_changes": "Keep Dawn identity/prompts; remove primary handoff/message RPCs and microphone routing",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "dawn-light-live-voice.js",
+      "bytes": 12628,
+      "git_blob_sha": "34bbef7cc3affb03bfb9afcebcf4715d53a903f4",
+      "sha256": "ccc7ae5c0f5a896a4c919a88bad09d77816c58c68771115b75da811fde53fe73",
+      "status": "downloaded_read_only",
+      "purpose": "Voice frontend dependency",
+      "disposition": "blocked_not_copied",
+      "target": null,
+      "required_changes": "Relay backend not supplied in the verified source set",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "dawn-light-live-voice-config.js",
+      "bytes": 287,
+      "git_blob_sha": "6a06ffbd85d2c9fd1466f0a5d64619eb1c3b3117",
+      "sha256": "bc4d1cf29828780f5851aca1da551caa540964a9cf1ea5457416aafcbd0bc526",
+      "status": "downloaded_read_only",
+      "purpose": "Voice relay configuration",
+      "disposition": "blocked_not_copied",
+      "target": null,
+      "required_changes": "Do not carry primary WebSocket URL or voice settings into second base",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "aivault-agent-voice-router.js",
+      "bytes": 4062,
+      "git_blob_sha": "2b9dbdddd25e7deb0e8bdf4300e871f239395b56",
+      "sha256": "ace3c17dd36d8dc6f3f33fa313e778bee1115d3c1b25c9b94eb6bee81b87a72f",
+      "status": "downloaded_read_only",
+      "purpose": "Voice dispatch",
+      "disposition": "deferred_not_copied",
+      "target": null,
+      "required_changes": "Voice is not enabled in minimal text port",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "artifacts/wake-mic-on-live-voice.js",
+      "bytes": 3437,
+      "git_blob_sha": "ecfaf2dab9bfbd6e83bc5008d50fb87d6b3d45d2",
+      "sha256": "2a56262ae7d6b8136ffa6a1270e9c8e25c176ec4f5abdf8e4071257c18f057db",
+      "status": "downloaded_read_only",
+      "purpose": "Microphone activation helper",
+      "disposition": "deferred_not_copied",
+      "target": null,
+      "required_changes": "No microphone access in minimal text port",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "artifacts/aivault-011-agent-modules.sql",
+      "bytes": 3893,
+      "git_blob_sha": "bfb4aaa6566382f1fbe5cb4f407afebd4ba2e733",
+      "sha256": "e79efe9518b79bb8f003454116e43e46a71392e6addeaca973827155d971c74c",
+      "status": "downloaded_read_only",
+      "purpose": "Original agent schema/dependency review",
+      "disposition": "review_only_not_applied",
+      "target": null,
+      "required_changes": "Existing AIVAULT controls are authoritative; no original definer RPCs or parallel queue imported",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "artifacts/dawn-light-wiring-2026-10-03.md",
+      "bytes": 2582,
+      "git_blob_sha": "1827127b91197e4f8c5a4503dfac2a438316b791",
+      "sha256": "f5e01e23f323cd94bd0e344948b1582c122d41eb600aa2f70cea8e4573fa983d",
+      "status": "downloaded_read_only",
+      "purpose": "Historical capability limitations",
+      "disposition": "historical_evidence_only",
+      "target": null,
+      "required_changes": "Not evidence of current model/free-tier or multimodal availability",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "supabase/functions/ai-gateway/index.ts",
+      "bytes": 159539,
+      "git_blob_sha": "0fd4ad031342ef7bb62e041ceff22144b06d61bc",
+      "sha256": "71629c453b0cb80576d143547831ae30f7bf1877524727e1553c89627bd2380d",
+      "status": "downloaded_read_only",
+      "purpose": "Dawn routing and evidence-first role rules",
+      "disposition": "selective_adaptation",
+      "target": "gateway.mjs",
+      "required_changes": "No wholesale gateway copy; exclude cityMemRpc, service-role access, primary permissions, memory and provider failover",
+      "blob_verified_against_github_api": true,
+      "license_basis": "User-authorized project-specific dual-base adaptation; no broader third-party license inferred"
+    },
+    {
+      "path": "LICENSE",
+      "status": "unavailable",
+      "error": "HTTP Error 404: Not Found"
+    }
+  ],
+  "schema_version": 1,
+  "agent_id": "dawn-light",
+  "target_repository": "NL13741619-commits/homework-helper",
+  "target_project_ref": "svtkpdmqemidlasowqew",
+  "program_status": "BOUNDED_LIVE_RUNTIME_DEPLOYED",
+  "model_status": "LOCAL_QWEN_VERIFIED_CLOUD_MODEL_BLOCKED",
+  "deployment_status": "BOUNDED_RUNTIME_DEPLOYED",
+  "real_inference_executed": true,
+  "raw_source_files_committed": false,
+  "source_dependencies": {
+    "dawn-light.html": [
+      "artifacts/wake-mic-on-live-voice.js",
+      "dawn-light-live-voice.js",
+      "aivault-agent-voice-router.js",
+      "dawn-light-runtime.js",
+      "dawn-light-dark-star-bridge.js"
+    ]
+  },
+  "license_status": "Root LICENSE path returned 404 at pinned commit; project-specific user authorization retained; third-party licensing not generalized",
+  "target_files": [
+    {
+      "path": "profile.mjs",
+      "sha256": "c2fa323cd7c9bfd5af1e03a2a0994ba29d477fd6aa06827a4966daf15e3e693b"
+    },
+    {
+      "path": "client.mjs",
+      "sha256": "63c0d907da584d1ba3b5555d791d1e906c416afd9e341094a4136b83f9f2e4ad"
+    },
+    {
+      "path": "gateway.mjs",
+      "sha256": "9fb01459f421d0ff3ac5fe7e2d7ea698f3515de77ac41be654fd117c9d429776"
+    },
+    {
+      "path": "page.mjs",
+      "sha256": "65bbd3c83bc8f5c427ca2938315657b742263ae82b2601d6783f5b4754458c1a"
+    },
+    {
+      "path": "dawn-light.html",
+      "sha256": "769e9667e81695190af34b95d6f0f6b7132349286a21e0034632abb8e306d95b"
+    },
+    {
+      "path": "instance.mjs",
+      "sha256": "8b9adb1087f4b26a4c3c1c31f0e6fb546878e75f723cbb64538ad012c2155241"
+    },
+    {
+      "path": "memory.mjs",
+      "sha256": "ac94e9620f4df3adcbafeecdf654347e3b487e4b23ebc5596ad3f983d62ac3f0"
+    },
+    {
+      "path": "memory.sql",
+      "sha256": "eab382bea6a81217d5935a318bbfc505c73ac0ccb735141f5a4d40ffaea91bcf"
+    },
+    {
+      "path": "runtime.mjs",
+      "sha256": "d415849525547d9d44f37525171efc96c09525bdfdbd4d9b42d4c86cbca293d6"
+    },
+    {
+      "path": "runtime.sql",
+      "sha256": "ce19073c0c354e2cab87938aadbab485695f4c1642f6f8e4e9b971083dd7d56b"
+    },
+    {
+      "path": "edge-index.ts",
+      "sha256": "a4b4c0f2a5bcc288b97b94029ff205a8eb9a21b173ba262793d3ce0c2b3d91f2"
+    },
+    {
+      "path": "scheduler.sql",
+      "sha256": "409c909d9cea660b7bd2ea8567da8eee3cafdd23ae0fd5fa47a16c71ea0e56e0"
+    },
+    {
+      "path": "smoke.py",
+      "sha256": "8a5a85d1e28d8603195ce221bf0f08f454570b3cd138b3f0282ccdfe2712e533"
+    },
+    {
+      "path": "install-qwen.py",
+      "sha256": "8b3d39d3fc57577336eae8a4969b11117f9ff4f3ecf70c5c1a2df17d3df6517d"
+    },
+    {
+      "path": "qwen-host.py",
+      "sha256": "9ae477a20021cdd18c1c9d9f37ffc84036d4d7603b214c47f828aca5bb74a3d4"
+    },
+    {
+      "path": "qwen-system.txt",
+      "sha256": "80d7571395a68cca003a7fa9474ab20fbda3f4bbcd1f163b7201155e8b100a5d"
+    },
+    {
+      "path": "qwen-policy.example.json",
+      "sha256": "19f592fa6c953db77ee2f6b3ffde145f802980a6af13f5c00f441229c46ceb79"
+    },
+    {
+      "path": "qwen-cpu.service.example",
+      "sha256": "72f0b405f89243e95e2108b6bce194c5c294762a6f5dea03fb29c5328cc49573"
+    }
+  ],
+  "instance_id": "base-002:dawn-light",
+  "always_on_model_host": false,
+  "github_outbox_credential_configured": false
+}

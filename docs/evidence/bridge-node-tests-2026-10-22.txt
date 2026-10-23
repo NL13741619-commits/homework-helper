@@ -1,0 +1,12 @@
+✔ strict allowlist and untrusted payload policy (2.029615ms)
+{"event":"bridge.transport_rejected","reason":"UNAUTHORIZED_SENDER"}
+✔ HTTP auth, kill switch, limits, actor binding and RPC flow (52.076024ms)
+✔ backend outage fails closed; protected endpoint never contacted (0.987562ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 172.576881

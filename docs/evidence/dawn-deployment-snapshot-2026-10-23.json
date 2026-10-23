@@ -1,0 +1,148 @@
+{
+  "legacy": {
+    "homeworks": 18,
+    "law_documents": 143,
+    "roc_tw_constitution": 175
+  },
+  "memory": {
+    "ok": true,
+    "entries": 8,
+    "used_chars": 2795,
+    "instance_id": "base-002:dawn-light",
+    "capacity_chars": 500000,
+    "remaining_chars": 497205
+  },
+  "runtime": {
+    "state": "ACTIVE",
+    "version": 3,
+    "endpoint": "https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-dawn-runtime"
+  },
+  "receipts": [
+    {
+      "state": "accepted",
+      "task_id": "31a4ff37-f8b1-44a2-a476-3b7534044170",
+      "message_id": "base-001-dawn-must-receive-execute-help-v1",
+      "source_comment_id": "6343996657"
+    }
+  ],
+  "schedule": [
+    {
+      "jobid": 1,
+      "active": true,
+      "schedule": "*/10 * * * *"
+    }
+  ],
+  "cron_runs": [
+    {
+      "jobid": 1,
+      "status": "succeeded",
+      "end_time": "2026-10-22T16:30:00.065274+00:00",
+      "start_time": "2026-10-22T16:30:00.047337+00:00"
+    },
+    {
+      "jobid": 1,
+      "status": "succeeded",
+      "end_time": "2026-10-22T16:20:00.083624+00:00",
+      "start_time": "2026-10-22T16:20:00.077591+00:00"
+    }
+  ],
+  "http_runs": [
+    {
+      "id": 3,
+      "body": {
+        "ok": true,
+        "task": {
+          "ok": true,
+          "idle": true
+        },
+        "inbox": {
+          "status": "INBOX_POLLED",
+          "accepted": 0,
+          "examined": 0
+        },
+        "outbox": {
+          "status": "BLOCKED_NO_GITHUB_CREDENTIAL",
+          "outbox_id": "686547fc-415b-4dc9-836c-787f85265253"
+        },
+        "instance_id": "base-002:dawn-light"
+      },
+      "error_msg": null,
+      "timed_out": false,
+      "status_code": 200
+    },
+    {
+      "id": 2,
+      "body": {
+        "ok": true,
+        "task": {
+          "ok": true,
+          "idle": true
+        },
+        "inbox": {
+          "status": "INBOX_POLLED",
+          "accepted": 0,
+          "examined": 0
+        },
+        "outbox": {
+          "status": "BLOCKED_NO_GITHUB_CREDENTIAL",
+          "outbox_id": "686547fc-415b-4dc9-836c-787f85265253"
+        },
+        "instance_id": "base-002:dawn-light"
+      },
+      "error_msg": null,
+      "timed_out": false,
+      "status_code": 200
+    },
+    {
+      "id": 1,
+      "body": {
+        "ok": true,
+        "task": {
+          "ok": true,
+          "run_id": "a1aa2974-d819-41c3-9daf-7dc8f46c0b34",
+          "status": "blocked",
+          "task_id": "31a4ff37-f8b1-44a2-a476-3b7534044170",
+          "evidence": {
+            "error": "BLOCKED_NO_MODEL",
+            "tools": [
+              "private_memory_recall"
+            ],
+            "executor": "base-002:dawn-light",
+            "help_request": {
+              "error": "BLOCKED_NO_MODEL",
+              "help_id": "DAWN-MODEL-001",
+              "task_id": "31a4ff37-f8b1-44a2-a476-3b7534044170",
+              "attempted": [
+                "private_memory_recall"
+              ],
+              "requested_action": "Provide the missing authorized runtime/model configuration through secure second-base settings; do not send secrets in Issues."
+            },
+            "tool_execution": true,
+            "inference_executed": false
+          },
+          "fencing_token": "24"
+        },
+        "inbox": {
+          "status": "INBOX_POLLED",
+          "accepted": 1,
+          "examined": 16
+        },
+        "outbox": {
+          "status": "BLOCKED_NO_GITHUB_CREDENTIAL",
+          "outbox_id": "d6b060f9-b72e-486b-a653-b11dd29bdeb0"
+        },
+        "instance_id": "base-002:dawn-light"
+      },
+      "error_msg": null,
+      "timed_out": false,
+      "status_code": 200
+    }
+  ],
+  "model_usage": {
+    "records": 5,
+    "input_units": 2518,
+    "output_units": 72,
+    "estimated_external_api_cost_usd": 0
+  },
+  "observed_at": "2026-10-22T16:33:10.215565+00:00"
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "local_base": "base-002",
+  "mode": "design_and_isolated_tests",
+  "bases": [
+    {
+      "base_id": "base-001",
+      "repository": "m9wmtcb782-arch/AIVAULT",
+      "repository_id": "1333439173",
+      "inbox_issue": 30,
+      "inbox_url": "https://github.com/m9wmtcb782-arch/AIVAULT/issues/30",
+      "github_user_id": "306819786",
+      "github_login": "m9wmtcb782-arch",
+      "status": "registered",
+      "task_submission_enabled": false
+    },
+    {
+      "base_id": "base-002",
+      "repository": "NL13741619-commits/homework-helper",
+      "repository_id": "1318351142",
+      "inbox_issue": 1,
+      "inbox_url": "https://github.com/NL13741619-commits/homework-helper/issues/1",
+      "github_user_id": "305579832",
+      "github_login": "NL13741619-commits",
+      "status": "registered",
+      "task_submission_enabled": false
+    }
+  ]
+}

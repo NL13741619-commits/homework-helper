@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "product": "AIVAULT",
+  "second_base": {
+    "github_repository_current": "NL13741619-commits/homework-helper",
+    "github_repository_target_name": "AIVAULT",
+    "supabase_project_ref": "svtkpdmqemidlasowqew",
+    "supabase_project_target_name": "AIVAULT"
+  },
+  "protected_systems": {
+    "github_repositories": [
+      "NL13741619-commits/safe-reunion-login",
+      "NL13741619-commits/safe-reunion"
+    ],
+    "supabase_project_refs": [
+      "perfsipperncvjocznhl"
+    ]
+  },
+  "gates": {
+    "auto_merge": false,
+    "production_deploy": false,
+    "paid_api": false,
+    "destructive_backend_cleanup": false,
+    "secrets_in_source_or_logs": false
+  }
+}

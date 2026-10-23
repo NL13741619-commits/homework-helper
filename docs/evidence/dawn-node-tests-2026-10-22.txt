@@ -1,0 +1,2 @@
+✔ exactly 1000 bounded logical channel routes (1.230829ms)
+✔ credentials are distinct per service principal (1.050306ms)

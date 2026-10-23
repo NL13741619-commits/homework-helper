@@ -1,0 +1,31 @@
+{
+  "project_ref": "svtkpdmqemidlasowqew",
+  "instance_id": "base-002:dawn-light",
+  "live_database_test": {
+    "execution_role": "service_role",
+    "grouped_checks": 9,
+    "additional_revocation_and_kill_switch_checks": 2,
+    "exact_capacity_chars": 500000,
+    "overflow_rejected": true,
+    "unicode_slice_verified": true,
+    "current_lease_write_verified": true,
+    "stale_and_finished_lease_rejected": true,
+    "fixtures_rolled_back": true,
+    "concurrent_host_load_test": false
+  },
+  "durable_bootstrap": {
+    "executor": "engineering-controller",
+    "entry_ids": ["56", "57", "58"],
+    "content_char_counts": [227, 253, 202],
+    "used_chars": 682,
+    "remaining_chars": 499318
+  },
+  "legacy_counts_before_and_after": {
+    "homeworks": 18,
+    "law_documents": 143,
+    "roc_tw_constitution": 175
+  },
+  "model_inference_executed": false,
+  "autonomous_memory_runtime_connected": false,
+  "runner_deployment_status": "NOT_DEPLOYED"
+}
