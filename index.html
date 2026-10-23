@@ -54,20 +54,21 @@ h1{
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-.sub{color:var(--muted);margin-bottom:20px;font-size:14px}
+.sub{color:var(--muted);margin-bottom:16px;font-size:14px}
 input{
   width:100%;height:44px;margin:6px 0;padding:0 12px;
   border-radius:10px;border:1px solid rgba(126,182,255,.3);
   background:#0b1220;color:var(--text);font:inherit;
 }
-button.btn,a.btn{
+button.btn{
   display:block;width:100%;padding:14px 18px;margin-top:8px;
-  border-radius:12px;text-decoration:none;color:var(--text);
+  border-radius:12px;color:var(--text);
   background:rgba(126,182,255,.08);border:1px solid rgba(126,182,255,.3);
   font:inherit;cursor:pointer;
 }
-button.btn:hover,a.btn:hover{background:rgba(126,182,255,.18)}
+button.btn:hover{background:rgba(126,182,255,.18)}
 .primary{background:rgba(126,182,255,.2);border-color:var(--accent)}
+.link{background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;margin-top:10px}
 .msg{font-size:13px;color:#ffb4b4;min-height:18px;margin:8px 0}
 .ok{color:#86efac}
 #ai-panel{display:none;margin-top:16px;text-align:left}
@@ -82,11 +83,14 @@ button.btn:hover,a.btn:hover{background:rgba(126,182,255,.18)}
   <h1>曙光城</h1>
   <div class="sub">AIVAULT 第二基地 · Dawn Light</div>
 
-  <div id="login-box">
-    <input id="email" type="email" placeholder="主城帳號 Email" autocomplete="username">
+  <div id="auth-box">
+    <div class="sub" id="mode-label">登入進入曙光</div>
+    <input id="email" type="email" placeholder="Email" autocomplete="username">
     <input id="password" type="password" placeholder="密碼" autocomplete="current-password">
+    <input id="confirm" type="password" placeholder="再次輸入密碼" style="display:none" autocomplete="new-password">
     <div class="msg" id="msg"></div>
-    <button class="btn primary" id="btn-login"><strong>主城登入進入曙光</strong></button>
+    <button class="btn primary" id="btn-go"><strong>登入</strong></button>
+    <button class="link" id="btn-switch">沒有帳號？立即註冊</button>
   </div>
 
   <div id="ai-panel">
@@ -97,7 +101,7 @@ button.btn:hover,a.btn:hover{background:rgba(126,182,255,.18)}
     <button class="btn" id="btn-out">登出</button>
   </div>
 
-  <div class="note">使用第一基地帳號登入。安全團聚不受影響。</div>
+  <div class="note">新使用者可在此註冊。帳號與主城共用。安全團聚不受影響。</div>
 </div>
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
@@ -105,28 +109,54 @@ const SUPABASE_URL='https://clcddygkaaqqtsbswgdf.supabase.co'
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsY2RkeWdrYWFxcXRzYnN3Z2RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzUwNjQsImV4cCI6MjEwMjMxMTA2NH0.kYg6h7n74CtbiIjNjZ2xxJj16SV42INZVzQ9dLNUfKE'
 const supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY)
 const msg=document.getElementById('msg')
-const loginBox=document.getElementById('login-box')
+const authBox=document.getElementById('auth-box')
 const panel=document.getElementById('ai-panel')
-function showLogin(){loginBox.style.display='block';panel.style.display='none'}
+const confirmEl=document.getElementById('confirm')
+const modeLabel=document.getElementById('mode-label')
+const btnGo=document.getElementById('btn-go')
+const btnSwitch=document.getElementById('btn-switch')
+let mode='login'
+function showAuth(){authBox.style.display='block';panel.style.display='none'}
 function showAI(email){
-  loginBox.style.display='none';panel.style.display='block'
+  authBox.style.display='none';panel.style.display='block'
   document.getElementById('who').textContent='已登入：'+email
+}
+function setMode(next){
+  mode=next
+  const reg=mode==='register'
+  modeLabel.textContent=reg?'註冊後進入曙光':'登入進入曙光'
+  confirmEl.style.display=reg?'block':'none'
+  btnGo.innerHTML=reg?'<strong>註冊</strong>':'<strong>登入</strong>'
+  btnSwitch.textContent=reg?'已有帳號？返回登入':'沒有帳號？立即註冊'
+  msg.textContent=''
 }
 async function boot(){
   const {data:{session}}=await supabase.auth.getSession()
-  if(session?.user)showAI(session.user.email);else showLogin()
+  if(session?.user)showAI(session.user.email);else showAuth()
 }
 boot()
-document.getElementById('btn-login').onclick=async()=>{
-  msg.textContent='登入中…';msg.className='msg'
+btnSwitch.onclick=()=>setMode(mode==='login'?'register':'login')
+btnGo.onclick=async()=>{
+  msg.textContent=mode==='register'?'註冊中…':'登入中…';msg.className='msg'
   const email=document.getElementById('email').value.trim()
   const password=document.getElementById('password').value
+  if(!email||!password){msg.textContent='請輸入 Email 與密碼';return}
+  if(mode==='register'){
+    if(password!==confirmEl.value){msg.textContent='兩次密碼不一致';return}
+    if(password.length<6){msg.textContent='密碼至少 6 字';return}
+    const {data,error}=await supabase.auth.signUp({email,password,options:{data:{role:'user'}}})
+    if(error){msg.textContent=error.message||'註冊失敗';return}
+    if(data.session){showAI(data.user.email);return}
+    msg.textContent='註冊成功，請至信箱驗證後再登入。';msg.className='msg ok'
+    setMode('login')
+    return
+  }
   const {data,error}=await supabase.auth.signInWithPassword({email,password})
   if(error){msg.textContent=error.message||'登入失敗';return}
   showAI(data.user.email)
 }
 document.getElementById('btn-out').onclick=async()=>{
-  await supabase.auth.signOut();showLogin()
+  await supabase.auth.signOut();showAuth()
 }
 document.getElementById('send').onclick=async()=>{
   const q=document.getElementById('q').value.trim()
