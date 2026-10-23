@@ -274,6 +274,21 @@
 
   <main class="content">
     <div class="panel active" id="panel-home">
+      <a id="dawnDigitalHumanEntry" class="agent-card" href="dawn-digital-human.html" style="margin-bottom:12px;display:block;text-decoration:none;border-color:#ffb347;background:linear-gradient(135deg,#422a12,#1e293b)">
+        <div class="agent-name" style="font-size:18px;color:#ffd27a">☀ 曙光數字人 · 第二基地主角</div>
+        <div class="agent-role" style="margin:8px 0">曙光 Dawn Light｜對話、任務與數字人入口</div>
+        <span style="color:#ffd27a">進入曙光 →</span>
+      </a>
+      <div id="darkStarEntry" class="agent-card" style="margin-bottom:12px; grid-column:1/-1; display:block; border-color:rgba(17,17,17,.55); background:linear-gradient(135deg,#0f0f12,#1e293b);">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+          <div>
+            <div class="agent-name" style="font-size:15px;">暗星 · 第二數字人</div>
+            <div class="agent-role" style="margin-bottom:0;">即時工程引擎 · AI Gateway · Sandbox · 測試／評估 · 語音通道</div>
+          </div>
+          <div style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 5px; border-radius:20px; background:#111; color:#fff; font-size:12px; font-weight:700;"><span data-darkstar-orb data-size="24" title="暗星"></span>進入暗星</div>
+        </div>
+      </div>
+
       <div id="videoStudioEntry" class="agent-card" style="margin-bottom:12px; grid-column:1/-1; display:block; border-color:rgba(244,63,94,.45); background:linear-gradient(135deg,#4c0519,#1e293b);">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
           <div>
@@ -284,15 +299,6 @@
         </div>
       </div>
 
-      <div id="darkStarEntry" class="agent-card" style="margin-bottom:12px; grid-column:1/-1; display:block; border-color:rgba(17,17,17,.55); background:linear-gradient(135deg,#0f0f12,#1e293b);">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-          <div>
-            <div class="agent-name" style="font-size:15px;">Technical Dark Star</div>
-            <div class="agent-role" style="margin-bottom:0;">即時工程引擎 · AI Gateway · Sandbox · 測試／評估 · 語音通道</div>
-          </div>
-          <div style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 5px; border-radius:20px; background:#111; color:#fff; font-size:12px; font-weight:700;"><span data-darkstar-orb data-size="24" title="暗星"></span>進入暗星</div>
-        </div>
-      </div>
       <div id="researchWsEntry" class="agent-card" style="margin-bottom:12px; grid-column:1/-1; display:block; border-color:rgba(14,165,233,.45); background:linear-gradient(135deg,#0c4a6e,#1e293b);">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
           <div>
@@ -395,7 +401,8 @@
           <div style="flex-shrink:0; padding:8px 12px; border-radius:20px; background:linear-gradient(135deg,#d4af37,#78716c); color:#1c1917; font-size:12px; font-weight:700;">進入西洋棋</div>
         </div>
       </div>
-      <div class="section-title">在線 Agent</div>
+      <div class="section-title">Agent 與後端心跳</div>
+      <div id="dawnHeartbeat" role="status" style="font-size:12px;color:var(--text-muted);line-height:1.7;margin:0 0 12px">正在讀取曙光實際心跳…</div>
       <div class="agents-grid" id="agentsGrid"></div>
       <div class="section-title">任務工作流｜大腦</div>
       <div class="workflow" id="workflowHome"></div>
@@ -670,41 +677,41 @@
       if (agent.provider === 'gemini' || agent.provider === 'gemini2' || agent.provider === 'gemini3') return 'gemini-2.5-flash';
       return 'llama-3.3-70b-versatile';
     }
-    async function probeProvider(provider, model) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 10000);
-      try {
-        const res = await fetch(AI_GATEWAY_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
-          body: JSON.stringify({ provider, model, agent: 'healthcheck', systemPrompt: 'Reply with the single word OK.', messages: [{ role: 'user', content: 'healthcheck' }] }),
-          signal: controller.signal
-        });
-        clearTimeout(timer);
-        if (res.status === 404) return { ok: false, text: '未連線' };
-        return { ok: true, text: '空閒' };
-      } catch (e) {
-        clearTimeout(timer);
-        return { ok: false, text: '未連線' };
-      }
-    }
+    let heartbeatChecking = false;
     async function checkGatewayConnections() {
-      AGENTS.forEach(a => setAgentRuntime(a.id, { status: 'working', statusText: '檢查連線…', connected: false }));
-      renderAgents(); renderAgentRegistry();
-      const providers = [...new Set(AGENTS.map(a => a.provider))];
-      const results = {};
-      await Promise.all(providers.map(async (provider) => {
-        const sample = AGENTS.find(a => a.provider === provider);
-        results[provider] = await probeProvider(provider, sample.model);
-      }));
-      AGENTS.forEach(agent => {
-        const r = results[agent.provider] || { ok: false, text: '未知' };
-        setAgentRuntime(agent.id, { status: r.ok ? 'idle' : 'offline', statusText: r.ok ? (`空閒`) : '未連線', connected: !!r.ok, lastError: r.ok ? '' : r.text });
-      });
-      renderAgents(); renderAgentRegistry();
-      if (!selectedChatAgents.length) selectedChatAgents = AGENTS.filter(a => getAgentView(a).connected).slice(0, 2).map(a => a.id);
-      else selectedChatAgents = selectedChatAgents.filter(id => { const a = AGENTS.find(x => x.id === id); return a && getAgentView(a).connected; });
-      renderAgentPickBars();
+      if (heartbeatChecking) return;
+      heartbeatChecking = true;
+      const panel = document.getElementById('dawnHeartbeat');
+      try {
+        const client = await window.AIVAULT_AUTH_READY;
+        if (!client) return;
+        const { data } = await client.auth.getSession();
+        if (!data.session) throw new Error('登入已失效');
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/aivault-agent-status`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', apikey:SUPABASE_ANON_KEY, Authorization:`Bearer ${data.session.access_token}` },
+          body: '{}', cache:'no-store', signal:AbortSignal.timeout(15000)
+        });
+        if (!response.ok) throw new Error(`心跳讀取失敗 HTTP ${response.status}`);
+        const result = await response.json();
+        if (!result.ok || !result.runtime) throw new Error('心跳回傳格式錯誤');
+        const runtime = result.runtime;
+        const states = { BACKEND_ALIVE:'正常', STALE:'已逾時', DISABLED:'已停用', UNKNOWN:'尚無紀錄', CLOCK_SKEW:'時鐘異常' };
+        const stamp = runtime.last_tick_at ? new Date(runtime.last_tick_at).toLocaleString('zh-TW', {timeZone:'Asia/Taipei'}) : '無';
+        panel.textContent = `曙光後端心跳：${states[runtime.state] || '未知'}｜上次回報：${stamp}（台灣時間）。每 30 秒讀取；超過 15 分鐘判為逾時。模型${runtime.model_approved ? '已核准，執行狀態需另驗證' : '尚未核准啟用'}。`;
+        panel.style.color = runtime.state === 'BACKEND_ALIVE' ? '#86efac' : '#fbbf24';
+        const message = result.gateway === 'NOT_DEPLOYED' ? '模型網關尚未部署' : '模型連線尚未驗證';
+        AGENTS.forEach(agent => setAgentRuntime(agent.id, {status:'offline',statusText:message,connected:false,lastError:message}));
+      } catch (error) {
+        panel.textContent = `無法確認曙光心跳：${error.message}。稍後會自動重試。`;
+        panel.style.color = '#fbbf24';
+        AGENTS.forEach(agent => setAgentRuntime(agent.id, {status:'offline',statusText:'連線狀態未知',connected:false,lastError:error.message}));
+      } finally {
+        heartbeatChecking = false;
+        renderAgents(); renderAgentRegistry();
+        selectedChatAgents = selectedChatAgents.filter(id => getAgentView(AGENTS.find(a => a.id === id) || {}).connected);
+        renderAgentPickBars();
+      }
     }
     function renderAgents() {
       const container = document.getElementById('agentsGrid');
@@ -1105,6 +1112,8 @@
       }
     });
     renderAgents(); renderAgentPickBars(); checkGatewayConnections();
+    setInterval(() => { if (!document.hidden) checkGatewayConnections(); }, 30000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) checkGatewayConnections(); });
     renderTasks('taskList'); renderTasks('taskListFull'); renderWorkflow();
     renderMessages('chatMessages'); renderMessages('homeChatPreview');
     renderAgentRegistry(); renderProviders(); renderApprovals();
