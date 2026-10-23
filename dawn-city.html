@@ -7,73 +7,87 @@
 *{box-sizing:border-box;margin:0;padding:0}body{background:#1a2744;color:#fff;font-family:-apple-system,"Noto Sans TC",sans-serif;overflow:hidden;height:100vh}
 #hud{position:fixed;top:8px;left:8px;background:rgba(20,30,50,.85);border:1px solid #4a5a7a;border-radius:12px;padding:10px 14px;font-size:12px;z-index:10}
 #hud b{font-size:16px;color:#f4d7a4}#count{font-size:20px;color:#f4d7a4}
-#bar{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10}
+#bar{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10;flex-wrap:wrap;justify-content:center;max-width:90vw}
 button{background:#1a2744;border:1px solid #4a5a7a;color:#fff;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer}
-.sun-char{position:absolute;top:18%;left:50%;transform:translateX(-50%);z-index:5;text-align:center}
-.sun{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6,#f4d7a4 40%,#e8a84a);box-shadow:0 0 40px #f4d7a488,0 0 80px #f4d7a444;animation:pulse 3s ease-in-out infinite;position:relative;margin:0 auto}
-.sun .rays{position:absolute;inset:-18px;background:repeating-conic-gradient(from 0deg,#f4d7a4 0 6deg,transparent 6deg 15deg);border-radius:50%;opacity:.6;z-index:-1}
-.face{position:absolute;inset:22%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:36px;line-height:1}
-.eyes{font-size:28px;letter-spacing:6px}.mouth{font-size:22px;margin-top:2px}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.darkstar{position:absolute;top:22%;left:18%;width:48px;height:48px;border-radius:50%;background:#111;box-shadow:0 0 12px #4a6a8a;display:flex;align-items:center;justify-content:center;font-size:20px}
-.bubble{position:absolute;top:-40px;left:50%;transform:translateX(-50%);background:#fff;color:#1a2744;border-radius:12px;padding:6px 10px;font-size:12px;white-space:nowrap;opacity:0;transition:opacity .3s}
+.sun-wrap{position:absolute;top:16%;left:50%;transform:translateX(-50%);z-index:5;text-align:center}
+.sun{width:160px;height:160px;position:relative;margin:0 auto}
+.sun svg{width:100%;height:100%;overflow:visible}
+.rays{animation:spin 20s linear infinite;transform-origin:50% 50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bubble{position:absolute;top:-36px;left:50%;transform:translateX(-50%);background:#fff;color:#1a2744;border-radius:12px;padding:6px 10px;font-size:12px;white-space:nowrap;opacity:0;transition:opacity .3s}
 .bubble.show{opacity:1}
+.darkstar{position:absolute;top:20%;left:12%;width:56px;height:56px;z-index:5}
 </style>
 </head>
 <body>
 <div id="hud"><b>曙光城</b><div>來自主城 <span id="count">8</span> 人</div></div>
-<div class="darkstar">🌑</div>
-<div class="sun-char">
+<div class="darkstar" id="ds"></div>
+<div class="sun-wrap">
   <div class="bubble" id="bubble"></div>
-  <div class="sun" id="sun"><div class="rays"></div><div class="face"><div class="eyes">● ●</div><div class="mouth">◐</div></div></div>
-  <div style="margin-top:8px;font-size:13px;letter-spacing:.1em">曙光</div>
+  <div class="sun" id="sun"></div>
+  <div style="margin-top:6px;font-size:13px;letter-spacing:.1em">曙光</div>
 </div>
 <div id="bar">
   <button data-e="neutral">平靜</button><button data-e="happy">開心</button><button data-e="thinking">思考</button>
   <button data-e="surprised">驚訝</button><button data-e="love">喜歡</button><button data-e="sleepy">想睡</button>
   <button id="speak">說話</button>
 </div>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"}}</script>
-<script type="module">
-import * as T from 'three';
-const scene=new T.Scene();scene.background=new T.Color(0x1a2744);
-const cam=new T.OrthographicCamera(-40,40,40,-40,0.1,300);
-const ren=new T.WebGLRenderer({antialias:true});ren.setSize(innerWidth,innerHeight);document.body.appendChild(ren.domElement);
-scene.add(new T.HemisphereLight(0xfff6e0,0x4a5a7a,1.2));
-const sunL=new T.DirectionalLight(0xffe4c0,1.8);sunL.position.set(-20,40,20);scene.add(sunL);
-function box(x,y,z,w,h,d,c){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshStandardMaterial({color:c}));m.position.set(x,y,z);scene.add(m);return m}
-function cone(x,y,z,r,h,c){const m=new T.Mesh(new T.ConeGeometry(r,h,8),new T.MeshStandardMaterial({color:c}));m.position.set(x,y,z);scene.add(m);return m}
-box(0,-0.5,0,80,1,80,0x3a4a5a);
-for(let i=-3;i<=3;i++)for(let j=-3;j<=3;j++){if(Math.abs(i)<2&&Math.abs(j)<2)continue;box(i*12,1,j*12,5,2,5,0x5a7a9a);cone(i*12,3.5,j*12,3.5,2.5,0x4a5a6a)}
-const people=[];
-function person(x,z){const g=new T.Group();g.position.set(x,0,z);scene.add(g);
-  const head=new T.Mesh(new T.SphereGeometry(0.35,8,6),new T.MeshStandardMaterial({color:0xf4d7a4}));head.position.y=1.6;g.add(head);
-  const body=new T.Mesh(new T.BoxGeometry(0.5,0.8,0.3),new T.MeshStandardMaterial({color:0x5a7a9a}));body.position.y=1;g.add(body);
-  people.push({g,phase:Math.random()*6});return g}
-for(let i=0;i<8;i++)person((i-4)*4+2,8+(i%3)*3);
-let dist=50,focus=new T.Vector3(0,0,0);
-function view(){const a=innerWidth/innerHeight;cam.left=-dist*a;cam.right=dist*a;cam.top=dist;cam.bottom=-dist;cam.updateProjectionMatrix();
-  cam.position.set(focus.x+dist*0.9,focus.y+dist*0.8,focus.z+dist*0.9);cam.lookAt(focus)}
-view();
-window.addEventListener('resize',()=>{ren.setSize(innerWidth,innerHeight);view()});
-let t=0;function loop(){requestAnimationFrame(loop);t+=0.016;
-  people.forEach(p=>{p.g.position.x+=Math.sin(t+p.phase)*0.02;p.g.rotation.y=Math.sin(t+p.phase)*0.3});
-  ren.render(scene,cam)}
-loop();
-const FACES={neutral:{e:"● ●",m:"◐"},happy:{e:"^ ^",m:"◕"},thinking:{e:"● ◐",m:"—"},surprised:{e:"○ ○",m:"o"},love:{e:"♥ ♥",m:"◕"},sleepy:{e:"- -",m:"◐"}};
-const eyes=document.querySelector(".eyes"),mouth=document.querySelector(".mouth"),bubble=document.getElementById("bubble");
-function setExpr(k){const f=FACES[k]||FACES.neutral;eyes.textContent=f.e;mouth.textContent=f.m}
-document.querySelectorAll("#bar button[data-e]").forEach(b=>b.onclick=()=>setExpr(b.dataset.e));
-setExpr("neutral");
-const lines=["來自主城的人來了","協作池有人在做事","曙光在這裡"];
-let speaking=false,mouthOpen=false;
-function speak(text){
-  if(speaking)return;speaking=true;bubble.textContent=text;bubble.classList.add("show");
-  const iv=setInterval(()=>{mouthOpen=!mouthOpen;mouth.textContent=mouthOpen?"o":"◐"},180);
-  setTimeout(()=>{clearInterval(iv);mouth.textContent="◐";bubble.classList.remove("show");speaking=false},2200);
+<script>
+const SUN_SVG = `<svg viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="sg" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#fff6"/><stop offset=".4" stop-color="#f4d7a4"/><stop offset="1" stop-color="#e8a84a"/></radialGradient>
+  </defs>
+  <g class="rays"><polygon points="100,10 108,40 92,40" fill="#f4d7a4"/><polygon points="100,190 108,160 92,160" fill="#f4d7a4"/>
+    <polygon points="10,100 40,108 40,92" fill="#f4d7a4"/><polygon points="190,100 160,108 160,92" fill="#f4d7a4"/>
+    <polygon points="30,30 55,45 45,55" fill="#f4d7a4"/><polygon points="170,30 155,55 145,45" fill="#f4d7a4"/>
+    <polygon points="30,170 55,155 45,145" fill="#f4d7a4"/><polygon points="170,170 155,145 145,155" fill="#f4d7a4"/></g>
+  <circle cx="100" cy="100" r="58" fill="url(#sg)"/>
+  <ellipse cx="78" cy="88" rx="8" ry="10" fill="#3a2a1a" class="eye-l"/>
+  <ellipse cx="122" cy="88" rx="8" ry="10" fill="#3a2a1a" class="eye-r"/>
+  <ellipse cx="74" cy="84" rx="3" ry="3" fill="#fff"/>
+  <ellipse cx="118" cy="84" rx="3" ry="3" fill="#fff"/>
+  <path d="M82 112 Q100 122 118 112" stroke="#c58b4a" stroke-width="3" fill="none" stroke-linecap="round" class="mouth"/>
+  <ellipse cx="70" cy="108" rx="6" ry="4" fill="#f4a4a4" opacity=".6"/>
+  <ellipse cx="130" cy="108" rx="6" ry="4" fill="#f4a4a4" opacity=".6"/>
+</svg>`;
+const DS_SVG = `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#111"/><circle cx="38" cy="42" r="6" fill="#fff"/><circle cx="62" cy="42" r="6" fill="#fff"/><path d="M38 62 Q50 70 62 62" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+document.getElementById("sun").innerHTML = SUN_SVG;
+document.getElementById("ds").innerHTML = DS_SVG;
+const mouth = document.querySelector(".mouth"), bubble = document.getElementById("bubble");
+const EYES = {
+  neutral: {l:"M78 88 Q78 78 78 88", r:"M122 88 Q122 78 122 88"},
+  happy: {l:"M70 86 Q78 78 86 86", r:"M114 86 Q122 78 130 86"},
+  thinking: {l:"M78 88 Q78 78 78 88", r:"M122 84 Q122 74 122 84"},
+  surprised: {l:"M78 88 Q78 76 78 88", r:"M122 88 Q122 76 122 88"},
+  love: {l:"M70 86 Q78 80 86 86", r:"M114 86 Q122 80 130 86"},
+  sleepy: {l:"M70 90 Q78 92 86 90", r:"M114 90 Q122 92 130 90"}
+};
+const MOUTHS = {
+  neutral: "M82 112 Q100 122 118 112",
+  happy: "M78 110 Q100 128 122 110",
+  thinking: "M88 114 Q100 118 112 114",
+  surprised: "M90 108 Q100 120 110 108",
+  love: "M78 110 Q100 128 122 110",
+  sleepy: "M86 116 Q100 120 114 116",
+  open: "M88 108 Q100 124 112 108"
+};
+function setExpr(k){
+  const m = MOUTHS[k] || MOUTHS.neutral;
+  mouth.setAttribute("d", m);
 }
-document.getElementById("speak").onclick=()=>speak(lines[Math.floor(Math.random()*lines.length)]);
-setInterval(()=>{if(!speaking&&Math.random()>.7)speak(lines[Math.floor(Math.random()*lines.length)])},6000);
+document.querySelectorAll("#bar button[data-e]").forEach(b => b.onclick = () => setExpr(b.dataset.e));
+setExpr("neutral");
+const lines = ["來自主城的人來了", "協作池有人在做事", "曙光在這裡"];
+let speaking = false;
+function speak(text){
+  if(speaking) return; speaking = true;
+  bubble.textContent = text; bubble.classList.add("show");
+  let open = false;
+  const iv = setInterval(() => { open = !open; mouth.setAttribute("d", open ? MOUTHS.open : MOUTHS.neutral); }, 160);
+  setTimeout(() => { clearInterval(iv); mouth.setAttribute("d", MOUTHS.neutral); bubble.classList.remove("show"); speaking = false; }, 2400);
+}
+document.getElementById("speak").onclick = () => speak(lines[Math.floor(Math.random()*lines.length)]);
+setInterval(() => { if(!speaking && Math.random() > .6) speak(lines[Math.floor(Math.random()*lines.length)]); }, 7000);
 </script>
 </body>
 </html>
