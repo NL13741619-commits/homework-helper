@@ -56,8 +56,9 @@ h1{
 }
 .sub{color:var(--muted);margin-bottom:28px;font-size:14px}
 .links{display:flex;flex-direction:column;gap:12px}
-a.btn{
+a.btn,button.btn{
   display:block;
+  width:100%;
   padding:14px 18px;
   border-radius:12px;
   text-decoration:none;
@@ -65,11 +66,18 @@ a.btn{
   background:rgba(126,182,255,.08);
   border:1px solid rgba(126,182,255,.3);
   transition:.2s;
+  font:inherit;
+  cursor:pointer;
 }
-a.btn:hover{background:rgba(126,182,255,.18);border-color:var(--accent)}
-a.btn strong{display:block;font-size:16px}
-a.btn small{color:var(--muted);font-size:12px}
+a.btn:hover,button.btn:hover{background:rgba(126,182,255,.18);border-color:var(--accent)}
+a.btn strong,button.btn strong{display:block;font-size:16px}
+a.btn small,button.btn small{color:var(--muted);font-size:12px}
+.primary{background:rgba(126,182,255,.2);border-color:var(--accent)}
+.gate{margin-bottom:16px;padding:16px;border:1px dashed rgba(126,182,255,.4);border-radius:12px;font-size:13px;color:var(--muted)}
 .note{margin-top:24px;font-size:12px;color:var(--muted)}
+#ai-panel{display:none;margin-top:16px;text-align:left}
+#ai-panel textarea{width:100%;min-height:80px;background:#0b1220;color:var(--text);border:1px solid rgba(126,182,255,.3);border-radius:8px;padding:10px;font:inherit}
+#ai-panel .out{margin-top:10px;padding:10px;background:#0b1220;border-radius:8px;font-size:14px;white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -77,7 +85,21 @@ a.btn small{color:var(--muted);font-size:12px}
   <div class="sun"></div>
   <h1>曙光城</h1>
   <div class="sub">AIVAULT 第二基地 · Dawn Light</div>
+
+  <div class="gate" id="gate">
+    需要主城登入才能進入曙光 AI。<br>
+    使用第一基地帳號授權。
+  </div>
+
   <div class="links">
+    <a class="btn primary" id="login-btn" href="https://m9wmtcb782-arch.github.io/AIVAULT/aivault-login.html">
+      <strong>主城登入</strong>
+      <small>用第一基地帳號進入曙光</small>
+    </a>
+    <button class="btn" id="enter-ai" style="display:none">
+      <strong>進入曙光 AI</strong>
+      <small>已登入，點擊開始對話</small>
+    </button>
     <a class="btn" href="https://github.com/NL13741619-commits/homework-helper/issues/1">
       <strong>城主收件匣</strong>
       <small>第二基地固定協作入口 Issue #1</small>
@@ -86,12 +108,45 @@ a.btn small{color:var(--muted);font-size:12px}
       <strong>主城回信</strong>
       <small>第一基地暗星 Issue #30</small>
     </a>
-    <a class="btn" href="https://github.com/NL13741619-commits/homework-helper/tree/feature/aivault-rebuild/aivault/dawn">
-      <strong>曙光程式源</strong>
-      <small>施工分支 aivault/dawn</small>
-    </a>
   </div>
+
+  <div id="ai-panel">
+    <textarea id="q" placeholder="對曙光說…"></textarea>
+    <button class="btn" id="send" style="margin-top:8px"><strong>送出</strong></button>
+    <div class="out" id="out">曙光待命。</div>
+  </div>
+
   <div class="note">舊作業輔助入口已替換。安全團聚不受影響。</div>
 </div>
+<script>
+const KEY='aivault_main_token';
+function hasToken(){return !!localStorage.getItem(KEY);}
+function refresh(){
+  const ok=hasToken();
+  document.getElementById('enter-ai').style.display=ok?'block':'none';
+  document.getElementById('gate').textContent=ok?'已以主城身分登入。':'需要主城登入才能進入曙光 AI。\n使用第一基地帳號授權。';
+}
+refresh();
+const params=new URLSearchParams(location.search);
+if(params.get('token')){localStorage.setItem(KEY,params.get('token'));history.replaceState({},'',location.pathname);refresh();}
+document.getElementById('enter-ai').onclick=()=>{
+  document.getElementById('ai-panel').style.display='block';
+};
+document.getElementById('send').onclick=async()=>{
+  const q=document.getElementById('q').value.trim();
+  if(!q)return;
+  const out=document.getElementById('out');
+  out.textContent='曙光處理中…';
+  try{
+    const r=await fetch('https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-dawn-runtime',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+localStorage.getItem(KEY)},
+      body:JSON.stringify({action:'status'})
+    });
+    const j=await r.json();
+    out.textContent=j.ok?('曙光在線。\n'+JSON.stringify(j,null,2)):('無法連線：'+(j.error||r.status));
+  }catch(e){out.textContent='連線失敗';}
+};
+</script>
 </body>
 </html>
