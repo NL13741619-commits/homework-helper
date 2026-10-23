@@ -3,107 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0c0a08">
-<title>AIVAULT｜曙光頁面</title>
+<meta name="theme-color" content="#f7f4ef">
+<title>AIVAULT｜曙光</title>
 <style>
 :root{
-  --bg:#0c0a08;--panel:#1a1410;--line:#3a2e24;--text:#f5efe6;--muted:#b8a48a;
+  --bg:#f7f4ef;--panel:#fff;--line:#e8e0d6;--text:#1a140e;--muted:#8a7a68;
   --sun:#ffb347;--glow:#ffe9a8;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;min-height:100dvh}
-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(12,10,8,.94);z-index:5}
-.logo{font-weight:800;letter-spacing:.16em;font-size:13px;background:linear-gradient(90deg,var(--glow),var(--sun));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.grow{flex:1}
-.nav a{color:var(--glow);text-decoration:none;font-size:12px;margin-left:10px}
-.wrap{max-width:980px;margin:0 auto;padding:14px;display:grid;gap:12px}
-@media(min-width:880px){.wrap{grid-template-columns:1.1fr .9fr}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px}
+header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.tabs{display:flex;gap:8px;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line)}
+.tab{padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:#fff;font-size:13px;color:var(--muted)}
+.tab.active{background:#fff8e8;border-color:var(--sun);color:#a06a20}
+.bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff}
+.avatar{width:28px;height:28px;border-radius:50%;background:#222;display:grid;place-items:center;font-size:14px}
+.title{font-weight:700;font-size:14px;flex:1}
+.back{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:4px 8px;border-radius:12px}
+.chat{padding:12px;min-height:40vh;max-height:50vh;overflow:auto}
+.msg{display:flex;gap:8px;margin:8px 0;align-items:flex-start}
+.msg.user{flex-direction:row-reverse}
+.bubble{max-width:70%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.4}
+.msg.user .bubble{background:#e8e0d6;color:var(--text)}
+.msg.ai .bubble{background:#fff;border:1px solid var(--line)}
+.sun-ico{font-size:20px}
+.panel{
+  position:fixed;right:12px;bottom:90px;width:200px;background:#fff;border:1px solid var(--line);
+  border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:10px;z-index:10
+}
+.panel h4{margin:0 0 8px;font-size:13px;display:flex;align-items:center;gap:4px}
+.dot{width:8px;height:8px;border-radius:50%;background:#86efac}
 .stage{
-  width:100%;aspect-ratio:4/5;border-radius:14px;background:#120e0a;
-  display:grid;place-items:center;position:relative;overflow:hidden;
+  height:100px;background:linear-gradient(180deg,#fff8e8,#fff);border-radius:12px;
+  display:grid;place-items:center;margin-bottom:8px
 }
 .sun{
-  width:120px;height:120px;border-radius:50%;
-  background:radial-gradient(circle at 35% 35%,#fff 0%,#ffe9a8 30%,#ffb347 65%,transparent 75%);
-  box-shadow:0 0 50px #ffb347,0 0 100px rgba(255,179,71,.4);
-  animation:rise 4s ease-in-out infinite alternate;
+  width:64px;height:64px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#fff 0%,#ffe9a8 30%,#ffb347 70%);
+  box-shadow:0 0 20px #ffb347;
+  animation:pulse 2.5s ease-in-out infinite alternate;
+  position:relative
 }
-@keyframes rise{from{transform:translateY(8px) scale(.95)}to{transform:translateY(-6px) scale(1.05)}}
-.caps{min-height:120px;max-height:280px;overflow:auto;font-size:13px;line-height:1.55;margin-top:10px}
-.cap{margin:0 0 8px;padding:8px 10px;border-radius:10px}
-.cap.user{background:#2a2018}
-.cap.ai{background:#1f1812}
-textarea{width:100%;min-height:68px;border:1px solid var(--line);border-radius:10px;background:#120e0a;color:var(--text);padding:9px 10px;font:inherit;resize:vertical}
-.row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-button{
-  height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--line);
-  background:#241c16;color:var(--text);font-size:13px;font-weight:700;cursor:pointer
+.sun:before{
+  content:"";position:absolute;inset:-8px;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent,rgba(255,179,71,.4),transparent);
+  animation:spin 6s linear infinite
 }
-button.primary{background:linear-gradient(135deg,#ffe9a8,#ffb347);color:#1a1008;border:0}
-.status{font-size:12px;color:var(--muted);padding:8px 10px;border-radius:10px;background:#120e0a;margin-top:8px;white-space:pre-wrap}
-.pool{margin-top:12px;padding:10px;background:#120e0a;border-radius:10px;font-size:13px}
-.pool h3{margin:0 0 8px;font-size:14px;color:var(--glow)}
-.pool a{color:var(--sun);text-decoration:none}
+@keyframes pulse{from{transform:scale(.95)}to{transform:scale(1.05)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.grid button{height:32px;font-size:11px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.input-bar{
+  position:fixed;bottom:0;left:0;right:0;padding:10px 12px;background:#fff;border-top:1px solid var(--line);
+  display:flex;gap:8px;align-items:center
+}
+.input-bar input{flex:1;height:40px;border:1px solid var(--line);border-radius:20px;padding:0 14px;font:inherit}
+.input-bar button{height:40px;padding:0 16px;border-radius:20px;border:0;background:#1a140e;color:#fff;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">AIVAULT</div>
-  <div class="grow"></div>
-  <nav class="nav"><a href="index.html">曙光城</a></nav>
-</header>
-<div class="wrap">
-  <div class="card">
-    <div class="stage" aria-label="曙光數字人">
-      <div class="sun"></div>
-    </div>
-    <div class="row">
-      <button class="primary" id="createDH">建立數字人</button>
-    </div>
-    <div class="status" id="status">曙光就緒</div>
-  </div>
-  <div class="card">
-    <div class="caps" id="caps"></div>
-    <textarea id="q" placeholder="對曙光說…"></textarea>
-    <div class="row">
-      <button class="primary" id="send">送出</button>
-      <button id="clear">清除</button>
-    </div>
-    <div class="pool">
-      <h3>協作池</h3>
-      <a href="https://m9wmtcb782-arch.github.io/AIVAULT/aivault-agent-collaboration.html" target="_blank">進入 AI 協作池</a>
-    </div>
+<div class="tabs">
+  <div class="tab active">🤝 AI 協作池</div>
+  <div class="tab">⚡ 算力池</div>
+</div>
+<div class="bar">
+  <div class="avatar">🌑</div>
+  <div class="title">曙光</div>
+  <span class="sun-ico">🌞</span>
+  <a class="back" href="index.html">← 返回</a>
+</div>
+<div class="chat" id="chat"></div>
+<div class="panel">
+  <h4>🌞 曙光數字人 <span class="dot"></span> 已連結</h4>
+  <div class="stage"><div class="sun"></div></div>
+  <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:8px">👂 曙光正在聆聽</div>
+  <div class="grid">
+    <button id="link">🔗 連結即時暗星</button>
+    <button id="expr">▶ 表情測試</button>
+    <button id="together">🌙🌞 一起聊</button>
+    <button id="chatbtn">🌙🌞 互聊</button>
   </div>
 </div>
+<div class="input-bar">
+  <input id="q" placeholder="傳訊息給曙光">
+  <button id="send">送出</button>
+</div>
 <script>
-const caps=document.getElementById('caps'),q=document.getElementById('q'),status=document.getElementById('status')
-function cap(role,text){
-  const d=document.createElement('div')
-  d.className='cap '+(role==='user'?'user':'ai')
-  d.textContent=text
-  caps.appendChild(d)
-  caps.scrollTop=caps.scrollHeight
-}
-document.getElementById('createDH').onclick=()=>{
-  status.textContent='數字人建立中…'
-  setTimeout(()=>{
-    cap('ai','曙光數字人已建立（骨架）。後端開通後可接真實引擎。')
-    status.textContent='數字人就緒'
-  },500)
+const chat=document.getElementById('chat'),q=document.getElementById('q')
+function add(role,text){
+  const m=document.createElement('div')
+  m.className='msg '+(role==='user'?'user':'ai')
+  m.innerHTML='<span class="sun-ico">'+(role==='user'?'':'\ud83c\udf1e')+'</span><div class="bubble">'+text+'</div>'
+  chat.appendChild(m)
+  chat.scrollTop=chat.scrollHeight
 }
 document.getElementById('send').onclick=()=>{
   const t=q.value.trim()
   if(!t)return
-  cap('user',t)
+  add('user',t)
   q.value=''
-  status.textContent='曙光處理中…'
-  setTimeout(()=>{
-    cap('ai','曙光已收到。後端尚未完全開通，此為對話框骨架。')
-    status.textContent='曙光就緒'
-  },400)
+  setTimeout(()=>add('ai','曙光已收到。'),300)
 }
-document.getElementById('clear').onclick=()=>{caps.innerHTML='';status.textContent='曙光就緒'}
+document.getElementById('link').onclick=()=>add('ai','連結即時暗星（骨架）')
+document.getElementById('expr').onclick=()=>add('ai','表情測試（骨架）')
+document.getElementById('together').onclick=()=>add('ai','一起聊（骨架）')
+document.getElementById('chatbtn').onclick=()=>add('ai','互聊（骨架）')
 </script>
 </body>
 </html>
