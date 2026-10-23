@@ -61,9 +61,9 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-sys
 </div>
 <div class="chat" id="chat"></div>
 <div class="panel">
-  <h4>🌞 曙光 <span class="dot"></span> 已連結</h4>
+  <h4>🌞 曙光 <span class="dot"></span> 任務模式</h4>
   <div class="stage"><div class="sun" id="sun"><div class="face"><div class="eyes">● ●</div><div class="mouth">◐</div></div></div></div>
-  <div class="status" id="status">準備連線 AI</div>
+  <div class="status" id="status">Qwen CPU 已通過實際問答</div>
   <div class="grid">
     <button data-e="neutral">平靜</button>
     <button data-e="happy">開心</button>
@@ -72,11 +72,10 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-sys
   </div>
 </div>
 <div class="input-bar">
-  <input id="q" placeholder="傳訊息給曙光">
-  <button id="send">送出</button>
+  <input id="q" placeholder="輸入問題，前往 GitHub 送出公開任務">
+  <button id="send">建立任務</button>
 </div>
 <script>
-const GATEWAY = 'https://clcddygkaaqqtsbswgdf.supabase.co/functions/v1/ai-gateway';
 const FACES = {
   neutral: {e: '● ●', m: '◐'},
   happy: {e: '^ ^', m: '◕'},
@@ -100,35 +99,25 @@ const q = document.getElementById('q');
 function add(role, text){
   const m = document.createElement('div');
   m.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
-  m.innerHTML = '<span class="sun-ico">' + (role === 'user' ? '' : '🌞') + '</span><div class="bubble">' + text + '</div>';
+  const icon = document.createElement('span'); icon.className = 'sun-ico'; icon.textContent = role === 'user' ? '' : '🌞';
+  const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = text;
+  m.append(icon, bubble);
   chat.appendChild(m);
   chat.scrollTop = chat.scrollHeight;
   return m;
 }
-async function ask(text){
-  status.textContent = '曙光思考中…';
-  setExpr('think');
-  const placeholder = add('ai', '…');
-  try{
-    const res = await fetch(GATEWAY, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        agent: 'dawn-light',
-        message: text,
-        system: '你是曙光，第二基地的太陽 AI。回應簡潔、友善。'
-      })
-    });
-    const data = await res.json().catch(() => ({}));
-    const reply = data.reply || data.text || data.message || data.content || '曙光暫時無法回應。';
-    placeholder.querySelector('.bubble').textContent = reply;
-    status.textContent = '已連線';
-    setExpr('happy');
-  }catch(e){
-    placeholder.querySelector('.bubble').textContent = '連線失敗：' + (e.message || 'Gateway 無法使用');
-    status.textContent = '連線失敗';
-    setExpr('sad');
-  }
+function ask(text){
+  if(text.length > 4000){ add('ai', '問題最多 4,000 個字。'); return; }
+  const url = new URL('https://github.com/NL13741619-commits/homework-helper/issues/new');
+  url.searchParams.set('title', '曙光 AI 任務');
+  url.searchParams.set('body', '/dawn ' + text);
+  const message = add('ai', '模型已部署在第二基地。請點下方連結，在 GitHub 確認送出公開任務；曙光會啟動 Qwen 並在該任務回覆。這裡尚未接上即時聊天。\n');
+  const link = document.createElement('a');
+  link.href = url.href;
+  link.textContent = '前往 GitHub 送出給曙光';
+  message.querySelector('.bubble').append(link);
+  status.textContent = '等待你在 GitHub 送出';
+  setExpr('neutral');
 }
 document.getElementById('send').onclick = () => {
   const t = q.value.trim();
