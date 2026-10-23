@@ -1,0 +1,254 @@
+{
+  "fixture": "known generated 8-tone monophonic waveform, not a retrieved commercial recording",
+  "expected_midi": [
+    60,
+    62,
+    64,
+    65,
+    67,
+    69,
+    71,
+    72
+  ],
+  "expected_bpm": 120,
+  "http_end_to_end": true,
+  "analysis": {
+    "status": "EXPERIMENTAL_MONOPHONIC_ANALYSIS",
+    "sample_rate": 22050,
+    "duration_seconds": 4.0,
+    "source_kind": "monophonic",
+    "notes": [
+      {
+        "midi": 60,
+        "frequency_hz": 261.626,
+        "start_seconds": 0.0,
+        "end_seconds": 0.47,
+        "duration_seconds": 0.47,
+        "pitch_name": "C4",
+        "beats_estimate": 0.942
+      },
+      {
+        "midi": 62,
+        "frequency_hz": 293.665,
+        "start_seconds": 0.47,
+        "end_seconds": 0.97,
+        "duration_seconds": 0.5,
+        "pitch_name": "D4",
+        "beats_estimate": 1.002
+      },
+      {
+        "midi": 64,
+        "frequency_hz": 329.629,
+        "start_seconds": 0.97,
+        "end_seconds": 1.465,
+        "duration_seconds": 0.495,
+        "pitch_name": "E4",
+        "beats_estimate": 0.992
+      },
+      {
+        "midi": 65,
+        "frequency_hz": 349.231,
+        "start_seconds": 1.465,
+        "end_seconds": 1.965,
+        "duration_seconds": 0.5,
+        "pitch_name": "F4",
+        "beats_estimate": 1.002
+      },
+      {
+        "midi": 67,
+        "frequency_hz": 391.998,
+        "start_seconds": 1.97,
+        "end_seconds": 2.465,
+        "duration_seconds": 0.495,
+        "pitch_name": "G4",
+        "beats_estimate": 0.992
+      },
+      {
+        "midi": 69,
+        "frequency_hz": 440.004,
+        "start_seconds": 2.47,
+        "end_seconds": 2.965,
+        "duration_seconds": 0.495,
+        "pitch_name": "A4",
+        "beats_estimate": 0.992
+      },
+      {
+        "midi": 71,
+        "frequency_hz": 493.881,
+        "start_seconds": 2.97,
+        "end_seconds": 3.465,
+        "duration_seconds": 0.495,
+        "pitch_name": "B4",
+        "beats_estimate": 0.992
+      },
+      {
+        "midi": 72,
+        "frequency_hz": 523.257,
+        "start_seconds": 3.465,
+        "end_seconds": 3.975,
+        "duration_seconds": 0.51,
+        "pitch_name": "C5",
+        "beats_estimate": 1.022
+      }
+    ],
+    "pitch_engine": "NORMALIZED_AUTOCORRELATION_FALLBACK",
+    "rhythm": {
+      "tempo_bpm": 120.27,
+      "tempo_candidates": [
+        60.14,
+        120.27
+      ],
+      "onsets_seconds": [
+        0.4989,
+        0.9977,
+        1.4966,
+        1.9955,
+        2.4943,
+        2.9932,
+        3.4921
+      ],
+      "confidence": "REGULAR_ONSETS_BEAT_LEVEL_UNCONFIRMED",
+      "interval_variation": 0.0,
+      "meter": "NOT_INFERRED",
+      "tempo_changes": "NOT_IMPLEMENTED"
+    },
+    "voiced_fraction": 0.99,
+    "polyphonic_transcription": false,
+    "limitations": [
+      "Pitch octaves and repeated same-pitch notes may need correction.",
+      "Tempo half/double ambiguity is retained.",
+      "Recorded lyric transcription is not implemented."
+    ],
+    "lyric_alignment": {
+      "status": "PROPOSED_SCORE_ALIGNMENT",
+      "forced_alignment_to_recording": false,
+      "items": [
+        {
+          "syllable": "曙",
+          "note_indexes": [
+            0
+          ],
+          "start_seconds": 0.0,
+          "end_seconds": 0.47,
+          "melisma": false
+        },
+        {
+          "syllable": "光",
+          "note_indexes": [
+            1
+          ],
+          "start_seconds": 0.47,
+          "end_seconds": 0.97,
+          "melisma": false
+        },
+        {
+          "syllable": "陪",
+          "note_indexes": [
+            2
+          ],
+          "start_seconds": 0.97,
+          "end_seconds": 1.465,
+          "melisma": false
+        },
+        {
+          "syllable": "你",
+          "note_indexes": [
+            3
+          ],
+          "start_seconds": 1.465,
+          "end_seconds": 1.965,
+          "melisma": false
+        },
+        {
+          "syllable": "唱",
+          "note_indexes": [
+            4
+          ],
+          "start_seconds": 1.97,
+          "end_seconds": 2.465,
+          "melisma": false
+        },
+        {
+          "syllable": "出",
+          "note_indexes": [
+            5
+          ],
+          "start_seconds": 2.47,
+          "end_seconds": 2.965,
+          "melisma": false
+        },
+        {
+          "syllable": "希",
+          "note_indexes": [
+            6
+          ],
+          "start_seconds": 2.97,
+          "end_seconds": 3.465,
+          "melisma": false
+        },
+        {
+          "syllable": "望",
+          "note_indexes": [
+            7
+          ],
+          "start_seconds": 3.465,
+          "end_seconds": 3.975,
+          "melisma": false
+        }
+      ],
+      "english_word_syllabification": "ONE_TOKEN_PER_WORD_NOT_PHONETIC",
+      "mandarin_units": "ONE_HAN_CHARACTER_PER_SYLLABLE",
+      "current_english_voice_can_render": false
+    },
+    "rhymes": {
+      "status": "MANDARIN_EXACT_FINAL_RHYME_PROPOSAL",
+      "lines": [
+        {
+          "line": "曙光陪你唱出希望",
+          "last_character": "望",
+          "pinyin_final": "uang",
+          "exact_rhyme_group": "A",
+          "pronunciation_status": "DEFAULT_READING_REVIEW_POLYPHONES"
+        }
+      ],
+      "scheme": "A",
+      "note": "Compares finals, not written characters or tones. Near-rhyme, dialect and artistic judgement are not inferred."
+    },
+    "request_id": "84b7e86f-0eb4-47fc-8a5c-ad07a3c15b18",
+    "latency_seconds": 2.1096
+  },
+  "rhyme_example": {
+    "status": "MANDARIN_EXACT_FINAL_RHYME_PROPOSAL",
+    "lines": [
+      {
+        "line": "曙光照在我的心",
+        "last_character": "心",
+        "pinyin_final": "in",
+        "exact_rhyme_group": "A",
+        "pronunciation_status": "DEFAULT_READING_REVIEW_POLYPHONES"
+      },
+      {
+        "line": "歌聲陪你到如今",
+        "last_character": "今",
+        "pinyin_final": "in",
+        "exact_rhyme_group": "A",
+        "pronunciation_status": "DEFAULT_READING_REVIEW_POLYPHONES"
+      },
+      {
+        "line": "一起迎接太陽",
+        "last_character": "陽",
+        "pinyin_final": "iang",
+        "exact_rhyme_group": "B",
+        "pronunciation_status": "DEFAULT_READING_REVIEW_POLYPHONES"
+      }
+    ],
+    "scheme": "A A B",
+    "note": "Compares finals, not written characters or tones. Near-rhyme, dialect and artistic judgement are not inferred."
+  },
+  "tests": {
+    "passed": 15,
+    "failed": 0
+  },
+  "real_recording_accuracy": "NOT_EVALUATED",
+  "online_song_downloaded": false
+}
