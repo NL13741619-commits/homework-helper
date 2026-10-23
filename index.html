@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>曙光城 · AIVAULT 第二基地</title>
+<style>
+:root{
+  --bg:#070b14;
+  --card:#101826;
+  --accent:#7eb6ff;
+  --glow:#c9e4ff;
+  --text:#e8f0ff;
+  --muted:#8aa0c0;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(ellipse at top,#1a2744 0%,var(--bg) 60%);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+.wrap{
+  max-width:560px;
+  width:100%;
+  background:var(--card);
+  border:1px solid rgba(126,182,255,.25);
+  border-radius:20px;
+  padding:36px 28px;
+  box-shadow:0 0 60px rgba(126,182,255,.08);
+  text-align:center;
+}
+.sun{
+  width:72px;height:72px;margin:0 auto 16px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#fff 0%,#ffe9a8 25%,#ffb347 60%,transparent 70%);
+  box-shadow:0 0 40px #ffb347;
+  animation:rise 4s ease-in-out infinite alternate;
+}
+@keyframes rise{
+  from{transform:translateY(6px);opacity:.85}
+  to{transform:translateY(-4px);opacity:1}
+}
+h1{
+  margin:0 0 6px;
+  font-size:32px;
+  letter-spacing:2px;
+  background:linear-gradient(90deg,var(--glow),var(--accent));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.sub{color:var(--muted);margin-bottom:28px;font-size:14px}
+.links{display:flex;flex-direction:column;gap:12px}
+a.btn{
+  display:block;
+  padding:14px 18px;
+  border-radius:12px;
+  text-decoration:none;
+  color:var(--text);
+  background:rgba(126,182,255,.08);
+  border:1px solid rgba(126,182,255,.3);
+  transition:.2s;
+}
+a.btn:hover{background:rgba(126,182,255,.18);border-color:var(--accent)}
+a.btn strong{display:block;font-size:16px}
+a.btn small{color:var(--muted);font-size:12px}
+.note{margin-top:24px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sun"></div>
+  <h1>曙光城</h1>
+  <div class="sub">AIVAULT 第二基地 · Dawn Light</div>
+  <div class="links">
+    <a class="btn" href="https://github.com/NL13741619-commits/homework-helper/issues/1">
+      <strong>城主收件匣</strong>
+      <small>第二基地固定協作入口 Issue #1</small>
+    </a>
+    <a class="btn" href="https://github.com/m9wmtcb782-arch/AIVAULT/issues/30">
+      <strong>主城回信</strong>
+      <small>第一基地暗星 Issue #30</small>
+    </a>
+    <a class="btn" href="https://github.com/NL13741619-commits/homework-helper/tree/feature/aivault-rebuild/aivault/dawn">
+      <strong>曙光程式源</strong>
+      <small>施工分支 aivault/dawn</small>
+    </a>
+  </div>
+  <div class="note">舊作業輔助入口已替換。安全團聚不受影響。</div>
+</div>
+</body>
+</html>
