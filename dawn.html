@@ -17,7 +17,7 @@ header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;
 .tab{padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:#fff;font-size:13px;color:var(--muted)}
 .tab.active{background:#fff8e8;border-color:var(--sun);color:#a06a20}
 .bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff}
-.avatar{width:28px;height:28px;border-radius:50%;background:#222;display:grid;place-items:center;font-size:14px}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ffe9a8,#ffb347);display:grid;place-items:center;font-size:14px}
 .title{font-weight:700;font-size:14px;flex:1}
 .back{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:4px 8px;border-radius:12px}
 .chat{padding:12px;min-height:40vh;max-height:50vh;overflow:auto}
@@ -63,25 +63,24 @@ header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;
 </head>
 <body>
 <div class="tabs">
-  <div class="tab active">🤝 AI 協作池</div>
-  <div class="tab">⚡ 算力池</div>
+  <div class="tab active">🤝 AI 協作</div>
 </div>
 <div class="bar">
-  <div class="avatar">🌑</div>
+  <div class="avatar">🌞</div>
   <div class="title">曙光</div>
   <span class="sun-ico">🌞</span>
   <a class="back" href="index.html">← 返回</a>
 </div>
 <div class="chat" id="chat"></div>
 <div class="panel">
-  <h4>🌞 曙光數字人 <span class="dot"></span> 已連結</h4>
+  <h4>🌞 曙光 <span class="dot"></span> 已連結</h4>
   <div class="stage"><div class="sun"></div></div>
   <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:8px">👂 曙光正在聆聽</div>
   <div class="grid">
-    <button id="link">🔗 連結即時暗星</button>
-    <button id="expr">▶ 表情測試</button>
-    <button id="together">🌙🌞 一起聊</button>
-    <button id="chatbtn">🌙🌞 互聊</button>
+    <button id="expr">▶ 表情</button>
+    <button id="happy">開心</button>
+    <button id="sad">難過</button>
+    <button id="think">思考</button>
   </div>
 </div>
 <div class="input-bar">
@@ -93,7 +92,7 @@ const chat=document.getElementById('chat'),q=document.getElementById('q')
 function add(role,text){
   const m=document.createElement('div')
   m.className='msg '+(role==='user'?'user':'ai')
-  m.innerHTML='<span class="sun-ico">'+(role==='user'?'':'\ud83c\udf1e')+'</span><div class="bubble">'+text+'</div>'
+  m.innerHTML='<span class="sun-ico">'+(role==='user'?'':'🌞')+'</span><div class="bubble">'+text+'</div>'
   chat.appendChild(m)
   chat.scrollTop=chat.scrollHeight
 }
@@ -104,10 +103,10 @@ document.getElementById('send').onclick=()=>{
   q.value=''
   setTimeout(()=>add('ai','曙光已收到。'),300)
 }
-document.getElementById('link').onclick=()=>add('ai','連結即時暗星（骨架）')
-document.getElementById('expr').onclick=()=>add('ai','表情測試（骨架）')
-document.getElementById('together').onclick=()=>add('ai','一起聊（骨架）')
-document.getElementById('chatbtn').onclick=()=>add('ai','互聊（骨架）')
+document.getElementById('expr').onclick=()=>add('ai','曙光表情：平靜')
+document.getElementById('happy').onclick=()=>add('ai','曙光表情：開心')
+document.getElementById('sad').onclick=()=>add('ai','曙光表情：難過')
+document.getElementById('think').onclick=()=>add('ai','曙光表情：思考')
 </script>
 </body>
 </html>
