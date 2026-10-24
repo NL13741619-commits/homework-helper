@@ -1,0 +1,136 @@
+{
+  "title": "小太陽亮晶晶（原創清唱試聽）",
+  "lyrics": "小太陽亮晶晶陪我看星星",
+  "engine": "dawn-ref-world-pitch-dsp-v0",
+  "label": "DSP_REFERENCE_CLONE — NOT neural singing, NOT product AVAILABLE",
+  "status": "EXPERIMENTAL_DSP_FROM_REFERENCE_WAV",
+  "trained_singing_model": false,
+  "neural_tts": "BLOCKED_NEED_GPU",
+  "reference_wav": "/workspace/reports/dawn-voice/dawn-natural-female-v2.wav",
+  "reference_sha256": "75f94ca3ae9d8746f2bcf0c22e184fb146aceb3fb46279cee6045fe5a5f108ce",
+  "duration_seconds": 6.05,
+  "generation_seconds": 0.4,
+  "sample_rate": 24000,
+  "artifact": {
+    "path": "/workspace/reports/dawn-singing/zh-female-acapella-dsp.wav",
+    "bytes": 290444,
+    "sha256": "e68a7c67ba3ec06c304bc8e004e1e051a150839a80b81ea0cb8663321774a389"
+  },
+  "pitch": {
+    "cents_min": 0.6423711617572934,
+    "cents_max": 37.08958289276664,
+    "cents_median": 9.338503735461954,
+    "notes": [
+      {
+        "lyric": "小",
+        "midi": 60,
+        "target_hz": 261.6255653005986,
+        "start_seconds": 0.0,
+        "end_seconds": 0.55,
+        "measured_hz": 261.84689111779016,
+        "cents_error": 1.463942596380684
+      },
+      {
+        "lyric": "太",
+        "midi": 64,
+        "target_hz": 329.6275569128699,
+        "start_seconds": 0.55,
+        "end_seconds": 1.1,
+        "measured_hz": 330.6223271139935,
+        "cents_error": 5.216756225099504
+      },
+      {
+        "lyric": "陽",
+        "midi": 67,
+        "target_hz": 391.99543598174927,
+        "start_seconds": 1.1,
+        "end_seconds": 1.65,
+        "measured_hz": 393.04541434981707,
+        "cents_error": 4.630993112576623
+      },
+      {
+        "lyric": "亮",
+        "midi": 64,
+        "target_hz": 329.6275569128699,
+        "start_seconds": 1.65,
+        "end_seconds": 2.2,
+        "measured_hz": 329.74988729628683,
+        "cents_error": 0.6423711617572934
+      },
+      {
+        "lyric": "晶",
+        "midi": 62,
+        "target_hz": 293.6647679174076,
+        "start_seconds": 2.2,
+        "end_seconds": 2.75,
+        "measured_hz": 294.8855632854576,
+        "cents_error": 7.182004417087967
+      },
+      {
+        "lyric": "晶",
+        "midi": 65,
+        "target_hz": 349.2282314330039,
+        "start_seconds": 2.75,
+        "end_seconds": 3.3,
+        "measured_hz": 351.1171041935436,
+        "cents_error": 9.338503735461954
+      },
+      {
+        "lyric": "陪",
+        "midi": 69,
+        "target_hz": 440.0,
+        "start_seconds": 3.3,
+        "end_seconds": 3.85,
+        "measured_hz": 430.67379342461396,
+        "cents_error": 37.08958289276664
+      },
+      {
+        "lyric": "我",
+        "midi": 67,
+        "target_hz": 391.99543598174927,
+        "start_seconds": 3.85,
+        "end_seconds": 4.4,
+        "measured_hz": 395.0190142664978,
+        "cents_error": 13.302290519431871
+      },
+      {
+        "lyric": "看",
+        "midi": 64,
+        "target_hz": 329.6275569128699,
+        "start_seconds": 4.4,
+        "end_seconds": 4.95,
+        "measured_hz": 327.813157054522,
+        "cents_error": 9.555717257864202
+      },
+      {
+        "lyric": "星",
+        "midi": 67,
+        "target_hz": 391.99543598174927,
+        "start_seconds": 4.95,
+        "end_seconds": 5.5,
+        "measured_hz": 395.01901426649613,
+        "cents_error": 13.302290519424623
+      },
+      {
+        "lyric": "星",
+        "midi": 72,
+        "target_hz": 523.2511306011972,
+        "start_seconds": 5.5,
+        "end_seconds": 6.05,
+        "measured_hz": 516.988042225655,
+        "cents_error": 20.847134299459608
+      }
+    ]
+  },
+  "honest_scores": {
+    "naturalness": "PARTIAL — approved female recording timbre via WORLD; not neural singing",
+    "pitch": "median cents_error=9.338503735461954 (per-note, controlled melody)",
+    "articulation": "FAIL for Chinese lyrics — pitch-shifted grains, NOT sung phonemes; characters not clearly intelligible",
+    "cuts": "20ms fades; grain splicing may be audible",
+    "generation_time_sec": 0.4
+  },
+  "本地可執行": true,
+  "後端已部署": false,
+  "網站已接通": false,
+  "disclaimer": "dawn-natural-female-v2.wav is REFERENCE ONLY — does not prove singing or live voice is live"
+}
