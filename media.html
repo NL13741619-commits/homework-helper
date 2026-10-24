@@ -6,7 +6,7 @@
 <header><div class="sun" aria-hidden="true"></div><strong>AIVAULT · 曙光城媒體中心</strong><a href="app/aivault-home.html">返回主頁</a></header>
 <main>
 <h1>☀ 小太陽／曙光媒體</h1>
-<p>第二基地以曙光為主。下列<strong>免費本機模組</strong>可立即使用；付費／Magic Hour／Gemini Live／image→video 金鑰維持關閉，不得標成可用。</p>
+<p>第二基地以曙光為主。JPG／短片等免費本機模組可試；<strong>語音合成電音已駁回</strong>（預設靜音）。付費／Magic Hour／Gemini Live／image→video 維持關閉。</p>
 <div id="connection" role="status">正在讀取第二基地付費模型目錄狀態…</div>
 
 <div class="grid">
@@ -18,17 +18,22 @@
 </section>
 
 <section>
-  <h2>☀ 免費語音（非 Gemini Live）</h2>
-  <div class="badge"><span class="ok">AVAILABLE</span> · 瀏覽器 Web Speech<br><span class="bad">DISABLED</span> · Gemini Live（政策禁止）</div>
-  <p>小太陽朗讀與聽一句，走系統語音。自架 Qwen3-TTS 尚未部署。</p>
-  <div class="links"><a href="app/dawn-voice-free.html">小太陽免費語音</a><a href="dawn.html">曙光對話入口</a></div>
+  <h2>☀ 曙光語音</h2>
+  <div class="badge"><span class="bad">已駁回／暫代，非曙光正式聲音</span><br>
+瀏覽器 Web Speech／speechSynthesis 產品播音：<strong>預設靜音</strong><br>
+<span class="bad">PENDING_NATURAL_CLONE</span> · dawn-natural-female-v2.wav MISSING<br>
+<span class="bad">BLOCKED_NO_NATURAL_TTS</span> · 神經 TTS 未部署<br>
+<span class="bad">DISABLED</span> · Gemini Live</div>
+  <p>正式聲線＝認可自然 wav + 免費神經 TTS。不得把合成電音標 AVAILABLE。</p>
+  <div class="links"><a href="app/dawn-voice-free.html">語音狀態（預設靜音）</a><a href="app/dawn-own-voice-test.html">自建測試（字幕／靜音）</a><a href="dawn.html">曙光對話入口</a></div>
 </section>
 
 <section>
-  <h2>☀ 歌唱原型（DSP）</h2>
-  <div class="badge"><span class="bad">EXPERIMENTAL_DSP_SINGING</span> · Web Audio 音高／節拍<br>不是神經歌唱；不可標 AVAILABLE</div>
-  <p>施工單 #22／#24 最低可聽原型。進階 WORLD／旋律分析見 Draft PR #21／#25。</p>
-  <div class="links"><a href="app/dawn-music-free.html">小太陽唱四小節</a></div>
+  <h2>☀ 歌唱實驗（非產品聲）</h2>
+  <div class="badge"><span class="bad">EXPERIMENTAL_DSP_SINGING</span> · 振盪器電子音<br>
+<strong>不是</strong>曙光／小太陽產品歌唱聲；禁止行銷為正式演唱</div>
+  <p>僅音高／節拍實驗。產品歌唱需自然聲線（尚未就緒）。</p>
+  <div class="links"><a href="app/dawn-music-free.html">DSP 實驗頁（非產品）</a></div>
 </section>
 
 <section>

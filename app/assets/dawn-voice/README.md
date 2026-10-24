@@ -1,23 +1,20 @@
 # 曙光自有聲線資產（第二基地）
 
+## 產品政策（2026-10-24）
+
+使用者駁回電腦合成／電音感聲線。**瀏覽器 `speechSynthesis` 不是曙光正式聲音**；產品播音預設靜音，直到：
+
+1. 認可參考檔 `dawn-natural-female-v2.wav` 到位，且
+2. 免費神經 TTS（例如自架 Qwen3-TTS）可依該參考發聲。
+
+狀態標示：`PENDING_NATURAL_CLONE`／`BLOCKED_NO_NATURAL_TTS`。不得標 AVAILABLE。
+
 ## dawn-natural-female-v2.wav
 
 - **狀態：MISSING（2026-10-24）**
-- 逸豪已認可的自然、年輕感女聲參考檔。
-- 倉庫、GitHub Releases、本機 attachments、主城資產中均未找到此檔名。
-- **不得**把檔名或 Gemini prebuilt 聲線名稱當成已接入的認可音色。
+- 倉庫、Releases、attachments、主城資產均未找到此檔。
+- 放入：`app/assets/dawn-voice/dawn-natural-female-v2.wav`
+- 有檔：可「預覽參考」；仍不是即時產品 TTS。
+- 無檔：保持靜音；除錯合成僅在明確勾選／`?synth=1` 且標「已駁回」。
 
-### 放入方式
-
-將實體檔放到本目錄：
-
-```text
-app/assets/dawn-voice/dawn-natural-female-v2.wav
-```
-
-測試頁會自動偵測：
-
-- 有檔：顯示「認可參考聲可預覽」並提供試聽（仍不是即時 TTS 引擎）。
-- 無檔：顯示 MISSING，改用瀏覽器 `speechSynthesis` 臨時語音，並標示 **TEMPORARY／非認可音色**。
-
-自有串流 TTS（以 v2 為音色）屬後續工程，本目錄只負責資產到位與偵測。
+Gemini Live／付費 TTS：禁用。

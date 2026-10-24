@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#1a140e">
-<title>曙光自建即時語音測試（非 Gemini Live）</title>
+<title>曙光自建即時語音測試（非 Gemini Live · 拒電音合成）</title>
 <style>
 :root{--bg:#1a140e;--card:#2a2118;--line:#3d3226;--text:#fff8ef;--muted:#b8a48a;--sun:#ffb347;--ok:#86efac;--warn:#fbbf24;--err:#f87171}
 *{box-sizing:border-box}
@@ -16,6 +16,7 @@ h1{font-size:16px;margin:0}
 .badge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);margin-left:auto}
 .badge.warn{color:var(--warn);border-color:#785f1a}
 .badge.ok{color:var(--ok);border-color:#14532d}
+.badge.err{color:var(--err);border-color:#7f1d1d}
 main{padding:12px;display:grid;gap:12px;max-width:720px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
 .card h2{font-size:13px;margin:0 0 8px;color:var(--muted);font-weight:600}
@@ -42,6 +43,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .composer{display:flex;gap:8px}
 .composer input{flex:1;border-radius:12px;border:1px solid var(--line);background:#1a140e;color:var(--text);padding:10px 12px;font:inherit}
 .notice{font-size:12px;color:var(--muted);line-height:1.6}
+.banner{background:#4c0519;border:1px solid #7f1d1d;color:#fecaca;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.55}
 a{color:var(--sun)}
 </style>
 </head>
@@ -50,19 +52,25 @@ a{color:var(--sun)}
   <div class="sun" aria-hidden="true"></div>
   <div>
     <h1>☀ 曙光自建即時語音</h1>
-    <p class="sub">第二基地獨立測試頁 · 禁止 Gemini Live · 小太陽優先</p>
+    <p class="sub">第二基地獨立測試頁 · 禁止 Gemini Live · 拒絕瀏覽器電音合成當產品聲</p>
   </div>
-  <span class="badge warn" id="liveBadge">Gemini Live：未使用</span>
+  <span class="badge warn" id="liveBadge">已駁回／暫代，非曙光正式聲音</span>
 </header>
 <main>
+  <section class="banner" role="status">
+    <strong>產品音色政策：</strong>瀏覽器 <code>speechSynthesis</code>（電音／合成腔）<strong>已被拒絕</strong>當曙光產品聲。
+    目前字幕可測；產品播音<strong>靜音</strong>，等待認可參考檔
+    <code>dawn-natural-female-v2.wav</code> + 免費自然神經 TTS（例如未來 Qwen3-TTS）。
+  </section>
+
   <section class="card">
     <h2>狀態</h2>
-    <div id="status" data-k="info">尚未開始。建議先用 ?mock=1 驗證流程。</div>
+    <div id="status" data-k="info">尚未開始。建議先用 ?mock=1 驗證字幕／流程（不會播電音）。</div>
     <div class="meta" style="margin-top:10px">
       <div>認可聲線 wav<b id="wavMeta">檢查中…</b></div>
       <div>對話來源<b id="modeMeta">—</b></div>
-      <div>STT<b id="sttMeta">—</b></div>
-      <div>TTS<b id="ttsMeta">瀏覽器臨時 speechSynthesis</b></div>
+      <div>STT（辨識）<b id="sttMeta">—</b></div>
+      <div>產品 TTS<b id="ttsMeta">REJECTED · 靜音等待自然神經 TTS</b></div>
     </div>
   </section>
 
@@ -86,13 +94,15 @@ a{color:var(--sun)}
     </form>
     <p class="notice" style="margin-top:10px">
       關閉開關：網址加 <code>?voice=0</code>，或 <code>localStorage.DAWN_OWN_VOICE_OFF=1</code>。<br>
-      MOCK：<code>?mock=1</code>。本頁不呼叫 dawn-city-ai Live、不呼叫圖生影片。<br>
+      MOCK：<code>?mock=1</code>。除錯電音（非產品）：<code>?synth=1</code> — 仍標 REJECTED。<br>
+      本頁不呼叫 dawn-city-ai Live、不呼叫圖生影片、不播瀏覽器合成當產品聲。<br>
       <a href="../index.html">回曙光城首頁</a>
       · <a href="dawn-own-voice-test.html?mock=1">開 MOCK</a>
+      · <a href="../docs/DAWN-OWN-REALTIME-VOICE.md">文件</a>
     </p>
   </section>
 </main>
-<script src="dawn-own-voice.js?v=20261024-own1"></script>
+<script src="dawn-own-voice.js?v=20261024-reject-synth"></script>
 <script>
 (function(){
   var log=document.getElementById('log');
@@ -105,21 +115,37 @@ a{color:var(--sun)}
       var who=document.createElement('div');who.className='who';who.textContent=role==='user'?'你':'☀ 曙光';
       var b=document.createElement('div');b.className='bubble';b.textContent=text;
       row.append(who,b);
-      if(meta&&meta.source){var s=document.createElement('div');s.className='src';s.textContent='source='+meta.source+(meta.model?' · '+meta.model:'');row.append(s);}
+      if(meta&&meta.source){
+        var s=document.createElement('div');s.className='src';
+        s.textContent='source='+meta.source+(meta.model?' · '+meta.model:'')+(meta.tts?' · tts='+meta.tts:'');
+        row.append(s);
+      }
       log.append(row);log.scrollTop=log.scrollHeight;
       document.getElementById('modeMeta').textContent=meta&&meta.source?meta.source:document.getElementById('modeMeta').textContent;
     },
-    onInterim:function(t){document.getElementById('interim').textContent=t?'辨識中：'+t:'';}
+    onInterim:function(t){document.getElementById('interim').textContent=t?'辨識中：'+t:'';},
+    onTtsPolicy:function(p){
+      document.getElementById('ttsMeta').textContent=
+        p&&p.productPlayback===false
+          ? '靜音 · REJECTED_BROWSER_SYNTH · 等待 wav+神經 TTS'
+          : document.getElementById('ttsMeta').textContent;
+    }
   });
 
   var Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  document.getElementById('sttMeta').textContent=Rec?'Web Speech API':'NOT LIVE（無 SpeechRecognition，請打字）';
+  document.getElementById('sttMeta').textContent=Rec?'Web Speech API（僅辨識，非產品聲）':'NOT LIVE（無 SpeechRecognition，請打字）';
   document.getElementById('modeMeta').textContent=/mock=1/.test(location.search)?'MOCK':'AUTO（腦閘道失敗則 MOCK）';
+  document.getElementById('ttsMeta').textContent=
+    /synth=1/.test(location.search)
+      ? 'DEBUG ?synth=1 · REJECTED（非產品）'
+      : 'REJECTED · 產品播音靜音 · 等待 dawn-natural-female-v2.wav';
 
   engine.probeWav().then(function(st){
-    document.getElementById('wavMeta').textContent=st==='PRESENT'?'PRESENT（可預覽，非即時 TTS）':'MISSING（臨時 TTS，非認可音色）';
+    document.getElementById('wavMeta').textContent=
+      st==='PRESENT'
+        ? 'PRESENT（可預覽參考檔；神經 TTS 尚未接）'
+        : 'MISSING · 請向使用者／GPT 索取 dawn-natural-female-v2.wav';
     document.getElementById('btnWav').disabled=st!=='PRESENT';
-    document.getElementById('ttsMeta').textContent=st==='PRESENT'?'臨時 speechSynthesis（wav 僅預覽）':'臨時 speechSynthesis · wav MISSING';
   });
 
   var btnStart=document.getElementById('btnStart');
@@ -144,6 +170,12 @@ a{color:var(--sun)}
     document.getElementById('text').value='';
     await engine.sendText(v);
   };
+
+  if(/[?&]demo=1(?:&|$)/.test(location.search)){
+    statusEl.textContent='DEMO MOCK：自動送出一句（未開麥克風 · 不播電音）';
+    statusEl.dataset.k='warn';
+    setTimeout(function(){engine.sendText('你好，曙光');},400);
+  }
   window.addEventListener('pagehide',function(){engine.stop(false);});
   window.addEventListener('beforeunload',function(){engine.stop(false);});
 })();
