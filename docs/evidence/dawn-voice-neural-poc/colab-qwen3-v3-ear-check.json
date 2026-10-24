@@ -1,0 +1,61 @@
+{
+  "title": "Dawn neural clone Colab Qwen3-TTS v3 ear-check",
+  "date_taipei": "2026-10-24",
+  "timezone": "Asia/Taipei",
+  "user_message_id": "t324u",
+  "user_verdict_zh": "很好",
+  "ear_check": "PASS",
+  "status_one_liner": "SPEAK_CANDIDATES_EAR_OK · LIVE_TTS BLOCKED_NEED_GPU_HOST · NOT AVAILABLE",
+  "available": false,
+  "live_tts": "BLOCKED_NEED_GPU_HOST",
+  "engine": {
+    "name": "Qwen3-TTS",
+    "host": "google_colab_free_t4",
+    "license": "Apache-2.0"
+  },
+  "speak_reference": {
+    "path": "app/assets/dawn-voice/dawn-natural-female-v3-speak.wav",
+    "sha256": "c42a877c6af9cb48384e4b9a8bf3d24aac137107faf49d5201955df69398cf1d",
+    "label": "v3"
+  },
+  "candidates": [
+    {
+      "file": "dawn-v3-qwen3-01-greeting.wav",
+      "role": "greeting",
+      "duration_s": 4.32,
+      "sample_rate": 24000,
+      "channels": 1,
+      "sha256": "0735009d9006833511e17e315d4071f129b681198d41cc40c14a73f5ddf333b9"
+    },
+    {
+      "file": "dawn-v3-qwen3-02-question.wav",
+      "role": "question",
+      "duration_s": 3.52,
+      "sample_rate": 24000,
+      "channels": 1,
+      "sha256": "4235d49f26c70d12167112ad4aad8734f79897a5da8b353b773cb06eb115dd41"
+    },
+    {
+      "file": "dawn-v3-qwen3-03-calm.wav",
+      "role": "calm",
+      "duration_s": 6.08,
+      "sample_rate": 24000,
+      "channels": 1,
+      "sha256": "338ae80828d566a11a93d2b69f057962afffae7cf7a28fc9893c02cfe4f1f9fc"
+    }
+  ],
+  "paths": {
+    "assets": "app/assets/dawn-voice/colab-qwen3-v3-candidates/",
+    "evidence": "docs/evidence/dawn-voice-neural-poc/colab-qwen3-v3-candidates/",
+    "reports": "/workspace/reports/dawn-voice/neural-poc/colab-qwen3-v3-candidates/",
+    "user_zip_source": "/workspace/reports/dawn-voice/neural-poc/colab-user-zip/",
+    "attachment_zip": "/home/box/agent-data/agents/8bb7edd6-a612-4fd2-af67-d01927a55809/attachments/ab64f4cbd873b445cbda61a58682027ce663698f163cd3e5d042bff7a1241fbc.zip"
+  },
+  "next": "self_host_gpu_inference_aivault_voice",
+  "forbidden": [
+    "mark_AVAILABLE",
+    "gemini_live_product",
+    "browser_speechSynthesis_product",
+    "paid_apis"
+  ]
+}

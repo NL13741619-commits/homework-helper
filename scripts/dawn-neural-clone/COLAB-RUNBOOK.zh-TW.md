@@ -1,5 +1,9 @@
 # 曙光神經克隆 · Colab 免費 GPU 操作手冊（中文）
 
+> **狀態（2026-10-24 Asia/Taipei）：** Colab 樣品已產出，使用者聽感 **PASS**（t324u 「很好」）。  
+> 權威狀態：`SPEAK_CANDIDATES_EAR_OK · LIVE_TTS BLOCKED_NEED_GPU_HOST · NOT AVAILABLE`  
+> 詳見 `docs/DAWN-NEURAL-CLONE-EAR-CHECK.md`。本手冊仍可供重跑／換句。
+
 > **手機友善：** notebook 會自動從 GitHub 下載 `dawn-natural-female-v3-speak.wav`，一般**不必**找資料夾上傳。你只要：開連結 → Runtime 選 GPU（若有）→ **全部執行**。
 
 
