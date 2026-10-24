@@ -13,17 +13,19 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 - 不修改第一基地 `m9wmtcb782-arch/AIVAULT` 正式頁。
 - 付費閘道 `_shared/paid_gate.ts` 必須遵守；預設禁止。
 
-## 產品音色政策（2026-10-24 · Option B）
+## 產品音色政策（2026-10-24 · Option B · Colab 聽感後）
+
+**一句狀態：** `SPEAK_CANDIDATES_EAR_OK · LIVE_TTS BLOCKED_NEED_GPU_HOST · NOT AVAILABLE`
 
 | 項目 | 狀態 |
 |------|------|
 | 瀏覽器 `speechSynthesis` 當產品聲 | **REJECTED** |
-| 產品播音 | **MUTED** 直到神經克隆聽感通過 |
-| **`dawn-natural-female-v3-speak.wav`（暫定說話 TARGET）** | **REFERENCE_TARGET_READY**（Max Factor VO · Demucs；見 `DAWN-SPEAKING-V3.md`） |
+| 產品即時播音（LIVE TTS） | **MUTED**／**BLOCKED_NEED_GPU_HOST**（需自架 GPU） |
+| **`dawn-natural-female-v3-speak.wav`（說話 TARGET）** | **REFERENCE_TARGET_READY**（見 `DAWN-SPEAKING-V3.md`） |
+| **Colab Qwen3-TTS 樣品**（`colab-qwen3-v3-candidates/`） | **SPEAK_CANDIDATES_EAR_OK**（t324u 「很好」· 見 `DAWN-NEURAL-CLONE-EAR-CHECK.md`） |
 | **`dawn-natural-female-v2.wav`** | 早期說話錨點，**保留** |
 | **`dawn-singing-melody-ref-v1.wav`** | **SINGING_MELODY_REF_READY** — 清唱／音律 ONLY（Option B） |
-| Qwen3-TTS／CosyVoice | **BLOCKED_NEED_GPU**（施工機無 GPU、無 torch） |
-| 產品標 AVAILABLE | **禁止**，直到聽感驗收通過 |
+| 產品標 AVAILABLE | **禁止**（樣品 PASS ≠ LIVE TTS 已接通） |
 
 ## MVP 管線（本輪）
 
@@ -47,12 +49,28 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 ## 驗收邊界
 
 - ✅ 可測：mic、VAD 能量條、EOT 計數、字幕、插話、重連、釋放、wav 投放校驗（RIFF）
-- ❌ 未宣稱：產品自然女聲已接通、iPhone Safari 成功、AVAILABLE
-- ❌ mock ≠ 真實模型；字幕 ≠ 產品播音
+- ✅ Colab Qwen3-TTS 樣品聽感 PASS（t324u）→ `SPEAK_CANDIDATES_EAR_OK`（非 LIVE）
+- ❌ 未宣稱：產品即時自然女聲已接通、LIVE TTS、AVAILABLE
+- ❌ mock ≠ 真實模型；字幕 ≠ 產品播音；樣品 PASS ≠ AVAILABLE
 
-## 下一步（需使用者）
+## 下一步
 
-1. 說話暫定：`dawn-natural-female-v3-speak.wav`（Demucs；廣告腔／可能殘 BGM）— 見 `DAWN-SPEAKING-V3.md`。
-2. 唱歌／音律：`dawn-singing-melody-ref-v1.wav`（Option B，非說話）。
-3. 核准免費 GPU／自架 Qwen3-TTS 或 CosyVoice，以 **v3** 為克隆錨點。
-4. 聽感通過（含殘 BGM／廣告腔可否接受）才可標 AVAILABLE。
+1. **（已完成）Colab 免費 T4** 克隆 v3 → 樣品入庫 → 使用者聽感 **PASS**（t324u）。見 `docs/DAWN-NEURAL-CLONE-EAR-CHECK.md`。
+2. **（進行中）GPU LIVE 主機計畫** — 見 **`docs/GPU-LIVE-TTS-HOST-PLAN.md`**（報告：`GPU-LIVE-TTS-HOST-PLAN`）與骨架 **`scripts/dawn-neural-clone/gpu-host/`**。Colab **不適合**常駐即時；首選創辦人自有 NVIDIA PC（選項 A）。
+3. **（下一個實作）** 有 GPU 後跑 `app/services/aivault-voice`（Qwen3-TTS）接 `DawnNeuralTts` — **LIVE TTS 仍 BLOCKED_NEED_GPU_HOST**。
+4. 唱歌／音律：`dawn-singing-melody-ref-v1.wav`（Option B，非說話）。
+5. LIVE 接線＋產品聽感前 **禁止** 標 AVAILABLE。
+
+## 神經克隆進度（2026-10-24 · Colab 解鎖完成）
+
+| 階段 | 狀態 |
+|------|------|
+| Colab T4 · Qwen3-TTS 樣品 | **DONE** · EAR_OK |
+| 樣品路徑 | `app/assets/dawn-voice/colab-qwen3-v3-candidates/` |
+| 聽感證據 | `docs/DAWN-NEURAL-CLONE-EAR-CHECK.md` + `docs/evidence/dawn-voice-neural-poc/colab-qwen3-v3-ear-check.json` |
+| 操作手冊／Notebook | `scripts/dawn-neural-clone/` |
+| 完整計畫 | `docs/NEURAL-CLONE-DEPLOY-PLAN.md` |
+| LIVE 產品推論 | **BLOCKED_NEED_GPU_HOST**（計畫：`GPU-LIVE-TTS-HOST-PLAN.md` · 骨架：`scripts/dawn-neural-clone/gpu-host/` · 實作仍 = aivault-voice） |
+
+**禁止：** Gemini Live 當產品聲；樣品 PASS 就標 `AVAILABLE`。  
+本箱仍無 GPU；產品 **MUTED**／**NOT AVAILABLE**。

@@ -1,0 +1,47 @@
+{
+  "title": "Dawn neural clone deploy plan",
+  "date_taipei": "2026-10-24",
+  "user_decision": "t314_colab_free_gpu",
+  "ear_check": {
+    "user_message_id": "t324u",
+    "verdict_zh": "很好",
+    "result": "PASS"
+  },
+  "status": "SPEAK_CANDIDATES_EAR_OK",
+  "live_tts": "BLOCKED_NEED_GPU_HOST",
+  "available": false,
+  "product_status_one_liner": "SPEAK_CANDIDATES_EAR_OK · LIVE_TTS BLOCKED_NEED_GPU_HOST · NOT AVAILABLE",
+  "approved_next_step": "self_host_gpu_inference_aivault_voice",
+  "colab_unlock": "DONE",
+  "box": {
+    "nvidia_smi": false,
+    "can_run_product_neural_now": false,
+    "cpu_openvoice_poc": "RAN_PRODUCED_WAV_NOT_PRODUCT"
+  },
+  "speak_reference": {
+    "path": "app/assets/dawn-voice/dawn-natural-female-v3-speak.wav",
+    "sha256": "c42a877c6af9cb48384e4b9a8bf3d24aac137107faf49d5201955df69398cf1d"
+  },
+  "candidates": {
+    "dir": "app/assets/dawn-voice/colab-qwen3-v3-candidates/",
+    "engine": "Qwen3-TTS",
+    "host": "google_colab_free_t4",
+    "files": [
+      "dawn-v3-qwen3-01-greeting.wav",
+      "dawn-v3-qwen3-02-question.wav",
+      "dawn-v3-qwen3-03-calm.wav"
+    ]
+  },
+  "docs": {
+    "ear_check": "docs/DAWN-NEURAL-CLONE-EAR-CHECK.md",
+    "ear_check_json": "docs/evidence/dawn-voice-neural-poc/colab-qwen3-v3-ear-check.json",
+    "notebook": "scripts/dawn-neural-clone/dawn-v3-colab-qwen3-tts.ipynb",
+    "runbook_zh": "scripts/dawn-neural-clone/COLAB-RUNBOOK.zh-TW.md"
+  },
+  "forbidden": [
+    "paid_apis",
+    "gemini_live_product",
+    "browser_speechSynthesis_product",
+    "fake_AVAILABLE"
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "title": "Dawn LIVE TTS GPU host plan",
+  "date_taipei": "2026-10-24T14:44+08:00",
+  "user_choice": "plan_gpu_host",
+  "merge_pr_36": false,
+  "product_status_one_liner": "SPEAK_CANDIDATES_EAR_OK · LIVE_TTS BLOCKED_NEED_GPU_HOST · NOT AVAILABLE",
+  "available": false,
+  "live_tts": "BLOCKED_NEED_GPU_HOST",
+  "speak_reference": {
+    "path": "app/assets/dawn-voice/dawn-natural-female-v3-speak.wav",
+    "sha256": "c42a877c6af9cb48384e4b9a8bf3d24aac137107faf49d5201955df69398cf1d"
+  },
+  "candidates_ear_ok": "app/assets/dawn-voice/colab-qwen3-v3-candidates/",
+  "stack": {
+    "engine": "Qwen3-TTS",
+    "license": "Apache-2.0",
+    "service": "app/services/aivault-voice",
+    "scaffold": "scripts/dawn-neural-clone/gpu-host",
+    "client": "app/dawn-neural-tts.js",
+    "edge_stub": "supabase/functions/dawn-own-tts",
+    "min_vram_gb_hint": 8,
+    "api": {
+      "health": "GET /health",
+      "speech": "POST /v1/audio/speech",
+      "auth": "Bearer AIVAULT_VOICE_TOKEN"
+    }
+  },
+  "split": {
+    "client": [
+      "mic",
+      "vad_eot",
+      "stt_recognize_only",
+      "pcm_playback",
+      "barge_in"
+    ],
+    "gpu_host": [
+      "qwen3_tts_inference",
+      "v3_voice_clone_prompt",
+      "wav_response"
+    ]
+  },
+  "options_ranked": [
+    {
+      "id": "A",
+      "name": "founder_own_nvidia_pc",
+      "realtime": true,
+      "recommended": true,
+      "cost": "electricity_only"
+    },
+    {
+      "id": "B",
+      "name": "colab_free_gpu",
+      "realtime": false,
+      "role": "batch_samples_only",
+      "note": "already_done_for_ear_check"
+    },
+    {
+      "id": "C",
+      "name": "cheap_cloud_gpu",
+      "realtime": true,
+      "requires": "explicit_paid_approval",
+      "phase_a_default": "deny"
+    },
+    {
+      "id": "D",
+      "name": "aivault_compute_pool",
+      "realtime": false,
+      "exists": false,
+      "note": "deploy_code_only_no_live_pool_in_docs"
+    }
+  ],
+  "recommended_for_phone_founder": "A_own_gpu_pc_phone_is_client_only",
+  "acceptance": {
+    "arbitrary_mandarin_from_v3": true,
+    "latency_target_s": "2-3_first_complete_utterance_unmeasured",
+    "barge_in": true,
+    "never_available_until_wired_and_live_ear_check": true
+  },
+  "forbidden": [
+    "gemini_live_product",
+    "browser_speechSynthesis_product",
+    "paid_apis_without_approval",
+    "fake_AVAILABLE",
+    "colab_as_always_on_realtime"
+  ],
+  "box": {
+    "nvidia": false,
+    "can_serve_live_now": false
+  },
+  "docs": {
+    "plan_md": "reports/dawn-voice/GPU-LIVE-TTS-HOST-PLAN.md",
+    "repo_mirror": "docs/GPU-LIVE-TTS-HOST-PLAN.md",
+    "realtime_voice": "docs/DAWN-OWN-REALTIME-VOICE.md",
+    "scaffold": "scripts/dawn-neural-clone/gpu-host/"
+  }
+}

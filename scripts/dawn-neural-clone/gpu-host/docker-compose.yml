@@ -1,0 +1,31 @@
+# STUB compose for Dawn LIVE TTS on a real NVIDIA host.
+# On machines WITHOUT NVIDIA Container Toolkit: do not expect inference.
+# health_stub.py is the honest no-GPU path.
+#
+# Usage (GPU host only, after editing .env):
+#   mkdir -p voice-data
+#   cp /path/to/dawn-natural-female-v3-speak.wav voice-data/
+#   docker compose up --build
+#
+# This stub service runs health_stub.py so a mistaken `compose up` on a
+# CPU-only box still returns BLOCKED_NEED_GPU — never fake AVAILABLE.
+# Replace the command with aivault-voice engine.py serve once CUDA image is ready.
+
+services:
+  dawn-tts-health:
+    build: .
+    ports:
+      - "${AIVAULT_VOICE_PORT:-8090}:8090"
+    environment:
+      AIVAULT_VOICE_TOKEN: ${AIVAULT_VOICE_TOKEN:-dev-token-not-for-production-use}
+      AIVAULT_VOICE_PORT: "8090"
+    volumes:
+      - ./voice-data:/data:ro
+    # Uncomment on a real NVIDIA host when switching to engine.py:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]

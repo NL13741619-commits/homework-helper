@@ -1,0 +1,18 @@
+{
+  "engine": "OpenVoice-V1",
+  "device": "cpu",
+  "ref": "/workspace/homework-helper/app/assets/dawn-voice/dawn-natural-female-v3-speak.wav",
+  "text": "你好，我是曙光。今天想先聽哪一段？",
+  "status": "RAN_PRODUCED_WAV",
+  "started": "2026-10-24T13:57:26+0800",
+  "note": "SE extract without whisper VAD — whole 12s ref as one segment",
+  "output": "/workspace/reports/dawn-voice/neural-poc/poc-openvoice-v1-zh-from-v3.wav",
+  "output_bytes": 162860,
+  "elapsed_s": 6.4,
+  "quality_verdict": "POC_ONLY_NOT_PRODUCT — ear-check required; do NOT mark AVAILABLE",
+  "product_status": "STILL_BLOCKED_NEED_GPU",
+  "duration_s": 3.69,
+  "sample_rate": 22050,
+  "energy_note": "RMS_CV~1.10 (energy only; not F0)",
+  "ear_check": "PENDING_USER — agent did not mark AVAILABLE"
+}
