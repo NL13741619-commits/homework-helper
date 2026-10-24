@@ -22,6 +22,7 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 | **`dawn-natural-female-v2.wav`（說話參考）** | **REFERENCE_WAV_READY**（現行對話說話錨點） |
 | **`dawn-singing-melody-ref-v1.wav`（影片音軌）** | **SINGING_MELODY_REF_READY** — 唱歌／音律／抑揚性格 **ONLY**；**不是**說話 TARGET（見 `DAWN-SINGING-MELODY-REF-V1.md`） |
 | 更好說話樣本 | **需要** — 見 `SPEAKING-PROSODY-SAMPLE-NEEDED.md` |
+| Max Factor v3 抽出 | **CANDIDATE_REJECTED_AS_IS**（BGM＋廣告腔；reports only；見 `DAWN-V3-SPEAK-CANDIDATE.md`） |
 | Qwen3-TTS／CosyVoice | **BLOCKED_NEED_GPU**（施工機無 GPU、無 torch） |
 | 產品標 AVAILABLE | **禁止**，直到聽感驗收通過 |
 

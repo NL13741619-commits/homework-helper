@@ -50,7 +50,7 @@
 | F0 median / stdev（粗） | ~247 Hz / **~75 Hz**（唱歌音高走勢代理） |
 | 內容誠實 | ~85% 多說話者清唱；1:04–1:08 合成旁白 → 拒絕當產品聲 |
 
-**對照：** video wav＝**唱歌 F0 研究**；speak target＝**v2** 直到 `dawn-natural-female-v3-speak.wav`（或同等）入庫。  
+**對照：** 清唱 video wav＝**唱歌 F0 研究**；speak target＝**v2**。Max Factor v3 抽出＝`CANDIDATE_REJECTED_AS_IS`（BGM＋廣告腔；見 `DAWN-V3-SPEAK-CANDIDATE.md`），**未**升為說話 TARGET。  
 詳見 `docs/DAWN-SINGING-MELODY-REF-V1.md`。
 
 ## 3. 引擎優先序（免費／自架）

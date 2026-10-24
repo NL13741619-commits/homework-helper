@@ -1,0 +1,38 @@
+{
+  "measured_at": "2026-10-24 13:37 Asia/Taipei",
+  "policy_at": "2026-10-24 13:38 Asia/Taipei",
+  "status": "CANDIDATE_REJECTED_AS_IS",
+  "user_intent": "t306u asked to use this as Dawn speaking voice",
+  "watchVideo": {
+    "speech_not_singing": true,
+    "speaker": "one natural Taiwanese Mandarin female",
+    "reject_reasons": [
+      "loud continuous BGM — bad for clone without vocal isolation",
+      "commercial announcer / sales-pitch prosody — not conversational"
+    ],
+    "recommendation": "NOT recommended as primary realtime speak corpus as-is"
+  },
+  "extract": {
+    "report_wav": "/workspace/reports/dawn-voice/dawn-natural-female-v3-speak-from-video.wav",
+    "in_product_assets": false,
+    "ffmpeg": "pcm_s16le 24000 Hz mono",
+    "bytes": 580240,
+    "duration_s": 12.087,
+    "rms_dbfs": -19.17,
+    "peak_dbfs": -6.15,
+    "sha256": "aff37e2e23005af31065f97d52413e1757f1c42ff64ee9103786c4c1f122ba8d",
+    "pitch_hz": {
+      "median": 201.7,
+      "stdev": 80.6,
+      "voiced_frames": 462
+    }
+  },
+  "product_speak_remains": "app/assets/dawn-voice/dawn-natural-female-v2.wav",
+  "singing_melody_ref": "app/assets/dawn-voice/dawn-singing-melody-ref-v1.wav",
+  "awaiting_user": [
+    "isolate_vocals_then_reassess",
+    "wait_clean_upload",
+    "timbre_only_keep_v2"
+  ],
+  "product_status": "SPEAK: REFERENCE_WAV_READY(v2) · SING_MELODY_REF_READY · v3=CANDIDATE_REJECTED_AS_IS · MUTED/BLOCKED_NEED_GPU · NOT AVAILABLE"
+}
