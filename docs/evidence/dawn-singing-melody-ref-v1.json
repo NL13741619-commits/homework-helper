@@ -1,0 +1,57 @@
+{
+  "measured_at": "2026-10-24 13:27 Asia/Taipei",
+  "policy_updated_at": "2026-10-24 Asia/Taipei",
+  "user_decision": "Option B — singing/melody/prosody-character reference ONLY; NOT realtime speaking TARGET",
+  "source_video": "user attachment mp4 (screen recording ~75.8s, Douyin/清唱 browse UI; ~85% multi-speaker singing; 1:04–1:08 synthetic TTS — reject as product voice)",
+  "extract": {
+    "ffmpeg": "pcm_s16le 24000 Hz mono",
+    "report_wav": "/workspace/reports/dawn-voice/dawn-singing-melody-ref-from-video.wav",
+    "asset_wav": "app/assets/dawn-voice/dawn-singing-melody-ref-v1.wav"
+  },
+  "singing_melody_ref_v1": {
+    "path": "/workspace/reports/dawn-voice/dawn-singing-melody-ref-from-video.wav",
+    "asset_path": "app/assets/dawn-voice/dawn-singing-melody-ref-v1.wav",
+    "role": "SINGING_MELODY_PROSODY_CHARACTER_REF_ONLY",
+    "bytes": 3637730,
+    "duration_s": 75.784,
+    "sample_rate": 24000,
+    "channels": 1,
+    "rms_dbfs": -15.26,
+    "peak_dbfs": -0.41,
+    "sha256": "f067dd215e87d8787b3ca375596b59d44ad369cb74e169f119432696194142ea",
+    "pitch_hz": {
+      "min": 80.3,
+      "median": 247.4,
+      "max": 400.0,
+      "stdev": 75.4,
+      "voiced_frames": 648,
+      "note": "F0 study for singing/melody; NOT speaking-clone corpus"
+    }
+  },
+  "speaking_reference_v2": {
+    "path": "app/assets/dawn-voice/dawn-natural-female-v2.wav",
+    "role": "CURRENT_CONVERSATIONAL_SPEAKING_REFERENCE",
+    "bytes": 247560,
+    "duration_s": 5.156,
+    "sample_rate": 24000,
+    "channels": 1,
+    "rms_dbfs": -23.29,
+    "peak_dbfs": -7.37,
+    "sha256": "75f94ca3ae9d8746f2bcf0c22e184fb146aceb3fb46279cee6045fe5a5f108ce",
+    "pitch_hz": {
+      "min": 89.9,
+      "median": 258.1,
+      "max": 338.0,
+      "stdev": 51.3,
+      "voiced_frames": 47
+    }
+  },
+  "comparison": {
+    "duration": "melody-ref 75.784s vs speak-v2 5.156s",
+    "loudness": "melody-ref RMS -15.26 dBFS vs speak-v2 -23.29 dBFS",
+    "prosody_proxy_pitch_stdev": "melody-ref 75.4 Hz (singing F0 study) vs speak-v2 51.3 Hz",
+    "policy": "Option B: video wav = singing/melody ref ONLY; speak target = dawn-natural-female-v2 until better speak sample; Product TTS BLOCKED_NEED_GPU; NOT AVAILABLE"
+  },
+  "product_status": "NOT AVAILABLE — SPEAK: REFERENCE_WAV_READY (v2) · SING: SINGING_MELODY_REF_READY · BLOCKED_NEED_GPU for neural clone",
+  "speaking_sample_needed": "reports/dawn-voice/SPEAKING-PROSODY-SAMPLE-NEEDED.md"
+}
