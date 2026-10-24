@@ -85,3 +85,7 @@
 - **唱歌／音律**參考：`dawn-singing-melody-ref-v1.wav`（Option B）。
 - 旋律須可對照 MIDI／JSON；F0 隨時間應跟隨指定音符。
 - 詳見 `docs/DAWN-VOICE-AND-SINGING-PLAN.md`。
+
+## 神經克隆下一步（Colab）
+
+使用者已選 **Colab 免費 T4**（t314）。引擎首選 Qwen3-TTS Base 克隆 **v3**；見 `docs/NEURAL-CLONE-DEPLOY-PLAN.md` 與 `scripts/dawn-neural-clone/COLAB-RUNBOOK.zh-TW.md`。聽感通過前狀態維持 `BLOCKED_NEED_GPU`，不得標 `AVAILABLE`。

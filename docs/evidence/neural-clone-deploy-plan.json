@@ -1,0 +1,66 @@
+{
+  "title": "Dawn neural clone deploy plan",
+  "date_taipei": "2026-10-24",
+  "user_decision": "t314_colab_free_gpu",
+  "status": "BLOCKED_NEED_GPU",
+  "approved_next_step": "google_colab_free_t4",
+  "product_status_one_liner": "SPEAK: REFERENCE_TARGET_READY(v3) · NEURAL: BLOCKED_NEED_GPU · NOT AVAILABLE · next=Colab T4 Qwen3-TTS samples",
+  "box": {
+    "nvidia_smi": false,
+    "can_run_product_neural_now": false,
+    "cpu_openvoice_poc": "RAN_PRODUCED_WAV_NOT_PRODUCT"
+  },
+  "speak_reference": {
+    "path": "app/assets/dawn-voice/dawn-natural-female-v3-speak.wav",
+    "sha256": "c42a877c6af9cb48384e4b9a8bf3d24aac137107faf49d5201955df69398cf1d"
+  },
+  "colab": {
+    "notebook": "scripts/dawn-neural-clone/dawn-v3-colab-qwen3-tts.ipynb",
+    "runbook_zh": "scripts/dawn-neural-clone/COLAB-RUNBOOK.zh-TW.md",
+    "engine": "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+    "engine_alt": "Qwen/Qwen3-TTS-12Hz-1.7B-Base or CosyVoice2",
+    "license": "Apache-2.0",
+    "user_must": [
+      "google_login",
+      "runtime_gpu_t4",
+      "upload_v3_wav",
+      "download_zip",
+      "ear_check"
+    ],
+    "not": [
+      "gemini_live",
+      "mark_AVAILABLE",
+      "7x24_product_host"
+    ]
+  },
+  "engines_ranked": [
+    {
+      "rank": 1,
+      "name": "Qwen3-TTS-12Hz-Base",
+      "license": "Apache-2.0",
+      "role": "colab_and_product_primary"
+    },
+    {
+      "rank": 2,
+      "name": "CosyVoice2/3-0.5B",
+      "license": "Apache-2.0",
+      "role": "product_alt_instruct"
+    },
+    {
+      "rank": 3,
+      "name": "OpenVoice V1",
+      "license": "MIT",
+      "role": "cpu_smoke_poc_done"
+    }
+  ],
+  "poc": {
+    "path": "/workspace/reports/dawn-voice/neural-poc/poc-openvoice-v1-zh-from-v3.wav",
+    "verdict": "POC_ONLY_NOT_PRODUCT"
+  },
+  "forbidden": [
+    "paid_apis",
+    "gemini_live_product",
+    "browser_speechSynthesis_product",
+    "fake_AVAILABLE"
+  ]
+}

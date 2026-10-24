@@ -52,7 +52,24 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 
 ## 下一步（需使用者）
 
-1. 說話暫定：`dawn-natural-female-v3-speak.wav`（Demucs；廣告腔／可能殘 BGM）— 見 `DAWN-SPEAKING-V3.md`。
+1. **（進行中）Colab 免費 T4** 克隆 v3 — 見下方「神經克隆下一步」。
 2. 唱歌／音律：`dawn-singing-melody-ref-v1.wav`（Option B，非說話）。
-3. 核准免費 GPU／自架 Qwen3-TTS 或 CosyVoice，以 **v3** 為克隆錨點。
-4. 聽感通過（含殘 BGM／廣告腔可否接受）才可標 AVAILABLE。
+3. 聽感通過後自架／本機 GPU 接 `aivault-voice`。
+4. 聽感通過前 **禁止** 標 AVAILABLE。
+
+## 神經克隆下一步（2026-10-24 · t314 Colab）
+
+**已核准路徑：** Google **Colab 免費 GPU（T4）** 跑 **Qwen3-TTS**（Apache-2.0）克隆 `dawn-natural-female-v3-speak.wav`，產出 2–3 句國語試聽。
+
+| 文件 | 路徑 |
+|------|------|
+| 操作手冊（中文） | `scripts/dawn-neural-clone/COLAB-RUNBOOK.zh-TW.md` |
+| Notebook | `scripts/dawn-neural-clone/dawn-v3-colab-qwen3-tts.ipynb` |
+| 完整計畫 | `docs/NEURAL-CLONE-DEPLOY-PLAN.md` |
+| CPU 煙測（非產品） | `docs/evidence/dawn-voice-neural-poc/` |
+
+**你要點：** Google 登入 → Runtime=GPU → 上傳 v3 → Run → 下載 zip → 聽感。  
+**禁止：** Gemini Live 當產品聲；聽感前標 `AVAILABLE`。  
+**之後：** 樣品通過 → 本機／自架 GPU 跑 `app/services/aivault-voice` 做日常推論（Colab 只解鎖樣品）。
+
+本箱狀態仍為 **`BLOCKED_NEED_GPU`** / 產品 **MUTED**。
