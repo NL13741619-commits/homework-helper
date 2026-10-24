@@ -56,9 +56,10 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 ## 下一步
 
 1. **（已完成）Colab 免費 T4** 克隆 v3 → 樣品入庫 → 使用者聽感 **PASS**（t324u）。見 `docs/DAWN-NEURAL-CLONE-EAR-CHECK.md`。
-2. **（下一個）自架／本機 GPU** 跑 `app/services/aivault-voice`（Qwen3-TTS 推論）接 `DawnNeuralTts` — **LIVE TTS 仍 BLOCKED_NEED_GPU_HOST**。
-3. 唱歌／音律：`dawn-singing-melody-ref-v1.wav`（Option B，非說話）。
-4. LIVE 接線＋產品聽感前 **禁止** 標 AVAILABLE。
+2. **（進行中）GPU LIVE 主機計畫** — 見 **`docs/GPU-LIVE-TTS-HOST-PLAN.md`**（報告：`GPU-LIVE-TTS-HOST-PLAN`）與骨架 **`scripts/dawn-neural-clone/gpu-host/`**。Colab **不適合**常駐即時；首選創辦人自有 NVIDIA PC（選項 A）。
+3. **（下一個實作）** 有 GPU 後跑 `app/services/aivault-voice`（Qwen3-TTS）接 `DawnNeuralTts` — **LIVE TTS 仍 BLOCKED_NEED_GPU_HOST**。
+4. 唱歌／音律：`dawn-singing-melody-ref-v1.wav`（Option B，非說話）。
+5. LIVE 接線＋產品聽感前 **禁止** 標 AVAILABLE。
 
 ## 神經克隆進度（2026-10-24 · Colab 解鎖完成）
 
@@ -69,7 +70,7 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 | 聽感證據 | `docs/DAWN-NEURAL-CLONE-EAR-CHECK.md` + `docs/evidence/dawn-voice-neural-poc/colab-qwen3-v3-ear-check.json` |
 | 操作手冊／Notebook | `scripts/dawn-neural-clone/` |
 | 完整計畫 | `docs/NEURAL-CLONE-DEPLOY-PLAN.md` |
-| LIVE 產品推論 | **BLOCKED_NEED_GPU_HOST**（下一步 = aivault-voice 自架） |
+| LIVE 產品推論 | **BLOCKED_NEED_GPU_HOST**（計畫：`GPU-LIVE-TTS-HOST-PLAN.md` · 骨架：`scripts/dawn-neural-clone/gpu-host/` · 實作仍 = aivault-voice） |
 
 **禁止：** Gemini Live 當產品聲；樣品 PASS 就標 `AVAILABLE`。  
 本箱仍無 GPU；產品 **MUTED**／**NOT AVAILABLE**。

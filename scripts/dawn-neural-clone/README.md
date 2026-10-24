@@ -13,3 +13,5 @@ Free/self-hosted neural clone helpers for Dawn speak reference **v3**.
 
 Reference: `app/assets/dawn-voice/dawn-natural-female-v3-speak.wav`  
 SHA-256: `c42a877c6af9cb48384e4b9a8bf3d24aac137107faf49d5201955df69398cf1d`
+
+| `gpu-host/` | LIVE TTS GPU host scaffold (health stub · compose) — see `docs/GPU-LIVE-TTS-HOST-PLAN.md` |

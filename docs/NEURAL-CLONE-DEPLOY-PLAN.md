@@ -87,3 +87,11 @@ OpenVoice V1 ZH · CPU → 煙測 only。解鎖已改走 Colab（完成）。
 | 樣品 wav | `app/assets/dawn-voice/colab-qwen3-v3-candidates/` |
 | Notebook／手冊 | `scripts/dawn-neural-clone/` |
 | 報告鏡像 | `/workspace/reports/dawn-voice/` |
+
+---
+
+## 6. LIVE GPU 主機（2026-10-24 · plan_gpu_host）
+
+使用者選 **規劃 GPU 主機**（暫不合併 PR #36）。完整文件：`docs/GPU-LIVE-TTS-HOST-PLAN.md` · 骨架：`scripts/dawn-neural-clone/gpu-host/`。
+
+Colab = 樣品 only；日常說話首選自有 NVIDIA PC；無主機前維持 `BLOCKED_NEED_GPU_HOST` · **NOT AVAILABLE**。

@@ -31,3 +31,7 @@ python engine.py serve --data-dir ./voice-data --host 127.0.0.1 --port 8090
 - 成功生成的音訊快取最多保留 256 段，減少重播成本。
 
 播放器尚未切换到本服務，因為目前沒有可用的部署主機與模型音訊。完成部署後需接上既有 aivault-tts 路由，再验证固定音色、長篇穩定性、法條原文無遗漏和反藍同步；正式頁面不得先標成可用。
+
+## LIVE 主機計畫
+
+日常即時說話主機選項與驗收見 `docs/GPU-LIVE-TTS-HOST-PLAN.md`；無 GPU 誠實 stub 見 `scripts/dawn-neural-clone/gpu-host/`。
