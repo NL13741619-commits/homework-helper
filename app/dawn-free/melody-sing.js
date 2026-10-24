@@ -1,6 +1,6 @@
 /**
  * Dawn free melody + DSP singing prototype (Web Audio).
- * Honest label: EXPERIMENTAL_DSP_SINGING — not a trained neural singing model.
+ * Honest label: EXPERIMENTAL_DSP_SINGING — electronic oscillators; NOT product Dawn/小太陽 singing voice.
  * License of generated tones: AIVAULT-owned synthesis (no third-party song).
  */
 (function (root) {

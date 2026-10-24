@@ -2,126 +2,112 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>小太陽語音實驗室 · 瀏覽器合成已拒當產品聲</title>
+<title>曙光語音狀態 · 合成聲已駁回</title>
 <link rel="stylesheet" href="dawn-free/media-hub.css">
-<style>
-.banner{background:#4c0519;border:1px solid #7f1d1d;color:#fecaca;border-radius:12px;padding:12px;line-height:1.55;margin-bottom:12px}
-.badge.rej{background:#4c0519;color:#fecaca;border:1px solid #7f1d1d}
-</style>
 </head>
 <body>
 <header class="top">
   <a href="../media.html">← 媒體中心</a>
-  <strong>☀ 小太陽語音實驗室</strong>
-  <span class="badge rej">瀏覽器 TTS＝REJECTED 產品聲</span>
+  <strong>☀ 曙光語音</strong>
+  <span class="badge bad">已駁回／暫代，非曙光正式聲音</span>
 </header>
 <main>
-  <div class="banner" role="status">
-    <strong>使用者決策（2026-10-24）：</strong>「聲音太假，不要電腦合成的電音。」
-    瀏覽器 Web Speech／系統合成<strong>不得</strong>當成曙光產品音色。
-    認可路徑：參考檔 <code>dawn-natural-female-v2.wav</code> + 免費自然神經 TTS（例如未來 Qwen3-TTS）。
-    下方「朗讀」僅供工程除錯，預設關閉；開啟後仍標 REJECTED。
-  </div>
   <div class="sunface" id="sun"><div class="eyes">● ●</div><div class="mouth">◐</div></div>
-  <p class="lead">政策：第二基地即時語音<strong>不得</strong>依賴 Gemini Live；也<strong>不得</strong>把瀏覽器電音合成當產品聲。本頁保留 STT／除錯合成能力，狀態標籤必須誠實。</p>
+  <p class="lead">使用者已駁回電腦合成／電音感聲線。瀏覽器 <code>speechSynthesis</code>（Web Speech）<strong>不是</strong>曙光產品音色，本頁<strong>預設不播放</strong>。正式路徑：認可參考 <code>dawn-natural-female-v2.wav</code> + 免費神經 TTS（如自架 Qwen3-TTS）。目前 wav <strong>MISSING</strong> → 狀態 <span class="bad">PENDING_NATURAL_CLONE</span>／<span class="bad">BLOCKED_NO_NATURAL_TTS</span>。</p>
+
   <section class="card">
-    <label>文字（字幕／除錯）</label>
-    <textarea id="text">你好，我是曙光城的小太陽。產品音色尚未接通：在等認可女聲檔與自然神經 TTS。</textarea>
-    <div class="row">
-      <button id="speak" disabled title="預設關閉：瀏覽器合成已拒當產品聲">朗讀（除錯・已拒）</button>
-      <button id="unlock" class="sec" type="button">暫時解鎖除錯合成</button>
-      <button id="stop" class="sec">停止</button>
-      <button id="listen" class="sec">按住聽你說一句</button>
-    </div>
-    <p id="status" class="status bad">產品 TTS＝REJECTED_BROWSER_SYNTH · 播音關閉</p>
-    <pre id="meta" class="note"></pre>
-  </section>
-  <section class="card">
-    <h2>狀態（誠實標籤）</h2>
+    <h2>產品播音</h2>
+    <p id="status" class="status bad">已靜音 · 等待自然聲線</p>
     <ul>
-      <li>瀏覽器 TTS 當產品聲 → <span class="bad">REJECTED（電音／合成腔）</span></li>
-      <li>瀏覽器 TTS 除錯 → 預設關閉；需按「暫時解鎖」</li>
-      <li>瀏覽器 ASR → 可用於辨識實驗（非產品聲）</li>
+      <li>瀏覽器 TTS 產品播音 → <span class="bad">REJECTED（預設靜音）</span></li>
+      <li>認可 wav <code>dawn-natural-female-v2.wav</code> → <span class="bad" id="wavBadge">檢查中…</span></li>
+      <li>神經 TTS（Qwen3-TTS 等）→ <span class="bad">NOT_DEPLOYED</span></li>
       <li>Gemini Live → <span class="bad">DISABLED_BY_POLICY</span></li>
-      <li>認可參考 wav → <span class="bad">MISSING（dawn-natural-female-v2.wav）</span></li>
-      <li>自架 Qwen3-TTS（app/services/aivault-voice）→ <span class="bad">NOT_DEPLOYED（需 GPU 節點）</span></li>
-      <li>連續自建語音測試 → <a href="dawn-own-voice-test.html">dawn-own-voice-test.html</a>（產品播音靜音）</li>
+      <li>麥克風辨識（ASR）→ 可作輸入；不代表產品音色</li>
     </ul>
+    <div class="row">
+      <button id="listen" class="sec">聽你說一句（只轉文字）</button>
+      <button id="previewWav" class="sec" disabled>預覽認可 wav（若有檔）</button>
+    </div>
+    <textarea id="text" readonly placeholder="辨識結果會顯示在這裡（不會用合成聲朗讀）"></textarea>
+  </section>
+
+  <section class="card">
+    <h2>除錯：試聽電腦合成（已駁回）</h2>
+    <p class="note">僅供對照「電音感」為何被駁回。需勾選後才會播；永不標 AVAILABLE／正式聲音。</p>
+    <label><input type="checkbox" id="allowSynth"> 我了解這是已駁回的暫代合成聲，僅試聽</label>
+    <div class="row">
+      <button id="speak" disabled>試聽電腦合成（已駁回）</button>
+      <button id="stop" class="sec" disabled>停止</button>
+    </div>
+    <pre id="meta" class="note"></pre>
   </section>
 </main>
 <script src="dawn-free/browser-voice.js"></script>
 <script>
-const sun = document.getElementById('sun');
-const status = document.getElementById('status');
-const meta = document.getElementById('meta');
-const speakBtn = document.getElementById('speak');
-let debugUnlocked = false;
+(function(){
+  const status = document.getElementById('status');
+  const meta = document.getElementById('meta');
+  const allow = document.getElementById('allowSynth');
+  const speakBtn = document.getElementById('speak');
+  const stopBtn = document.getElementById('stop');
+  const wavBtn = document.getElementById('previewWav');
+  const WAV = new URL('assets/dawn-voice/dawn-natural-female-v2.wav', location.href).href;
 
-function setFace(mode){
-  sun.querySelector('.eyes').textContent = mode==='speak' ? '^ ^' : mode==='listen' ? '● ◐' : '● ●';
-  sun.querySelector('.mouth').textContent = mode==='speak' ? '◕' : mode==='listen' ? '○' : '◐';
-}
-function refreshMeta(){
-  const s = Object.assign({}, DawnFreeVoice.STATUS, {
-    product_voice: 'REJECTED_BROWSER_SYNTH',
-    approved_path: 'dawn-natural-female-v2.wav + neural TTS (e.g. Qwen3-TTS)',
-    debug_unlocked: debugUnlocked
+  allow.onchange = () => {
+    speakBtn.disabled = !allow.checked;
+    stopBtn.disabled = !allow.checked;
+  };
+
+  fetch(WAV, { method: 'HEAD', cache: 'no-store' }).then(r => {
+    const ok = r.ok;
+    document.getElementById('wavBadge').textContent = ok ? 'PRESENT（可預覽參考，仍非即時 TTS）' : 'MISSING → PENDING_NATURAL_CLONE';
+    document.getElementById('wavBadge').className = ok ? 'ok' : 'bad';
+    wavBtn.disabled = !ok;
+  }).catch(() => {
+    document.getElementById('wavBadge').textContent = 'MISSING → PENDING_NATURAL_CLONE';
   });
-  const v = DawnFreeVoice.pickZhVoice();
-  meta.textContent = JSON.stringify({...s, zh_voice: v && {name:v.name, lang:v.lang}}, null, 2);
-  if (!debugUnlocked) {
-    status.textContent = '產品 TTS＝REJECTED · 播音關閉 · 等待認可 wav＋神經 TTS';
-    status.className = 'status bad';
-  } else {
-    status.textContent = '除錯合成已解鎖（仍 REJECTED 產品聲）· ASR=' + s.asr;
-    status.className = 'status bad';
-  }
-}
-if(window.speechSynthesis){
-  speechSynthesis.onvoiceschanged = refreshMeta;
-  refreshMeta();
-} else refreshMeta();
 
-document.getElementById('unlock').onclick = () => {
-  debugUnlocked = true;
-  speakBtn.disabled = false;
-  refreshMeta();
-  status.textContent = '已暫時解鎖除錯合成 — 仍非曙光產品音色';
-  status.className = 'status bad';
-};
+  wavBtn.onclick = () => {
+    const a = new Audio(WAV);
+    a.play().catch(e => { status.textContent = 'wav 播放失敗：' + e; });
+  };
 
-document.getElementById('speak').onclick = async () => {
-  if (!debugUnlocked) {
-    status.textContent = '產品播音禁止。先按「暫時解鎖除錯合成」。';
-    status.className = 'status bad';
-    return;
-  }
-  try{
-    setFace('speak');
-    status.textContent = '除錯朗讀中…（REJECTED 產品聲）';
-    status.className = 'status bad';
-    const r = await DawnFreeVoice.speak(document.getElementById('text').value);
-    status.textContent = '除錯完成 · REJECTED · voice=' + (r.voice||'default');
-    status.className = 'status bad';
-  }catch(e){
-    status.textContent = String(e.message||e);
-    status.className = 'status bad';
-  }finally{ setFace('idle'); }
-};
-document.getElementById('stop').onclick = () => { DawnFreeVoice.stopSpeak(); setFace('idle'); };
-document.getElementById('listen').onclick = async () => {
-  try{
-    setFace('listen');
-    status.textContent = '請說話…（僅 ASR 實驗）';
-    const r = await DawnFreeVoice.listenOnce();
-    document.getElementById('text').value = r.text;
-    status.textContent = '辨識：' + r.text + '（未播產品聲）';
-    status.className = 'status ok';
-  }catch(e){
-    status.textContent = '辨識失敗：' + (e.message||e);
-    status.className = 'status bad';
-  }finally{ setFace('idle'); }
-};
+  meta.textContent = JSON.stringify({
+    product_tts: 'MUTED_REJECTED_BROWSER_SYNTH',
+    natural_wav: 'dawn-natural-female-v2.wav',
+    natural_status: 'PENDING_NATURAL_CLONE',
+    neural_tts: 'NOT_DEPLOYED',
+    gemini_live: 'DISABLED_BY_POLICY',
+    browser_synth: DawnFreeVoice.STATUS
+  }, null, 2);
+
+  document.getElementById('speak').onclick = async () => {
+    if (!allow.checked) return;
+    try {
+      status.textContent = 'DEBUG 合成聲播放中（已駁回・非產品音色）';
+      status.className = 'status bad';
+      await DawnFreeVoice.speak('這是已駁回的瀏覽器合成聲，不是曙光正式聲音。');
+      status.textContent = '試聽結束 · 產品播音仍靜音，等待自然聲線';
+    } catch (e) {
+      status.textContent = String(e.message || e);
+    }
+  };
+  document.getElementById('stop').onclick = () => DawnFreeVoice.stopSpeak();
+  document.getElementById('listen').onclick = async () => {
+    try {
+      status.textContent = '請說話…（只轉文字，不朗讀）';
+      status.className = 'status';
+      const r = await DawnFreeVoice.listenOnce();
+      document.getElementById('text').value = r.text;
+      status.textContent = '已轉文字（未播放合成聲）';
+      status.className = 'status ok';
+    } catch (e) {
+      status.textContent = '辨識失敗：' + (e.message || e);
+      status.className = 'status bad';
+    }
+  };
+})();
 </script>
 </body>
 </html>

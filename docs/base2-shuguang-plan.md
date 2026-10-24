@@ -66,7 +66,7 @@
 | Gemini Live（既有 `dawn-light-live-voice.js`） | 外部 | Gemini Live relay | 付費／配額風險 | **DISABLED_BY_POLICY**（本輪不接 UI） |
 | 自架 Qwen3-TTS | owned 部署程式 | `app/services/aivault-voice` | Apache-2.0 上游權重 | NOT_DEPLOYED（需 GPU 節點） |
 | Draft PR #21/#26 | owned local-ai | Qwen + Flite/WORLD 等 | 見各 PR | DRAFT 未合併 |
-| 歌唱 DSP 四小節 | owned | Web Audio | AIVAULT 原創合成 | EXPERIMENTAL_DSP_SINGING |
+| 歌唱 DSP 四小節 | Web Audio oscillator | EXPERIMENTAL_DSP_SINGING（**非產品歌唱聲**） | Web Audio | AIVAULT 原創合成 | EXPERIMENTAL_DSP_SINGING |
 | Draft PR #25 旋律分析 | owned | 本機 WAV/MIDI | 見 PR | DRAFT |
 | 免費短片 | owned | Canvas + MediaRecorder | AIVAULT | AVAILABLE*（視瀏覽器；iOS 可能 BLOCKED） |
 | Magic Hour 圖生影片 | 外部付費 | Magic Hour | 商業 | **GATES_CLOSED · 禁止呼叫** |
@@ -112,3 +112,18 @@
 | Canvas 短片 | ✓* | Magic Hour / AI 圖生影片 |
 | Edge image 誠實封鎖 | ✓（程式） | 未 deploy 到線上 |
 
+---
+
+## 語音政策更正（2026-10-24）
+
+使用者駁回「聲音太假／電腦合成電音」。
+
+| 項目 | Before | After |
+|------|--------|--------|
+| media.html 語音徽章 | AVAILABLE · 瀏覽器 Web Speech | **已駁回／暫代，非曙光正式聲音** · 預設靜音 · PENDING_NATURAL_CLONE |
+| dawn-voice-free.html | 一鍵朗讀 Web Speech | 預設不播；需勾選才「試聽電腦合成（已駁回）」 |
+| dawn-own-voice.js | （曾用 speechSynthesis 播回覆） | 產品路徑 MUTED；僅 `?synth=1` 除錯 |
+| 正式音色 | （誤用瀏覽器） | `dawn-natural-female-v2.wav`（MISSING）+ 神經 TTS NOT_DEPLOYED |
+| 歌唱頁 | 「小太陽唱四小節」 | **DSP 實驗・非產品聲** |
+
+Gemini Live／付費 TTS／image→video：仍禁用。

@@ -1,26 +1,17 @@
 /**
- * Dawn free browser voice — Web Speech API only.
- * NOT Gemini Live. NOT a neural TTS model owned by AIVAULT.
- *
- * Product policy (2026-10-24): browser speechSynthesis is REJECTED as the
- * Dawn product voice ("too fake / 電音"). Callers must not market this as
- * the approved Dawn voice. Approved path = dawn-natural-female-v2.wav
- * reference + free neural TTS (e.g. future Qwen3-TTS).
- *
- * Status labels:
- *   tts_product: REJECTED_BROWSER_SYNTH
- *   tts_debug: AVAILABLE_BROWSER (engineering only)
- *   asr: AVAILABLE_BROWSER | BLOCKED_NO_SPEECH_RECOGNITION
+ * Browser Web Speech helpers — REJECTED as Dawn product voice (2026-10-24).
+ * Prefer muted UI; only call speak() behind explicit "已駁回" disclosure.
+ * Status must never be marketed as AVAILABLE product TTS.
  */
 (function (root) {
   "use strict";
   const STATUS = {
-    tts_product: "REJECTED_BROWSER_SYNTH",
-    tts: "REJECTED_AS_PRODUCT_VOICE",
-    tts_debug: typeof root.speechSynthesis !== "undefined" ? "AVAILABLE_BROWSER_DEBUG_ONLY" : "BLOCKED_NO_SPEECH_SYNTHESIS",
-    asr: !!(root.SpeechRecognition || root.webkitSpeechRecognition) ? "AVAILABLE_BROWSER" : "BLOCKED_NO_SPEECH_RECOGNITION",
+    tts: typeof root.speechSynthesis !== "undefined" ? "REJECTED_BROWSER_SYNTH_NOT_PRODUCT" : "BLOCKED_NO_SPEECH_SYNTHESIS",
+    asr: !!(root.SpeechRecognition || root.webkitSpeechRecognition) ? "AVAILABLE_BROWSER_ASR_INPUT_ONLY" : "BLOCKED_NO_SPEECH_RECOGNITION",
     engine: "Web Speech API (browser / OS) — REJECTED as Dawn product voice",
-    approved_path: "dawn-natural-female-v2.wav + free neural TTS (e.g. Qwen3-TTS)",
+    product_playback_default: "MUTED",
+    natural_wav: "dawn-natural-female-v2.wav",
+    natural_status: "PENDING_NATURAL_CLONE",
     gemini_live: "DISABLED_BY_POLICY"
   };
 
@@ -31,7 +22,6 @@
     return prefer || anyZh || voices[0] || null;
   }
 
-  /** Debug-only speak. Must not be presented as product Dawn voice. */
   function speak(text, opts) {
     return new Promise((resolve, reject) => {
       if (!root.speechSynthesis) return reject(new Error("BLOCKED_NO_SPEECH_SYNTHESIS"));
@@ -41,12 +31,7 @@
       const v = pickZhVoice();
       if (v) u.voice = v;
       u.rate = (opts && opts.rate) || 1;
-      u.onend = () => resolve({
-        ok: true,
-        engine: STATUS.engine,
-        voice: v && v.name,
-        product_voice: "REJECTED_BROWSER_SYNTH"
-      });
+      u.onend = () => resolve({ ok: true, engine: STATUS.engine, voice: v && v.name, product: false, rejected: true });
       u.onerror = (e) => reject(new Error((e && e.error) || "tts_error"));
       root.speechSynthesis.speak(u);
     });
@@ -65,8 +50,7 @@
       rec.interimResults = false;
       rec.maxAlternatives = 1;
       rec.onresult = (ev) => {
-        const text = ev.results[0][0].transcript;
-        resolve({ ok: true, text, engine: STATUS.engine });
+        resolve({ ok: true, text: ev.results[0][0].transcript, engine: "Web Speech ASR" });
       };
       rec.onerror = (e) => reject(new Error((e && e.error) || "asr_error"));
       rec.start();
