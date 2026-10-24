@@ -2,7 +2,7 @@
   "title": "Dawn LIVE TTS GPU host plan",
   "date_taipei": "2026-10-24T14:44+08:00",
   "user_choice": "plan_gpu_host",
-  "merge_pr_36": false,
+  "merge_pr_36": true,
   "product_status_one_liner": "SPEAK_CANDIDATES_EAR_OK · LIVE_TTS BLOCKED_NEED_GPU_HOST · NOT AVAILABLE",
   "available": false,
   "live_tts": "BLOCKED_NEED_GPU_HOST",
@@ -48,6 +48,13 @@
       "cost": "electricity_only"
     },
     {
+      "id": "A_prime",
+      "name": "founder_apple_mac_mps_or_cpu",
+      "realtime": false,
+      "role": "experimental_lan_host_only",
+      "note": "no_cuda_sleep_kills_host_see_DAWN-MAC-TTS-HOST-RUNBOOK"
+    },
+    {
       "id": "B",
       "name": "colab_free_gpu",
       "realtime": false,
@@ -59,7 +66,13 @@
       "name": "cheap_cloud_gpu",
       "realtime": true,
       "requires": "explicit_paid_approval",
-      "phase_a_default": "deny"
+      "phase_a_default": "deny",
+      "status": "CLOUD_GPU_BACKUP_DOCUMENTED",
+      "vendors_examples": [
+        "RunPod",
+        "Vast.ai"
+      ],
+      "no_spend_this_round": true
     },
     {
       "id": "D",
@@ -69,7 +82,7 @@
       "note": "deploy_code_only_no_live_pool_in_docs"
     }
   ],
-  "recommended_for_phone_founder": "A_own_gpu_pc_phone_is_client_only",
+  "recommended_for_phone_founder": "A_prime_mac_trial_then_A_nvidia_or_C_after_dollar_approval",
   "acceptance": {
     "arbitrary_mandarin_from_v3": true,
     "latency_target_s": "2-3_first_complete_utterance_unmeasured",
@@ -92,5 +105,13 @@
     "repo_mirror": "docs/GPU-LIVE-TTS-HOST-PLAN.md",
     "realtime_voice": "docs/DAWN-OWN-REALTIME-VOICE.md",
     "scaffold": "scripts/dawn-neural-clone/gpu-host/"
+  },
+  "date_taipei_updated": "2026-10-24T15:30+08:00",
+  "merge_commit": "0cc8d68",
+  "mac_runbook": "docs/DAWN-MAC-TTS-HOST-RUNBOOK.zh-TW.md",
+  "user_choice_abc": {
+    "A_mac_host_steps": true,
+    "B_merge_pr36": "already_merged",
+    "C_paid_cloud_backup_notes": "documented_awaiting_dollar_approval"
   }
 }

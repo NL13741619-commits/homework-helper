@@ -6,6 +6,8 @@
 真正推論實作：`app/services/aivault-voice/engine.py`（Qwen3-TTS）  
 說話參考：`app/assets/dawn-voice/dawn-natural-female-v3-speak.wav`
 
+**Apple Mac：** 見 [`README-MAC.zh-TW.md`](./README-MAC.zh-TW.md) 與 `docs/DAWN-MAC-TTS-HOST-RUNBOOK.zh-TW.md`（`DAWN_DEVICE=mps|cpu`；無 CUDA）。
+
 ## 這目錄是什麼
 
 給**有 NVIDIA GPU 的機器**用的啟動草圖：
@@ -13,19 +15,23 @@
 | 檔案 | 用途 |
 |------|------|
 | `docker-compose.yml` | GPU 服務草圖（需 NVIDIA Container Toolkit） |
-| `.env.example` | token／埠／資料目錄（複製成 `.env`，勿提交密鑰） |
-| `health_stub.py` | **無 CUDA 時**本地可跑的誠實 health（回 BLOCKED） |
+| `.env.example` | token／埠／資料目錄／`DAWN_DEVICE`（複製成 `.env`，勿提交密鑰） |
+| `health_stub.py` | 本地誠實 health（回 BLOCKED；回報 cuda／mps／cpu） |
+| `README-MAC.zh-TW.md` | Apple 筆電快速說明 |
 | `Dockerfile` | 佔位；正式映像應安裝 CUDA PyTorch + qwen-tts |
 
 Colab 免費 GPU：**只做樣品**，不要拿來當本 compose 的常駐 LIVE。
 
-## 無 GPU（本箱／筆電）
+## 無 NVIDIA GPU（本箱／Intel／尚未設定的 Mac）
 
 ```bash
 cd scripts/dawn-neural-clone/gpu-host
+# 可選：export DAWN_DEVICE=mps   # Apple Silicon 試作
 python3 health_stub.py
-# → GET http://127.0.0.1:8090/health  JSON status=BLOCKED_NEED_GPU
+# → GET http://127.0.0.1:8090/health  available=false · 依裝置回 BLOCKED_*
 ```
+
+Apple 逐步手冊：`docs/DAWN-MAC-TTS-HOST-RUNBOOK.zh-TW.md`
 
 ## 有 GPU 主機（選項 A）
 

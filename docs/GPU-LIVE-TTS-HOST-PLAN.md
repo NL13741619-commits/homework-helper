@@ -1,11 +1,12 @@
 # 曙光 LIVE TTS · GPU 主機計畫
 
-**日期：** 2026-10-24 Asia/Taipei（約 14:44）  
-**決策來源：** 使用者選「plan_gpu_host」（不合併 PR #36；Colab 樣品聽感已 PASS）  
-**一句狀態：** `SPEAK_CANDIDATES_EAR_OK · LIVE_TTS BLOCKED_NEED_GPU_HOST · NOT AVAILABLE`
+**日期：** 2026-10-24 Asia/Taipei（約 14:44；Mac／雲補充同日稍晚）  
+**決策來源：** 使用者選「plan_gpu_host」→ 後選 ABC（Mac 手冊 + 已合併 PR #36 + 付費雲後備筆記）  
+**一句狀態：** `SPEAK_CANDIDATES_EAR_OK · LIVE_TTS BLOCKED_NEED_GPU_HOST · NOT AVAILABLE`  
+**Mac 手冊：** `docs/DAWN-MAC-TTS-HOST-RUNBOOK.zh-TW.md`
 
 機器可讀：同目錄 `GPU-LIVE-TTS-HOST-PLAN.json`  
-倉庫鏡像：`docs/GPU-LIVE-TTS-HOST-PLAN.md` · 骨架：`scripts/dawn-neural-clone/gpu-host/`  
+倉庫鏡像：`docs/GPU-LIVE-TTS-HOST-PLAN.md` · Mac：`docs/DAWN-MAC-TTS-HOST-RUNBOOK.zh-TW.md` · 骨架：`scripts/dawn-neural-clone/gpu-host/`  
 既有服務：`app/services/aivault-voice/`（Qwen3-TTS 部署程式，**尚未上線**）
 
 ---
@@ -120,12 +121,30 @@ Content-Type: application/json
 | 順位 | 選項 | 適不適合 LIVE | 說明 |
 |------|------|---------------|------|
 | **A（首選）** | **創辦人自己的 NVIDIA 電腦** | ✅ 適合常駐 | 零付費 API；家用／工作室 PC 裝 Docker 跑 `aivault-voice`；手機只當客戶端聽串流 |
+| **A′** | **創辦人 Apple 筆電（MPS／CPU）** | ⚠️ **僅試作** | **無 CUDA**；M 系列可試 PyTorch **MPS**（Qwen3-TTS 不保證相容），否則 CPU（慢）。睡眠＝斷線，不當 7×24。手冊：`docs/DAWN-MAC-TTS-HOST-RUNBOOK.zh-TW.md` |
 | **B** | **Colab 免費 GPU** | ❌ **不適合**日常 LIVE | 斷線、閒置回收、無法穩定 HTTPS 給產品；**只保留批次樣品／聽感**（已完成） |
-| **C** | **便宜雲 GPU**（RunPod／Vast 等） | ⚠️ 需另批金額 | Phase A **預設拒絕付費**；使用者明文核准金額與供應商後才排 |
+| **C** | **便宜雲 GPU**（RunPod／Vast 等） | ⚠️ 需另批金額 | 見下方 **§3.C**；Phase A **預設拒絕付費**；**之後、要明文 $ 核准**才排；本輪不開帳、不存金鑰 |
 | **D** | **AIVAULT compute pool** | ❌ **目前不存在可掛載池** | 倉庫僅有 `app/services/aivault-voice` **部署程式**，文件**未**描述已上線共用 GPU 池；不可假裝有池可接 |
 
 **給「人在手機上」的創辦人一句話：**  
-手機本身不用顯卡；要找（或借）一台有 NVIDIA 的電腦當 A，或等你核准付費雲 C。在那之前產品維持 **NOT AVAILABLE**，可繼續播 Colab 樣品／參考 wav 預覽。
+手機本身不用顯卡。你有 Apple 筆電 → 先跟 A′ 手冊試作流程；要穩定日常說話仍要 A（NVIDIA）或等你核准付費雲 C。在那之前產品維持 **NOT AVAILABLE**，可繼續播 Colab 樣品／參考 wav 預覽。
+
+### 3.C 付費雲 GPU 後備（RunPod／Vast 等）· **之後才做**
+
+> **預設：不做、不花錢、不存 API／SSH 金鑰。**  
+> 僅在使用者**明文核准**：供應商、機型、**預算上限（$）**、計費方式之後，才另外開施工單。
+
+| 項目 | 筆記（規劃用 · 非下單） |
+|------|------------------------|
+| 為何列後備 | Mac 試作／無家用 NVIDIA 時，雲 GPU 可當常駐推論；仍要自己接 `aivault-voice` + v3 參考 |
+| 常見供應商（示例） | **RunPod**、**Vast.ai**、類似按小時租 NVIDIA（T4／RTX 等）的平台 |
+| 建議規格起點 | 與 §2.1 相同：VRAM **≥ 8 GB**、磁碟 ≥ 20 GB、可裝 CUDA PyTorch |
+| 接線概念 | 租到機器 → 裝驅動／Docker 或 venv → 跑 `gpu-host`／`engine.py` → HTTPS 反代 → Edge／`DawnNeuralTts` 指上游 |
+| 費用風險 | 閒置未關機會持續計費；要設自動關機／預算警報（**核准後**再設） |
+| 本輪禁止 | 註冊付費、綁卡、建立實例、把密鑰寫進倉庫或聊天 |
+| 核准句型（範例） | 「核准用 RunPod RTX 3080，上限每月 USD __，超過就關」——缺金額與上限則**不排** |
+
+**狀態標籤：** `CLOUD_GPU_BACKUP_DOCUMENTED · AWAITING_EXPLICIT_DOLLAR_APPROVAL`
 
 ---
 
@@ -182,9 +201,11 @@ Colab 樣品 PASS ≠ 本表通過。
 
 ## 7. 明確不做
 
-- 不合併 PR #36（除非使用者另下指令）
+- ~~不合併 PR #36~~ → **已合併**（`0cc8d68`）；文件／樣品已在 main
 - 不把 Colab 閒置連線當產品 LIVE
+- 不把 Mac MPS 試作標成產品 AVAILABLE
 - 不呼叫付費 TTS／Gemini Live
+- **不**在未明文核准金額時開 RunPod／Vast 等付費實例、不存雲端金鑰
 - 不在本無 GPU 施工箱回 `ready: true` 或 `AVAILABLE`
 - 不宣稱 AIVAULT 已有現成 GPU 算力池可掛
 
@@ -192,8 +213,9 @@ Colab 樣品 PASS ≠ 本表通過。
 
 ## 8. 下一步（建議順序）
 
-1. **確認選項 A：** 創辦人是否有／能借用 NVIDIA ≥8GB 電腦？有 → 依 `gpu-host/README.md` 安裝。  
-2. 沒有 → 產品維持靜音；可繼續用樣品預覽；**不要**開付費雲除非明文核准（選項 C）。  
-3. 主機 `health=ready` 後再排 `DawnNeuralTts` 接線 + LIVE 聽感卡。
+1. **A′ Apple 筆電（已選）：** 依 `docs/DAWN-MAC-TTS-HOST-RUNBOOK.zh-TW.md` 設 `DAWN_DEVICE=mps|cpu`、跑 health stub、區網試作。  
+2. **A NVIDIA：** 若之後有／能借 ≥8GB 顯卡電腦 → `gpu-host/README.md` 常駐。  
+3. **C 付費雲：** 僅在明文核准供應商＋**$ 上限**後排；見 §3.C。未核准前不開機。  
+4. 主機真實引擎 `health=ready` 且 LIVE 聽感過關後，再排 `DawnNeuralTts` 接線；**另開變更**才可討論 AVAILABLE。
 
-**禁止：** 樣品好聽就標產品已接通。
+**禁止：** 樣品好聽／Mac 試作成功就標產品已接通。
