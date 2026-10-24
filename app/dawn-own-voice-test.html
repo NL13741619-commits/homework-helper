@@ -67,8 +67,10 @@ code{font-size:11px}
 <main>
   <section class="banner" role="status">
     <strong>產品音色政策：</strong>瀏覽器 <code>speechSynthesis</code>（電音）已被拒絕。
-    產品播音<strong>靜音</strong>，直到認可檔 <code>dawn-natural-female-v2.wav</code> + 免費神經 TTS（Qwen3-TTS／CosyVoice；本機<strong>無 GPU</strong> → <code>BLOCKED_NEED_GPU</code>）。
-    不得標 AVAILABLE。
+    <strong>新目標</strong>：使用者影片音軌 <code>dawn-realtime-target-v1.wav</code>（抑揚頓挫較明顯）。
+    早期短參考 <code>dawn-natural-female-v2.wav</code> 保留不刪。
+    產品播音仍<strong>靜音</strong>，直到免費神經 TTS 克隆通過聽感（本機<strong>無 GPU</strong> → <code>BLOCKED_NEED_GPU</code>）。
+    <strong>不得標 AVAILABLE</strong>。
   </section>
 
   <section class="card">
@@ -76,7 +78,9 @@ code{font-size:11px}
     <div id="status" data-k="info">尚未開始。建議先用 ?mock=1 驗證字幕／VAD／插話（不會播電音）。</div>
     <div class="level" title="麥克風能量"><i id="levelBar"></i></div>
     <div class="meta" style="margin-top:10px">
-      <div>認可聲線 wav<b id="wavMeta">檢查中…</b></div>
+      <div>即時目標 v1<b id="targetMeta">檢查中…</b></div>
+      <div>早期參考 v2<b id="legacyMeta">檢查中…</b></div>
+      <div>克隆錨點 wav<b id="wavMeta">檢查中…</b></div>
       <div>神經 TTS 引擎<b id="engineMeta">—</b></div>
       <div>對話來源<b id="modeMeta">—</b></div>
       <div>STT（僅辨識）<b id="sttMeta">—</b></div>
@@ -94,17 +98,28 @@ code{font-size:11px}
   </section>
 
   <section class="card">
-    <h2>投放認可女聲（dawn-natural-female-v2.wav）</h2>
+    <h2>即時語音目標（影片音軌 · 新）</h2>
+    <p class="notice">來源：使用者上傳影片抽出的 24 kHz mono wav。作為曙光<strong>即時說話</strong>聲線新目標；唱歌／音律另案。產品 TTS 仍非 AVAILABLE。</p>
+    <div class="btns" style="margin-top:8px">
+      <button type="button" class="primary" id="btnTarget" disabled>▶ 預覽新目標 v1</button>
+      <button type="button" id="btnLegacy" disabled>預覽早期 v2</button>
+      <a href="assets/dawn-voice/dawn-realtime-target-v1.wav" download style="align-self:center;font-size:12px">下載 v1 wav</a>
+    </div>
+    <p class="notice" id="targetDetail">檢查中…</p>
+  </section>
+
+  <section class="card">
+    <h2>本機投放額外 wav（IndexedDB · 選用）</h2>
     <div class="drop" id="drop" tabindex="0">
       拖放或點此選擇 <code>.wav</code>（RIFF）。檔案先存瀏覽器 IndexedDB，<strong>不會</strong>自動 commit 進 Git。<br>
-      倉庫路徑目標：<code>app/assets/dawn-voice/dawn-natural-female-v2.wav</code>
+      倉庫正式目標：<code>app/assets/dawn-voice/dawn-realtime-target-v1.wav</code>（v2 保留）
       <input type="file" id="wavFile" accept="audio/wav,.wav" hidden>
     </div>
     <div class="btns" style="margin-top:8px">
-      <button type="button" id="btnWav" disabled>預覽參考 wav</button>
+      <button type="button" id="btnWav" disabled>預覽克隆錨點／投放檔</button>
       <button type="button" id="btnClearWav">清除本機投放</button>
     </div>
-    <p class="notice" id="wavDetail">搜尋結果：倉庫／信件／附件仍 MISSING（2026-10-24）。</p>
+    <p class="notice" id="wavDetail">—</p>
   </section>
 
   <section class="card">
@@ -133,11 +148,12 @@ code{font-size:11px}
       · <a href="dawn-own-voice-test.html?mock=1">開 MOCK</a>
       · <a href="dawn-own-voice-test.html?mock=1&amp;demo=1">DEMO 一句</a>
       · <a href="../docs/DAWN-OWN-REALTIME-VOICE.md">文件</a>
+      · <a href="../docs/DAWN-REALTIME-VOICE-TARGET-V1.md">目標 v1</a>
     </p>
   </section>
 </main>
-<script src="dawn-neural-tts.js?v=20261024-mvp"></script>
-<script src="dawn-own-voice.js?v=20261024-mvp"></script>
+<script src="dawn-neural-tts.js?v=20261024-target-v1"></script>
+<script src="dawn-own-voice.js?v=20261024-target-v1"></script>
 <script>
 (function(){
   var log=document.getElementById('log');
@@ -148,14 +164,20 @@ code{font-size:11px}
     if(!st)return;
     var wav=st.wavStatus||'UNKNOWN';
     var eng=st.engineStatus||'UNKNOWN';
+    var tgt=st.targetStatus||'UNKNOWN';
+    var leg=st.legacyStatus||'UNKNOWN';
+    document.getElementById('targetMeta').textContent=tgt+(tgt.indexOf('PRESENT')===0?' · dawn-realtime-target-v1.wav':'');
+    document.getElementById('legacyMeta').textContent=leg+(leg.indexOf('PRESENT')===0?' · dawn-natural-female-v2.wav（保留）':'');
     document.getElementById('wavMeta').textContent=
       wav.indexOf('PRESENT')===0
-        ? wav+(st.wavMeta&&st.wavMeta.sha256?' · sha256='+st.wavMeta.sha256.slice(0,12)+'…':'')+(st.wavMeta&&st.wavMeta.source?' · '+st.wavMeta.source:'')
-        : 'MISSING · 請投放或向使用者／GPT 索取';
+        ? wav+(st.wavMeta&&st.wavMeta.role?' · '+st.wavMeta.role:'')+(st.wavMeta&&st.wavMeta.sha256?' · sha256='+st.wavMeta.sha256.slice(0,12)+'…':'')+(st.wavMeta&&st.wavMeta.source?' · '+st.wavMeta.source:'')
+        : 'MISSING';
     document.getElementById('engineMeta').textContent=eng+(st.nextStep?' · '+st.nextStep:'');
     document.getElementById('ttsMeta').textContent=
-      st.productPlayback===true ? 'AVAILABLE（不應在本階段出現）' : 'MUTED · '+eng;
+      st.productPlayback===true ? 'AVAILABLE（不應在本階段出現）' : 'MUTED · '+eng+' · 非 AVAILABLE';
     document.getElementById('btnWav').disabled=wav.indexOf('PRESENT')!==0;
+    document.getElementById('btnTarget').disabled=tgt.indexOf('PRESENT')!==0;
+    document.getElementById('btnLegacy').disabled=leg.indexOf('PRESENT')!==0;
     document.getElementById('liveBadge').textContent=
       '產品 TTS：非 AVAILABLE · '+eng;
     document.getElementById('liveBadge').className='badge warn';
@@ -163,6 +185,8 @@ code{font-size:11px}
     if(st.wavMeta&&st.wavMeta.sha256) detail+='｜sha256 '+st.wavMeta.sha256;
     if(st.reason) detail+='｜'+st.reason;
     document.getElementById('wavDetail').textContent=detail;
+    document.getElementById('targetDetail').textContent=
+      'v1='+tgt+' · v2='+leg+' · 產品播音 MUTED／BLOCKED_NEED_GPU · 文件 docs/DAWN-REALTIME-VOICE-TARGET-V1.md';
   }
 
   var engine=new DawnOwnVoice({
@@ -213,7 +237,7 @@ code{font-size:11px}
   document.getElementById('ttsMeta').textContent=
     /synth=1/.test(location.search)
       ? 'DEBUG ?synth=1 · REJECTED（非產品）'
-      : 'MUTED · 等待 dawn-natural-female-v2.wav + 神經 TTS';
+      : 'MUTED · 目標 v1 已備 · 神經 TTS 仍 BLOCKED_NEED_GPU';
 
   engine.probeWav().then(function(){ paintNeural(engine.neuralStatus); });
 
@@ -273,6 +297,16 @@ code{font-size:11px}
   };
   btnBarge.onclick=function(){engine.bargeIn('button');};
   document.getElementById('btnWav').onclick=function(){engine.previewApprovedWav();};
+  document.getElementById('btnTarget').onclick=async function(){
+    var ok=engine.neural&&await engine.neural.previewRealtimeTarget();
+    statusEl.textContent=ok?'正在預覽新目標 dawn-realtime-target-v1.wav（真人／清唱參考音 · 非電音 · 非產品 TTS）':'新目標預覽失敗';
+    statusEl.dataset.k=ok?'warn':'err';
+  };
+  document.getElementById('btnLegacy').onclick=async function(){
+    var ok=engine.neural&&await engine.neural.previewLegacyV2();
+    statusEl.textContent=ok?'正在預覽早期參考 v2（保留）':'早期 v2 預覽失敗';
+    statusEl.dataset.k=ok?'warn':'err';
+  };
   document.getElementById('form').onsubmit=async function(e){
     e.preventDefault();
     var v=document.getElementById('text').value.trim();

@@ -1,3 +1,4 @@
+<!-- 2026-10-24: realtime speaking TARGET switched to dawn-realtime-target-v1.wav (video audio). v2 kept. Singing melody from same clip = separate track. Product TTS NOT AVAILABLE. -->
 # 曙光說話＋唱歌統一計畫（第二基地）
 
 **日期：** 2026-10-24（Asia/Taipei）  

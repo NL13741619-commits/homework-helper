@@ -13,15 +13,17 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 - 不修改第一基地 `m9wmtcb782-arch/AIVAULT` 正式頁。
 - 付費閘道 `_shared/paid_gate.ts` 必須遵守；預設禁止。
 
-## 產品音色政策（2026-10-24）
+## 產品音色政策（2026-10-24 · 目標更新）
 
 | 項目 | 狀態 |
 |------|------|
 | 瀏覽器 `speechSynthesis` 當產品聲 | **REJECTED** |
-| 產品播音 | **MUTED** 直到認可路徑就緒 |
-| `dawn-natural-female-v2.wav` | **MISSING**（倉庫／信件／附件均無；測試頁可 IndexedDB 投放） |
+| 產品播音 | **MUTED** 直到神經克隆聽感通過 |
+| **`dawn-realtime-target-v1.wav`（新目標）** | **REFERENCE_TARGET_READY**（使用者影片音軌抽出，24 kHz mono；見 `DAWN-REALTIME-VOICE-TARGET-V1.md`） |
+| `dawn-natural-female-v2.wav`（早期參考） | **保留不刪**；可預覽；次要錨點 |
 | Qwen3-TTS／CosyVoice | **BLOCKED_NEED_GPU**（施工機無 GPU、無 torch） |
 | 產品標 AVAILABLE | **禁止**，直到聽感驗收通過 |
+| 唱歌／音律 | 影片音軌含清唱式旋律 → **另案**（不當作唱歌產品已接通） |
 
 ## MVP 管線（本輪）
 
@@ -50,7 +52,7 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 
 ## 下一步（需使用者）
 
-1. 提供 `dawn-natural-female-v2.wav`（聊天上傳或放入倉庫）。
-2. 核准免費 GPU／自架主機跑 Qwen3-TTS 或 CosyVoice。
-3. 部署 `dawn-own-tts` 並接上游後，聽感通過才可標 AVAILABLE。
-4. 合併本草稿 PR 前再聽感／流程確認。
+1. ~~提供參考 wav~~ → 新目標 `dawn-realtime-target-v1.wav` 已入庫（v2 保留）。
+2. 核准免費 GPU／自架主機跑 Qwen3-TTS 或 CosyVoice，以 **v1** 為克隆錨點。
+3. 部署 `dawn-own-tts` 並接上游後，聽感通過（抑揚頓挫規格）才可標 AVAILABLE。
+4. 唱歌模組另用本音軌研究旋律／音律；不得把本剪輯標成唱歌產品完成。

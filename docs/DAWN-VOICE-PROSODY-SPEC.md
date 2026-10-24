@@ -37,6 +37,22 @@
 1. 補錄更長、更多情緒／疑問／強調句的參考（同音色），或  
 2. 選用 **instruct／emotion** 類引擎（Qwen3-TTS、CosyVoice 等）並調 style，而不是換回平坦電音。
 
+
+## 2b. 新目標分析（dawn-realtime-target-v1.wav · 2026-10-24）
+
+來源：使用者上傳影片音軌（清唱瀏覽錄影之音訊）。**這是即時說話產品聲的新目標**；v2 保留為早期參考。
+
+| 指標 | 數值 |
+|------|------|
+| 時長 | ~75.78 s · 24 kHz mono PCM |
+| SHA-256 | `f067dd215e87d8787b3ca375596b59d44ad369cb74e169f119432696194142ea` |
+| RMS / Peak | ~−15.3 / −0.4 dBFS |
+| F0 median / stdev（粗） | ~247 Hz / **~75 Hz**（高於 v2 的 ~51 Hz → 抑揚頓挫代理較強） |
+
+與 v2 對照：更長、更響、音高起伏代理更高，較符合「要有抑揚頓挫」。  
+**唱歌／音律：** 音軌含清唱式旋律，交給唱歌模組另案；不可因本檔宣稱唱歌 AVAILABLE。  
+詳見 `docs/DAWN-REALTIME-VOICE-TARGET-V1.md`。
+
 ## 3. 引擎優先序（免費／自架）
 
 1. **優先：** Qwen3-TTS 或 CosyVoice（支持指令／情感／克隆）— 需 GPU → 現況 `BLOCKED_NEED_GPU`
@@ -47,13 +63,14 @@
 
 | 狀態 | 意義 |
 |------|------|
-| REFERENCE_WAV_READY | 認可參考已入庫，可預覽 |
+| REFERENCE_TARGET_READY | 新目標 v1 已入庫，可預覽（仍非 AVAILABLE） |
+| REFERENCE_WAV_READY | 早期 v2 參考已入庫，可預覽 |
 | BLOCKED_NEED_GPU | 即時神經克隆未部署 |
 | AVAILABLE | **僅當**神經 TTS 聽感通過抑揚頓挫規格 |
 
 ## 5. 說話能唱歌（與 #22–#24 對齊）
 
 - 產品「唱歌」必須是**有音高軌跡的人聲／歌聲模型**，不是朗讀加 pitch slider，也不是 Web Audio sine（`EXPERIMENTAL_DSP_SINGING`）。
-- 說話與唱歌共用自然聲線錨點（`dawn-natural-female-v2.wav` 或後續小太陽專用參考）。
+- 說話產品聲錨點：**`dawn-realtime-target-v1.wav`（新）**；早期 `dawn-natural-female-v2.wav` 保留。唱歌／小太陽可另備專用參考。
 - 旋律須可對照 MIDI／JSON；F0 隨時間應跟隨指定音符。
 - 詳見 `docs/DAWN-VOICE-AND-SINGING-PLAN.md`。

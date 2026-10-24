@@ -36,8 +36,11 @@ test('product path rejects browser synth and waits for neural', () => {
   assert.match(neural, /BLOCKED_NEED_GPU/);
   assert.match(neural, /speechSynthesis/);
   assert.match(neural, /productUsesBrowserSynth:\s*false/);
-  assert.match(html, /投放認可女聲/);
+  assert.match(neural, /productAvailable:\s*false/);
+  assert.match(html, /即時語音目標/);
+  assert.match(html, /dawn-realtime-target-v1\.wav/);
   assert.match(html, /IndexedDB/);
+  assert.doesNotMatch(html, /產品 TTS：AVAILABLE(?!.*非)/);
 });
 
 test('VAD EOT uses 500-800ms silence window', () => {
@@ -48,11 +51,21 @@ test('VAD EOT uses 500-800ms silence window', () => {
   assert.match(js, /AbortController/);
 });
 
-test('wav missing is documented not invented', () => {
+test('realtime target v1 present; legacy v2 kept; product not AVAILABLE', () => {
   const readme = readFileSync(new URL('../app/assets/dawn-voice/README.md', import.meta.url), 'utf8');
-  assert.match(readme, /MISSING/);
+  assert.match(readme, /dawn-realtime-target-v1\.wav/);
   assert.match(readme, /dawn-natural-female-v2\.wav/);
-  assert.equal(existsSync(new URL('../app/assets/dawn-voice/dawn-natural-female-v2.wav', import.meta.url)), false);
+  assert.match(readme, /not AVAILABLE|非 AVAILABLE|REFERENCE_TARGET_READY/i);
+  assert.match(neural, /ASSET_TARGET_WAV/);
+  assert.match(neural, /previewRealtimeTarget/);
+  const v1 = new URL('../app/assets/dawn-voice/dawn-realtime-target-v1.wav', import.meta.url);
+  const v2 = new URL('../app/assets/dawn-voice/dawn-natural-female-v2.wav', import.meta.url);
+  assert.equal(existsSync(v1), true);
+  assert.equal(existsSync(v2), true);
+  const buf = readFileSync(v1);
+  assert.equal(buf.slice(0, 4).toString('ascii'), 'RIFF');
+  const sha = createHash('sha256').update(buf).digest('hex');
+  assert.equal(sha, 'f067dd215e87d8787b3ca375596b59d44ad369cb74e169f119432696194142ea');
 });
 
 test('EOT onnx asset present with expected sha256 prefix', () => {
