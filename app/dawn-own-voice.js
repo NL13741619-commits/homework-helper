@@ -80,7 +80,7 @@
     var t = String(text || '').trim();
     if (!t) return '我在聽，請再說一次。';
     if (/你好|嗨|哈囉|hello/i.test(t)) {
-      return '你好，我是曙光。這是第二基地自建語音測試，沒有使用 Gemini Live。產品音色尚未接通：新目標 dawn-realtime-target-v1.wav 已備，自然神經 TTS 仍需 GPU。';
+      return '你好，我是曙光。這是第二基地自建語音測試，沒有使用 Gemini Live。產品音色尚未接通：說話參考仍為 dawn-natural-female-v2.wav；影片清唱僅作唱歌音律參考；自然神經 TTS 仍需 GPU。';
     }
     if (/你是誰|名字/.test(t)) {
       return '我是曙光 Dawn Light。瀏覽器合成聲已被拒絕當產品音色；認可女聲檔與神經 TTS 尚未就緒。';
@@ -256,7 +256,7 @@
     }
     await this.probeWav();
     if (!this.neuralStatus || String(this.neuralStatus.wavStatus).indexOf('PRESENT') !== 0) {
-      this.setStatus('克隆錨點仍 MISSING。請確認 dawn-realtime-target-v1.wav 或投放 wav。', 'warn');
+      this.setStatus('說話克隆錨點仍 MISSING。請確認 dawn-natural-female-v2.wav 或投放說話 wav。', 'warn');
       return false;
     }
     var ok = await this.neural.previewReference();
@@ -640,8 +640,9 @@
   root.DawnOwnVoiceMeta = {
     geminiLive: false,
     productTts: 'MUTED_UNTIL_NATURAL_NEURAL',
-    approvedPath: 'dawn-realtime-target-v1.wav + free neural TTS (e.g. Qwen3-TTS); v2 kept',
-    wavPath: 'app/assets/dawn-voice/dawn-realtime-target-v1.wav',
+    approvedPath: 'speak: dawn-natural-female-v2.wav + free neural TTS; melody: dawn-singing-melody-ref-v1.wav (Option B, not speak TARGET)',
+    wavPath: 'app/assets/dawn-voice/dawn-natural-female-v2.wav',
+    melodyWavPath: 'app/assets/dawn-voice/dawn-singing-melody-ref-v1.wav',
     legacyWavPath: 'app/assets/dawn-voice/dawn-natural-female-v2.wav',
     eotAsset: 'app/assets/dawn-voice/aivault-eot-v1-int8.onnx',
     offSwitch: '?voice=0 or localStorage.DAWN_OWN_VOICE_OFF=1',

@@ -14,12 +14,15 @@
   var IDB_NAME = 'dawn-voice-v1';
   var IDB_STORE = 'refs';
   var IDB_KEY = 'dawn-natural-female-v2';
-  /** NEW realtime speaking TARGET (user video audio, 2026-10-24). */
-  var ASSET_TARGET_WAV = 'assets/dawn-voice/dawn-realtime-target-v1.wav';
-  /** Earlier short reference — keep; do not delete. */
-  var ASSET_LEGACY_WAV = 'assets/dawn-voice/dawn-natural-female-v2.wav';
-  /** Primary clone anchor for future neural TTS = realtime target. */
-  var ASSET_WAV = ASSET_TARGET_WAV;
+  /** Option B: singing/melody/prosody-character reference ONLY (video audio). NOT speaking TARGET. */
+  var ASSET_MELODY_WAV = 'assets/dawn-voice/dawn-singing-melody-ref-v1.wav';
+  /** Current conversational speaking reference — keep until better speak sample. */
+  var ASSET_SPEAK_WAV = 'assets/dawn-voice/dawn-natural-female-v2.wav';
+  /** Aliases for probe/preview API compatibility. */
+  var ASSET_TARGET_WAV = ASSET_MELODY_WAV;
+  var ASSET_LEGACY_WAV = ASSET_SPEAK_WAV;
+  /** Primary clone anchor for future neural TTS = speaking v2 (Option B). */
+  var ASSET_WAV = ASSET_SPEAK_WAV;
   var FORBIDDEN = [
     'generativelanguage.googleapis.com',
     'BidiGenerateContent',
@@ -189,10 +192,11 @@
 
   function DawnNeuralTts() {
     this.wavStatus = 'UNKNOWN'; // MISSING | PRESENT_ASSET | PRESENT_IDB
-    this.wavUrl = resolveAssetUrl(ASSET_TARGET_WAV);
-    this.legacyUrl = resolveAssetUrl(ASSET_LEGACY_WAV);
-    this.targetStatus = 'UNKNOWN'; // realtime-target-v1
-    this.legacyStatus = 'UNKNOWN'; // natural-female-v2
+    this.wavUrl = resolveAssetUrl(ASSET_SPEAK_WAV);
+    this.melodyUrl = resolveAssetUrl(ASSET_MELODY_WAV);
+    this.legacyUrl = resolveAssetUrl(ASSET_SPEAK_WAV);
+    this.targetStatus = 'UNKNOWN'; // singing-melody-ref-v1 (NOT speaking target)
+    this.legacyStatus = 'UNKNOWN'; // natural-female-v2 speaking ref
     this.wavObjectUrl = null;
     this.wavMeta = null;
     this.engineStatus = 'UNKNOWN';
@@ -211,21 +215,21 @@
   };
 
   DawnNeuralTts.prototype.probe = async function () {
-    // 1) NEW realtime target asset (primary)
-    this.targetStatus = (await this._headOk(this.wavUrl)) ? 'PRESENT_ASSET' : 'MISSING';
-    // 2) Earlier v2 reference (kept)
+    // Option B: speaking v2 = clone anchor; melody ref = singing study only
     this.legacyStatus = (await this._headOk(this.legacyUrl)) ? 'PRESENT_ASSET' : 'MISSING';
+    this.targetStatus = (await this._headOk(this.melodyUrl)) ? 'PRESENT_ASSET' : 'MISSING';
 
-    if (this.targetStatus === 'PRESENT_ASSET') {
+    if (this.legacyStatus === 'PRESENT_ASSET') {
       this.wavStatus = 'PRESENT_ASSET';
+      this.wavUrl = this.legacyUrl;
       this.wavMeta = {
         source: 'asset',
-        role: 'realtime_target_v1',
-        url: this.wavUrl,
-        path: 'app/assets/dawn-voice/dawn-realtime-target-v1.wav'
+        role: 'speaking_reference_v2',
+        url: this.legacyUrl,
+        path: 'app/assets/dawn-voice/dawn-natural-female-v2.wav'
       };
     } else {
-      // IndexedDB drop-in (browser-local until committed)
+      // IndexedDB drop-in (browser-local until committed) — for future speak sample
       var rec = await idbGet();
       if (rec && rec.blob) {
         if (this.wavObjectUrl) {
@@ -239,16 +243,6 @@
           size: rec.size || (rec.blob && rec.blob.size) || 0,
           sha256: rec.sha256 || null,
           savedAt: rec.savedAt || null
-        };
-      } else if (this.legacyStatus === 'PRESENT_ASSET') {
-        // Fallback preview anchor only — still not product TTS
-        this.wavStatus = 'PRESENT_ASSET';
-        this.wavUrl = this.legacyUrl;
-        this.wavMeta = {
-          source: 'asset',
-          role: 'legacy_v2_earlier_reference',
-          url: this.legacyUrl,
-          path: 'app/assets/dawn-voice/dawn-natural-female-v2.wav'
         };
       } else {
         this.wavStatus = 'MISSING';
@@ -279,16 +273,16 @@
       productPlayback: false,
       reason:
         this.engineStatus === 'MUTED_WAITING_WAV'
-          ? 'MISSING_realtime_target_and_legacy_refs'
+          ? 'MISSING_speaking_reference_v2'
           : this.engineStatus === 'BLOCKED_NEED_GPU'
             ? 'Qwen3-TTS/CosyVoice need GPU; box has none; torch not installed'
             : this.engineStatus,
-      approvedPath: 'dawn-realtime-target-v1.wav (NEW) + free neural TTS (Qwen3-TTS / CosyVoice); v2 kept as earlier reference',
-      rejected: ['speechSynthesis', 'Web Speech TTS', 'Gemini Live TTS'],
+      approvedPath: 'speak: dawn-natural-female-v2.wav + free neural TTS; singing/melody ref: dawn-singing-melody-ref-v1.wav (Option B, NOT speak TARGET)',
+      rejected: ['speechSynthesis', 'Web Speech TTS', 'Gemini Live TTS', 'video singing clip as speak TARGET'],
       nextStep:
-        this.targetStatus !== 'PRESENT_ASSET' && this.wavStatus === 'MISSING'
-          ? 'Commit dawn-realtime-target-v1.wav or drop wav into test page; then provision free GPU for neural clone'
-          : 'Provision free GPU or CPU host for Qwen3-TTS/CosyVoice; wire dawn-own-tts; never mark AVAILABLE until hear-test pass'
+        this.wavStatus === 'MISSING'
+          ? 'Commit dawn-natural-female-v2.wav or drop a speaking wav; then provision free GPU for neural clone'
+          : 'Need better speak sample (SPEAKING-PROSODY-SAMPLE-NEEDED.md); provision free GPU for Qwen3-TTS/CosyVoice; never mark AVAILABLE until hear-test pass'
     };
   };
 
@@ -352,17 +346,21 @@
     return this._playUrl(url);
   };
 
-  /** Preview NEW realtime speaking TARGET (video-derived). */
+  /** Preview singing/melody reference (video-derived). Option B: NOT speaking TARGET. */
   DawnNeuralTts.prototype.previewRealtimeTarget = async function () {
-    await this.probe();
-    if (this.targetStatus !== 'PRESENT_ASSET') {
-      this.lastError = 'TARGET_MISSING';
-      return false;
-    }
-    return this._playUrl(resolveAssetUrl(ASSET_TARGET_WAV));
+    return this.previewMelodyRef();
   };
 
-  /** Preview earlier v2 short reference (kept). */
+  DawnNeuralTts.prototype.previewMelodyRef = async function () {
+    await this.probe();
+    if (this.targetStatus !== 'PRESENT_ASSET') {
+      this.lastError = 'MELODY_REF_MISSING';
+      return false;
+    }
+    return this._playUrl(resolveAssetUrl(ASSET_MELODY_WAV));
+  };
+
+  /** Preview speaking reference v2 (current conversational anchor). */
   DawnNeuralTts.prototype.previewLegacyV2 = async function () {
     await this.probe();
     if (this.legacyStatus !== 'PRESENT_ASSET') {
@@ -409,9 +407,11 @@
   root.DawnNeuralTts = DawnNeuralTts;
   root.DawnNeuralTtsMeta = {
     idbKey: IDB_KEY,
-    assetPath: 'app/assets/dawn-voice/dawn-realtime-target-v1.wav',
+    assetPath: 'app/assets/dawn-voice/dawn-natural-female-v2.wav',
+    speakAssetPath: 'app/assets/dawn-voice/dawn-natural-female-v2.wav',
+    melodyAssetPath: 'app/assets/dawn-voice/dawn-singing-melody-ref-v1.wav',
     legacyAssetPath: 'app/assets/dawn-voice/dawn-natural-female-v2.wav',
-    realtimeTargetRole: 'NEW speaking voice TARGET from user video audio',
+    realtimeTargetRole: 'Option B: video wav is SINGING/MELODY ref ONLY; speak = v2',
     gpuRequiredFor: ['Qwen3-TTS', 'CosyVoice'],
     boxGpu: false,
     productUsesBrowserSynth: false,

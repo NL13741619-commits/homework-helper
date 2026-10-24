@@ -67,8 +67,8 @@ code{font-size:11px}
 <main>
   <section class="banner" role="status">
     <strong>產品音色政策：</strong>瀏覽器 <code>speechSynthesis</code>（電音）已被拒絕。
-    <strong>新目標</strong>：使用者影片音軌 <code>dawn-realtime-target-v1.wav</code>（抑揚頓挫較明顯）。
-    早期短參考 <code>dawn-natural-female-v2.wav</code> 保留不刪。
+    <strong>Option B</strong>：影片清唱 <code>dawn-singing-melody-ref-v1.wav</code> 僅作<strong>唱歌／音律</strong>參考，<strong>不是</strong>即時說話 TARGET。
+    說話參考暫用 <code>dawn-natural-female-v2.wav</code>；需另補有抑揚頓挫的真人說話樣本。
     產品播音仍<strong>靜音</strong>，直到免費神經 TTS 克隆通過聽感（本機<strong>無 GPU</strong> → <code>BLOCKED_NEED_GPU</code>）。
     <strong>不得標 AVAILABLE</strong>。
   </section>
@@ -78,9 +78,9 @@ code{font-size:11px}
     <div id="status" data-k="info">尚未開始。建議先用 ?mock=1 驗證字幕／VAD／插話（不會播電音）。</div>
     <div class="level" title="麥克風能量"><i id="levelBar"></i></div>
     <div class="meta" style="margin-top:10px">
-      <div>即時目標 v1<b id="targetMeta">檢查中…</b></div>
-      <div>早期參考 v2<b id="legacyMeta">檢查中…</b></div>
-      <div>克隆錨點 wav<b id="wavMeta">檢查中…</b></div>
+      <div>唱歌／音律參考<b id="targetMeta">檢查中…</b></div>
+      <div>說話參考 v2<b id="legacyMeta">檢查中…</b></div>
+      <div>說話克隆錨點 wav<b id="wavMeta">檢查中…</b></div>
       <div>神經 TTS 引擎<b id="engineMeta">—</b></div>
       <div>對話來源<b id="modeMeta">—</b></div>
       <div>STT（僅辨識）<b id="sttMeta">—</b></div>
@@ -98,12 +98,12 @@ code{font-size:11px}
   </section>
 
   <section class="card">
-    <h2>即時語音目標（影片音軌 · 新）</h2>
-    <p class="notice">來源：使用者上傳影片抽出的 24 kHz mono wav。作為曙光<strong>即時說話</strong>聲線新目標；唱歌／音律另案。產品 TTS 仍非 AVAILABLE。</p>
+    <h2>唱歌／音律參考（影片音軌 · Option B）</h2>
+    <p class="notice">來源：使用者上傳清唱瀏覽影片抽出的 24 kHz mono wav。<strong>僅</strong>作唱歌／旋律／抑揚性格參考；<strong>不是</strong>即時說話 TARGET。說話仍用 v2。產品 TTS 仍非 AVAILABLE。</p>
     <div class="btns" style="margin-top:8px">
-      <button type="button" class="primary" id="btnTarget" disabled>▶ 預覽新目標 v1</button>
-      <button type="button" id="btnLegacy" disabled>預覽早期 v2</button>
-      <a href="assets/dawn-voice/dawn-realtime-target-v1.wav" download style="align-self:center;font-size:12px">下載 v1 wav</a>
+      <button type="button" class="primary" id="btnTarget" disabled>▶ 預覽唱歌／音律參考</button>
+      <button type="button" id="btnLegacy" disabled>預覽說話參考 v2</button>
+      <a href="assets/dawn-voice/dawn-singing-melody-ref-v1.wav" download style="align-self:center;font-size:12px">下載唱歌參考 wav</a>
     </div>
     <p class="notice" id="targetDetail">檢查中…</p>
   </section>
@@ -112,7 +112,7 @@ code{font-size:11px}
     <h2>本機投放額外 wav（IndexedDB · 選用）</h2>
     <div class="drop" id="drop" tabindex="0">
       拖放或點此選擇 <code>.wav</code>（RIFF）。檔案先存瀏覽器 IndexedDB，<strong>不會</strong>自動 commit 進 Git。<br>
-      倉庫正式目標：<code>app/assets/dawn-voice/dawn-realtime-target-v1.wav</code>（v2 保留）
+      倉庫說話錨點：<code>app/assets/dawn-voice/dawn-natural-female-v2.wav</code>；唱歌參考：<code>dawn-singing-melody-ref-v1.wav</code>
       <input type="file" id="wavFile" accept="audio/wav,.wav" hidden>
     </div>
     <div class="btns" style="margin-top:8px">
@@ -148,12 +148,13 @@ code{font-size:11px}
       · <a href="dawn-own-voice-test.html?mock=1">開 MOCK</a>
       · <a href="dawn-own-voice-test.html?mock=1&amp;demo=1">DEMO 一句</a>
       · <a href="../docs/DAWN-OWN-REALTIME-VOICE.md">文件</a>
-      · <a href="../docs/DAWN-REALTIME-VOICE-TARGET-V1.md">目標 v1</a>
+      · <a href="../docs/DAWN-SINGING-MELODY-REF-V1.md">唱歌音律參考</a>
+      · <a href="../docs/SPEAKING-PROSODY-SAMPLE-NEEDED.md">說話樣本需求</a>
     </p>
   </section>
 </main>
-<script src="dawn-neural-tts.js?v=20261024-target-v1"></script>
-<script src="dawn-own-voice.js?v=20261024-target-v1"></script>
+<script src="dawn-neural-tts.js?v=20261024-option-b"></script>
+<script src="dawn-own-voice.js?v=20261024-option-b"></script>
 <script>
 (function(){
   var log=document.getElementById('log');
@@ -166,8 +167,8 @@ code{font-size:11px}
     var eng=st.engineStatus||'UNKNOWN';
     var tgt=st.targetStatus||'UNKNOWN';
     var leg=st.legacyStatus||'UNKNOWN';
-    document.getElementById('targetMeta').textContent=tgt+(tgt.indexOf('PRESENT')===0?' · dawn-realtime-target-v1.wav':'');
-    document.getElementById('legacyMeta').textContent=leg+(leg.indexOf('PRESENT')===0?' · dawn-natural-female-v2.wav（保留）':'');
+    document.getElementById('targetMeta').textContent=tgt+(tgt.indexOf('PRESENT')===0?' · dawn-singing-melody-ref-v1.wav（非說話）':'');
+    document.getElementById('legacyMeta').textContent=leg+(leg.indexOf('PRESENT')===0?' · dawn-natural-female-v2.wav（說話）':'');
     document.getElementById('wavMeta').textContent=
       wav.indexOf('PRESENT')===0
         ? wav+(st.wavMeta&&st.wavMeta.role?' · '+st.wavMeta.role:'')+(st.wavMeta&&st.wavMeta.sha256?' · sha256='+st.wavMeta.sha256.slice(0,12)+'…':'')+(st.wavMeta&&st.wavMeta.source?' · '+st.wavMeta.source:'')
@@ -186,7 +187,7 @@ code{font-size:11px}
     if(st.reason) detail+='｜'+st.reason;
     document.getElementById('wavDetail').textContent=detail;
     document.getElementById('targetDetail').textContent=
-      'v1='+tgt+' · v2='+leg+' · 產品播音 MUTED／BLOCKED_NEED_GPU · 文件 docs/DAWN-REALTIME-VOICE-TARGET-V1.md';
+      'melody='+tgt+' · speak-v2='+leg+' · Option B · 產品播音 MUTED／BLOCKED_NEED_GPU · docs/DAWN-SINGING-MELODY-REF-V1.md';
   }
 
   var engine=new DawnOwnVoice({
@@ -237,7 +238,7 @@ code{font-size:11px}
   document.getElementById('ttsMeta').textContent=
     /synth=1/.test(location.search)
       ? 'DEBUG ?synth=1 · REJECTED（非產品）'
-      : 'MUTED · 目標 v1 已備 · 神經 TTS 仍 BLOCKED_NEED_GPU';
+      : 'MUTED · 說話 v2 已備 · 清唱僅音律參考 · 神經 TTS 仍 BLOCKED_NEED_GPU';
 
   engine.probeWav().then(function(){ paintNeural(engine.neuralStatus); });
 
@@ -299,12 +300,12 @@ code{font-size:11px}
   document.getElementById('btnWav').onclick=function(){engine.previewApprovedWav();};
   document.getElementById('btnTarget').onclick=async function(){
     var ok=engine.neural&&await engine.neural.previewRealtimeTarget();
-    statusEl.textContent=ok?'正在預覽新目標 dawn-realtime-target-v1.wav（真人／清唱參考音 · 非電音 · 非產品 TTS）':'新目標預覽失敗';
+    statusEl.textContent=ok?'正在預覽唱歌／音律參考 dawn-singing-melody-ref-v1.wav（Option B · 非說話 TARGET · 非產品 TTS）':'唱歌／音律參考預覽失敗';
     statusEl.dataset.k=ok?'warn':'err';
   };
   document.getElementById('btnLegacy').onclick=async function(){
     var ok=engine.neural&&await engine.neural.previewLegacyV2();
-    statusEl.textContent=ok?'正在預覽早期參考 v2（保留）':'早期 v2 預覽失敗';
+    statusEl.textContent=ok?'正在預覽說話參考 v2（現行對話錨點）':'說話參考 v2 預覽失敗';
     statusEl.dataset.k=ok?'warn':'err';
   };
   document.getElementById('form').onsubmit=async function(e){

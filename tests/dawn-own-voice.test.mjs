@@ -37,8 +37,9 @@ test('product path rejects browser synth and waits for neural', () => {
   assert.match(neural, /speechSynthesis/);
   assert.match(neural, /productUsesBrowserSynth:\s*false/);
   assert.match(neural, /productAvailable:\s*false/);
-  assert.match(html, /即時語音目標/);
-  assert.match(html, /dawn-realtime-target-v1\.wav/);
+  assert.match(html, /唱歌／音律參考|Option B/);
+  assert.match(html, /dawn-singing-melody-ref-v1\.wav/);
+  assert.match(html, /dawn-natural-female-v2\.wav/);
   assert.match(html, /IndexedDB/);
   assert.doesNotMatch(html, /產品 TTS：AVAILABLE(?!.*非)/);
 });
@@ -51,18 +52,23 @@ test('VAD EOT uses 500-800ms silence window', () => {
   assert.match(js, /AbortController/);
 });
 
-test('realtime target v1 present; legacy v2 kept; product not AVAILABLE', () => {
+test('Option B: singing melody ref present; speak stays v2; product not AVAILABLE', () => {
   const readme = readFileSync(new URL('../app/assets/dawn-voice/README.md', import.meta.url), 'utf8');
-  assert.match(readme, /dawn-realtime-target-v1\.wav/);
+  assert.match(readme, /dawn-singing-melody-ref-v1\.wav/);
   assert.match(readme, /dawn-natural-female-v2\.wav/);
-  assert.match(readme, /not AVAILABLE|非 AVAILABLE|REFERENCE_TARGET_READY/i);
-  assert.match(neural, /ASSET_TARGET_WAV/);
-  assert.match(neural, /previewRealtimeTarget/);
-  const v1 = new URL('../app/assets/dawn-voice/dawn-realtime-target-v1.wav', import.meta.url);
+  assert.match(readme, /singing|melody|NOT.*speaking|非.*說話/i);
+  assert.match(readme, /not AVAILABLE|非 AVAILABLE|REFERENCE_WAV_READY/i);
+  assert.doesNotMatch(readme, /realtime speaking voice TARGET/i);
+  assert.match(neural, /ASSET_MELODY_WAV|ASSET_TARGET_WAV/);
+  assert.match(neural, /ASSET_SPEAK_WAV|ASSET_WAV = ASSET_SPEAK_WAV/);
+  assert.match(neural, /previewMelodyRef|previewRealtimeTarget/);
+  assert.match(neural, /Option B|SINGING|NOT speaking/i);
+  const melody = new URL('../app/assets/dawn-voice/dawn-singing-melody-ref-v1.wav', import.meta.url);
   const v2 = new URL('../app/assets/dawn-voice/dawn-natural-female-v2.wav', import.meta.url);
-  assert.equal(existsSync(v1), true);
+  assert.equal(existsSync(melody), true);
   assert.equal(existsSync(v2), true);
-  const buf = readFileSync(v1);
+  assert.equal(existsSync(new URL('../app/assets/dawn-voice/dawn-realtime-target-v1.wav', import.meta.url)), false);
+  const buf = readFileSync(melody);
   assert.equal(buf.slice(0, 4).toString('ascii'), 'RIFF');
   const sha = createHash('sha256').update(buf).digest('hex');
   assert.equal(sha, 'f067dd215e87d8787b3ca375596b59d44ad369cb74e169f119432696194142ea');
