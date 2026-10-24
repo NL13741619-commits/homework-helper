@@ -17,7 +17,7 @@
 | 10 | 小太陽數字人修復 | OPEN | 入口保留；語音改走免費頁 |
 | 12 | 小太陽 UI 改善 | OPEN | media hub 以曙光／小太陽為先 |
 | 13–14 | AI 核心／Gateway | OPEN | 未動付費閘 |
-| 15 | Dawn Voice Engine | OPEN | 免費瀏覽器語音頁；Gemini Live 禁用 |
+| 15 | Dawn Voice Engine | OPEN | 瀏覽器 TTS 已 REJECTED 當產品聲；等 wav+神經 TTS；Gemini Live 禁用 |
 | 16–20 | 自主模型／即時語音 | OPEN | 標示 Draft PR #21/#26；不合併冒充上線 |
 | 22–24 | 歌唱／聽歌學唱 | OPEN | DSP 四小節原型；神經歌唱仍 EXPERIMENTAL／BLOCKED |
 | 21 PR | 本機 Qwen+歌唱 | DRAFT | 短名單引用，未合併 |
@@ -60,7 +60,9 @@
 
 | 模組 | 類型 | 引擎 | 授權 | 狀態 |
 |------|------|------|------|------|
-| 免費語音 TTS/ASR | owned UI + 瀏覽器 | Web Speech API | 瀏覽器／OS | AVAILABLE_BROWSER |
+| 免費語音 ASR | owned UI + 瀏覽器 | Web Speech Recognition | 瀏覽器／OS | AVAILABLE_BROWSER（僅辨識） |
+| 瀏覽器 TTS 當產品聲 | — | speechSynthesis | 瀏覽器／OS | **REJECTED**（電音；2026-10-24） |
+| 產品自然 TTS | owned 部署 | 認可 wav + 神經 TTS（如 Qwen3-TTS） | 待 GPU／權重 | WAITING / NOT_DEPLOYED |
 | Gemini Live（既有 `dawn-light-live-voice.js`） | 外部 | Gemini Live relay | 付費／配額風險 | **DISABLED_BY_POLICY**（本輪不接 UI） |
 | 自架 Qwen3-TTS | owned 部署程式 | `app/services/aivault-voice` | Apache-2.0 上游權重 | NOT_DEPLOYED（需 GPU 節點） |
 | Draft PR #21/#26 | owned local-ai | Qwen + Flite/WORLD 等 | 見各 PR | DRAFT 未合併 |
@@ -105,7 +107,7 @@
 |------|------|---------|
 | Canvas→真實 JPEG | ✓ | |
 | AI 插畫 | | BLOCKED_NO_FREE_IMAGE_PROVIDER |
-| 瀏覽器語音 | ✓ | Gemini Live 禁用 |
+| 瀏覽器語音（產品聲） | REJECTED | 等 wav+神經 TTS；Gemini Live 禁用 |
 | DSP 歌唱原型 | ✓（實驗） | 神經歌唱／聽歌翻唱 |
 | Canvas 短片 | ✓* | Magic Hour / AI 圖生影片 |
 | Edge image 誠實封鎖 | ✓（程式） | 未 deploy 到線上 |

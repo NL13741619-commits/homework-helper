@@ -1,6 +1,10 @@
 /**
  * Dawn own realtime voice (Base 2) — NO Gemini Live.
+ * Product TTS policy (2026-10-24): Web Speech / speechSynthesis is REJECTED
+ * as the Dawn product voice (too synthetic / "電音"). Approved path =
+ * dawn-natural-female-v2.wav reference + free neural TTS (e.g. Qwen3-TTS).
  * Off: ?voice=0 or localStorage DAWN_OWN_VOICE_OFF=1
+ * Debug-only synth (never product): ?synth=1 — still labeled REJECTED.
  */
 (function (root) {
   'use strict';
@@ -30,6 +34,11 @@
     return /[?&]mock=1(?:&|$)/.test(location.search);
   }
 
+  /** Explicit debug only — never the product Dawn voice. */
+  function debugSynthAllowed() {
+    return /[?&]synth=1(?:&|$)/.test(location.search);
+  }
+
   function assertNoLive(url) {
     var s = String(url || '');
     for (var i = 0; i < FORBIDDEN.length; i++) {
@@ -54,10 +63,14 @@
   function mockReply(text) {
     var t = String(text || '').trim();
     if (!t) return '我在聽，請再說一次。';
-    if (/你好|嗨|哈囉|hello/i.test(t)) return '你好，我是曙光。這是第二基地自建語音測試，沒有使用 Gemini Live。';
-    if (/你是誰|名字/.test(t)) return '我是曙光 Dawn Light。目前用臨時瀏覽器語音；認可女聲檔還沒放到倉庫。';
+    if (/你好|嗨|哈囉|hello/i.test(t)) {
+      return '你好，我是曙光。這是第二基地自建語音測試，沒有使用 Gemini Live。產品音色尚未接通：在等認可檔 dawn-natural-female-v2.wav 與自然神經 TTS。';
+    }
+    if (/你是誰|名字/.test(t)) {
+      return '我是曙光 Dawn Light。瀏覽器合成聲已被拒絕當產品音色；認可女聲檔與神經 TTS 尚未就緒。';
+    }
     if (/天氣|時間/.test(t)) return '我還沒接上氣象或時鐘服務，這句是 MOCK 回覆。';
-    return '收到：「' + t.slice(0, 80) + '」。這是 MOCK 對話，不是 Gemini Live，也還不是認可音色。';
+    return '收到：「' + t.slice(0, 80) + '」。這是 MOCK 對話，不是 Gemini Live，也不是認可自然女聲。';
   }
 
   function DawnOwnVoice(ui) {
@@ -74,6 +87,7 @@
     this.wavUrl = WAV_URL;
     this.mode = mockMode() ? 'MOCK' : 'AUTO';
     this.lastError = '';
+    this.ttsPolicy = 'REJECTED_BROWSER_SYNTH';
   }
 
   DawnOwnVoice.prototype.setStatus = function (text, kind) {
@@ -99,7 +113,7 @@
 
   DawnOwnVoice.prototype.previewApprovedWav = async function () {
     if (this.wavStatus !== 'PRESENT') {
-      this.setStatus('認可聲線檔仍 MISSING，無法預覽。', 'warn');
+      this.setStatus('認可聲線檔仍 MISSING，無法預覽。請向使用者／GPT 索取 dawn-natural-female-v2.wav。', 'warn');
       return false;
     }
     return new Promise(function (resolve) {
@@ -115,24 +129,49 @@
     this.speaking = false;
   };
 
+  /**
+   * Product speak path: NEVER play browser speechSynthesis as Dawn voice.
+   * Subtitles remain; optional ?synth=1 plays REJECTED debug synth only.
+   */
   DawnOwnVoice.prototype.speak = function (text) {
     var self = this;
     this.stopTts();
+    var msg = String(text || '');
+
+    if (!debugSynthAllowed()) {
+      this.speaking = false;
+      this.ttsPolicy = 'MUTED_WAITING_NATURAL_TTS';
+      this.setStatus(
+        '字幕已顯示 · 產品播音已靜音（拒絕瀏覽器電音合成）· 等待 dawn-natural-female-v2.wav + 自然神經 TTS（如 Qwen3-TTS）',
+        'warn'
+      );
+      if (this.ui.onTtsPolicy) {
+        this.ui.onTtsPolicy({
+          productPlayback: false,
+          reason: 'REJECTED_BROWSER_SYNTH',
+          waitingFor: ['dawn-natural-female-v2.wav', 'neural_tts_e.g._Qwen3-TTS']
+        });
+      }
+      return Promise.resolve(false);
+    }
+
+    // Debug-only path — explicitly not product voice.
     if (!root.speechSynthesis) {
-      this.setStatus('此瀏覽器沒有 speechSynthesis，無法播放臨時語音。', 'err');
+      this.setStatus('?synth=1 但此瀏覽器沒有 speechSynthesis（仍非產品音色）。', 'err');
       return Promise.resolve(false);
     }
     return new Promise(function (resolve) {
-      var u = new SpeechSynthesisUtterance(String(text || ''));
+      var u = new SpeechSynthesisUtterance(msg);
       u.lang = 'zh-TW';
       var v = pickZhVoice();
       if (v) u.voice = v;
       u.rate = 1.05;
       self.speaking = true;
-      self.setStatus('曙光說話中（TEMPORARY TTS・非認可 v2 音色）', 'speak');
+      self.ttsPolicy = 'DEBUG_SYNTH_REJECTED_AS_PRODUCT';
+      self.setStatus('DEBUG 合成聲播放中（REJECTED・非曙光產品音色・非認可 v2）', 'speak');
       u.onend = function () {
         self.speaking = false;
-        if (self.active) self.setStatus('正在聆聽…', 'listen');
+        if (self.active) self.setStatus('正在聆聽…（產品播音仍未接通）', 'listen');
         resolve(true);
       };
       u.onerror = function () {
@@ -154,7 +193,6 @@
       var m = mockReply(userText);
       return { content: m, source: 'MOCK', inference_executed: false };
     }
-    // Optional free text via Base2 brain gateway — never Live.
     try {
       assertNoLive(BRAIN);
       var client = root.AIVAULT_AUTH_CLIENT;
@@ -194,7 +232,11 @@
     this.history.push({ role: 'user', text: t });
     this.setStatus('曙光思考中…', 'think');
     var ans = await this.chat(t);
-    this.addLine('dawn', ans.content, { source: ans.source, model: ans.model || null });
+    this.addLine('dawn', ans.content, {
+      source: ans.source,
+      model: ans.model || null,
+      tts: 'MUTED_REJECTED_BROWSER_SYNTH'
+    });
     this.history.push({ role: 'dawn', text: ans.content, source: ans.source });
     await this.speak(ans.content);
   };
@@ -278,7 +320,9 @@
       this.rec.start();
       this.active = true;
       this.starting = false;
-      var wavNote = this.wavStatus === 'PRESENT' ? '認可 wav 可預覽' : '認可 wav=MISSING・臨時 TTS';
+      var wavNote = this.wavStatus === 'PRESENT'
+        ? '認可 wav 可預覽（尚未接神經 TTS）'
+        : '認可 wav=MISSING・產品播音靜音';
       this.setStatus('正在聆聽（非 Gemini Live・' + wavNote + '・模式 ' + this.mode + '）', 'listen');
       return true;
     } catch (e) {
@@ -314,8 +358,11 @@
   root.DawnOwnVoice = DawnOwnVoice;
   root.DawnOwnVoiceMeta = {
     geminiLive: false,
+    productTts: 'REJECTED_BROWSER_SYNTH',
+    approvedPath: 'dawn-natural-female-v2.wav + free neural TTS (e.g. Qwen3-TTS)',
     wavPath: 'app/assets/dawn-voice/dawn-natural-female-v2.wav',
     offSwitch: '?voice=0 or localStorage.DAWN_OWN_VOICE_OFF=1',
+    debugSynth: '?synth=1 (REJECTED as product voice)',
     forbidden: FORBIDDEN.slice()
   };
 })(typeof window !== 'undefined' ? window : globalThis);
