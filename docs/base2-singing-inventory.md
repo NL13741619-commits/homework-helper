@@ -67,3 +67,8 @@
 
 
 整合見 `docs/DAWN-SPEAK-SING-INTEGRATION-PLAN.md`。
+
+
+## 全曲分析／說唱切換（ChatGPT 規則）
+
+站上狀態：分段／分軌／對齊／押韻／說↔唱產品切換均為 **尚未完成**（或僅 Draft／父代理 #25 **原型**）。詳見 `docs/DAWN-SPEAK-SING-INTEGRATION-PLAN.md`。勿標 live AVAILABLE。
