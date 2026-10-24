@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>曙光自然參考聲 · 說／唱演示（非神經）</title>
+<link rel="stylesheet" href="dawn-free/media-hub.css">
+</head>
+<body>
+<header class="top">
+  <a href="../media.html">← 媒體中心</a>
+  <strong>☀ 自然參考聲 · 說＋唱演示</strong>
+  <span class="badge">REFERENCE_PLAYBACK</span>
+</header>
+<main>
+  <p class="lead">使用已入庫的 <code>dawn-natural-female-v2.wav</code>（逸豪認可自然女聲）。可聽<strong>原檔</strong>、粗略<strong>抑揚頓挫</strong>（playbackRate／音量包絡），以及把同一段參考聲依音階比例變形的<strong>唱腔演示</strong>。這<strong>不是</strong>神經 TTS、不是神經歌唱、不是瀏覽器電音產品聲；歌唱產品仍 <span class="bad">NOT AVAILABLE</span>／等免費神經或真實演唱音檔。</p>
+
+  <section class="card">
+    <h2>狀態</h2>
+    <ul>
+      <li>參考 wav → <span class="ok" id="wavSt">檢查中…</span></li>
+      <li>瀏覽器 Web Speech 產品聲 → <span class="bad">REJECTED</span></li>
+      <li>振盪器 DSP 歌唱 → <span class="bad">EXPERIMENTAL_DSP（非產品）</span></li>
+      <li>神經說＋唱 → <span class="bad">PENDING_FREE_NEURAL_TTS / NOT AVAILABLE</span></li>
+      <li>Gemini Live → <span class="bad">DISABLED</span></li>
+    </ul>
+    <p id="meta" class="note"></p>
+  </section>
+
+  <section class="card">
+    <h2>播放（誠實標示）</h2>
+    <div class="row">
+      <button id="plain">① 原檔參考（REFERENCE）</button>
+      <button id="prosody">② 抑揚頓挫演示（仍是 REFERENCE）</button>
+      <button id="sing">③ 唱腔變形演示（仍是 REFERENCE，非神經唱）</button>
+      <button id="stop" class="sec">停止</button>
+    </div>
+    <p id="status" class="status">就緒</p>
+  </section>
+
+  <section class="card">
+    <h2>與 GPT 歌唱施工的關係</h2>
+    <p class="note">Issue #22–#24／Draft PR #21（WORLD 聲碼器）、#25（旋律）仍是實驗／草稿。本頁只證明「有自然參考聲可播，並能做粗抑揚」，不冒充已完成聽歌學唱。</p>
+  </section>
+</main>
+<script src="dawn-free/reference-playback.js"></script>
+<script>
+(async function(){
+  const status = document.getElementById('status');
+  const player = new DawnRefPlayback({ wavUrl: 'assets/dawn-voice/dawn-natural-female-v2.wav' });
+  try {
+    const info = await player.load();
+    document.getElementById('wavSt').textContent = 'REFERENCE_WAV_READY · ' + info.duration.toFixed(2) + 's · ' + info.sampleRate + ' Hz';
+    document.getElementById('meta').textContent = JSON.stringify({ ...DawnRefPlayback.STATUS, load: info }, null, 2);
+    status.textContent = '參考聲已載入 · 產品歌唱仍 NOT AVAILABLE';
+    status.className = 'status ok';
+  } catch (e) {
+    document.getElementById('wavSt').textContent = 'MISSING / 載入失敗';
+    document.getElementById('wavSt').className = 'bad';
+    status.textContent = String(e.message || e);
+    status.className = 'status bad';
+  }
+  async function go(mode) {
+    try {
+      status.textContent = '播放中… ' + mode;
+      status.className = 'status';
+      const r = await player.play(mode);
+      status.textContent = r.note;
+      status.className = 'status ok';
+    } catch (e) {
+      status.textContent = String(e.message || e);
+      status.className = 'status bad';
+    }
+  }
+  document.getElementById('plain').onclick = () => go('plain');
+  document.getElementById('prosody').onclick = () => go('speak_prosody');
+  document.getElementById('sing').onclick = () => go('sing_steps');
+  document.getElementById('stop').onclick = () => { player.stop(); status.textContent = '已停止'; };
+})();
+</script>
+</body>
+</html>

@@ -1,15 +1,16 @@
 # 曙光免費媒體能力（第二基地）
 
-| 模組 | 路徑 | 引擎 | 狀態 | 授權 |
-|------|------|------|------|------|
-| JPG 海報 | `app/dawn-jpg-studio.html` | Canvas + toBlob JPEG | AVAILABLE（本機） | AIVAULT-owned |
-| AI 插畫 | edge `dawn-light-image` | （無） | BLOCKED_NO_FREE_IMAGE_PROVIDER | — |
-| 產品語音 TTS | — | 需 natural wav + 神經 TTS | **PENDING_NATURAL_CLONE** / **BLOCKED_NO_NATURAL_TTS** | — |
-| 瀏覽器 speechSynthesis | `dawn-voice-free.html` | Web Speech | **REJECTED**（預設靜音；非產品聲） | 瀏覽器／OS |
-| Gemini Live | （舊 live-voice.js） | Gemini | DISABLED_BY_POLICY | 不用 |
-| 自架 Qwen3-TTS | `app/services/aivault-voice` | 開源權重 | NOT_DEPLOYED | Apache-2.0 上游 |
-| 歌唱 DSP | `app/dawn-music-free.html` | Web Audio oscillator | EXPERIMENTAL_DSP_SINGING（**非產品歌唱**） | AIVAULT-owned |
-| 短片 | `app/dawn-short-video-free.html` | Canvas + MediaRecorder | AVAILABLE* | AIVAULT-owned |
-| Magic Hour | edge dawn-light-* | Magic Hour | GATES_CLOSED | 禁止呼叫 |
+| 模組 | 路徑 | 引擎 | 狀態 |
+|------|------|------|------|
+| JPG 海報 | `dawn-jpg-studio.html` | Canvas JPEG | AVAILABLE（本機） |
+| 認可參考 wav | `assets/dawn-voice/dawn-natural-female-v2.wav` | PCM 24 kHz | **REFERENCE_WAV_READY** |
+| 參考說／唱演示 | `dawn-sing-ref.html` | Web Audio envelopes | **REFERENCE_PLAYBACK**（非神經、非產品 AVAILABLE） |
+| 產品語音 TTS | — | 需免費神經 TTS | **PENDING_FREE_NEURAL_TTS** / **BLOCKED_NEED_GPU** |
+| 瀏覽器 speechSynthesis | `dawn-voice-free.html` | Web Speech | **REJECTED**（預設靜音） |
+| Gemini Live | — | — | DISABLED |
+| DSP 振盪歌唱 | `dawn-music-free.html` | Web Audio osc | **EXPERIMENTAL_DSP_SINGING**（非產品） |
+| GPT local-ai 歌唱 | Draft PR #21/#25 | WORLD／旋律 | DRAFT 未合併 |
+| 短片 Canvas | `dawn-short-video-free.html` | MediaRecorder | AVAILABLE* |
+| Magic Hour | — | — | GATES_CLOSED |
 
-`dawn-natural-female-v2.wav`：見 `app/assets/dawn-voice/` — 目前 **MISSING**。
+SHA-256 `dawn-natural-female-v2.wav`：`75f94ca3ae9d8746f2bcf0c22e184fb146aceb3fb46279cee6045fe5a5f108ce`
