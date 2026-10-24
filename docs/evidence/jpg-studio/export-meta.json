@@ -1,0 +1,11 @@
+{
+  "type": "image/jpeg",
+  "size": 63925,
+  "width": 1280,
+  "height": 720,
+  "path": "/workspace/homework-helper/docs/evidence/jpg-studio/dawn-image-sample.jpg",
+  "engine": "Canvas + toBlob image/jpeg",
+  "neural_image": "NOT_USED",
+  "paid_api": false,
+  "jpeg_magic_ok": true
+}

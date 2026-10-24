@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>曙光免費短影片 · Canvas 錄製</title>
+<link rel="stylesheet" href="dawn-free/media-hub.css">
+</head>
+<body>
+<header class="top">
+  <a href="../media.html">← 媒體中心</a>
+  <strong>☀ 免費短影片</strong>
+  <span class="badge ok">Canvas + MediaRecorder</span>
+</header>
+<main>
+  <p class="lead">Image→video（Magic Hour）金鑰<strong>禁止使用</strong>。此頁用本機 Canvas 動畫錄成短片，屬 AIVAULT 自有免費路徑，不是 AI 圖生影片。iPhone Safari 可能不支援 WebM；若無法錄製會顯示 BLOCKED。</p>
+  <section class="card">
+    <label>標題</label>
+    <input id="title" value="曙光城短片">
+    <label>說明</label>
+    <textarea id="prompt">小太陽在城市上空慢慢升起。</textarea>
+    <label>秒數（2–8）</label>
+    <input id="secs" type="number" min="2" max="8" value="4">
+    <div class="row">
+      <button id="rec">錄製短片</button>
+      <a id="dl" class="sec" hidden style="display:none;padding:10px 16px;background:#29415e;border-radius:12px;color:#fff;text-decoration:none">下載</a>
+    </div>
+    <p id="status" class="status">偵測錄製能力中…</p>
+    <video id="out" controls playsinline></video>
+  </section>
+  <section class="card">
+    <h2>狀態</h2>
+    <ul>
+      <li>Canvas 錄製 → 見偵測結果</li>
+      <li>Magic Hour / image→video API → <span class="bad">GATES_CLOSED · 禁止呼叫</span></li>
+      <li>正式 AI 短片工作室 → 仍須另開授權，目前不得標 AVAILABLE</li>
+    </ul>
+  </section>
+</main>
+<script src="dawn-free/procedural-poster.js"></script>
+<script src="dawn-free/short-video.js"></script>
+<script>
+const status = document.getElementById('status');
+const mime = DawnFreeShortVideo.supportedMime();
+status.textContent = mime === null ? 'BLOCKED_NO_MEDIA_RECORDER' : ('MediaRecorder 可用 · mime偏好=' + (mime || '(browser default)'));
+status.className = 'status ' + (mime === null ? 'bad' : 'ok');
+let url = null;
+document.getElementById('rec').onclick = async () => {
+  try{
+    status.textContent = '錄製中…請保持頁面在前景';
+    status.className = 'status';
+    if(url){ URL.revokeObjectURL(url); url=null; }
+    const r = await DawnFreeShortVideo.recordPosterClip({
+      title: document.getElementById('title').value,
+      prompt: document.getElementById('prompt').value,
+      seconds: Number(document.getElementById('secs').value)||4
+    });
+    url = URL.createObjectURL(r.blob);
+    const v = document.getElementById('out');
+    v.src = url;
+    const dl = document.getElementById('dl');
+    dl.hidden = false; dl.style.display = 'inline-block';
+    dl.href = url;
+    dl.download = r.mime.indexOf('mp4')>=0 ? 'dawn-clip.mp4' : 'dawn-clip.webm';
+    status.textContent = '完成 · ' + r.bytes + ' bytes · ' + r.mime + ' · ' + r.status + '（' + r.not + '）';
+    status.className = 'status ok';
+  }catch(e){
+    status.textContent = '失敗：' + (e && e.message || e);
+    status.className = 'status bad';
+  }
+};
+</script>
+</body>
+</html>
