@@ -1,5 +1,8 @@
 # 曙光神經克隆 · Colab 免費 GPU 操作手冊（中文）
 
+> **手機友善：** notebook 會自動從 GitHub 下載 `dawn-natural-female-v3-speak.wav`，一般**不必**找資料夾上傳。你只要：開連結 → Runtime 選 GPU（若有）→ **全部執行**。
+
+
 **使用者決策（t314）：** 用 **Google Colab 免費 GPU** 解鎖曙光說話克隆樣品。  
 **不是** Gemini Live；**不是**產品已接通。
 
@@ -8,7 +11,7 @@
 1. **Google 登入**（Colab 會要求；請你本人完成，代理人不能代登）。  
 2. 打開 notebook 後：**Runtime（執行階段）→ Change runtime type（變更執行階段類型）→ Hardware accelerator = GPU（T4）→ Save**。  
 3. 由上到下 **Run all**（或逐格執行）。  
-4. 上傳格出現時：選本機的 `dawn-natural-female-v3-speak.wav`。  
+4. （通常免上傳：notebook 會自動下載 v3；若失敗再）上傳格出現時：選本機的 `dawn-natural-female-v3-speak.wav`。  
 5. 結束後下載 `dawn-v3-qwen3-clones.zip`，聽感後交回維護者。
 
 ## 檔案在哪
