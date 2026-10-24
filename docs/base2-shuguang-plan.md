@@ -110,3 +110,17 @@
 | Canvas 短片 | ✓* | Magic Hour / AI 圖生影片 |
 | Edge image 誠實封鎖 | ✓（程式） | 未 deploy 到線上 |
 
+---
+
+## 7. 上線紀錄（2026-10-24）
+
+- PR #27 已合併：merge commit `bc6dcf69baa79909baa72a7c862ff5565f53cb95`
+- GitHub Pages：`main` / → status `built`
+- 線上：
+  - https://nl13741619-commits.github.io/homework-helper/media.html
+  - https://nl13741619-commits.github.io/homework-helper/app/dawn-jpg-studio.html
+  - https://nl13741619-commits.github.io/homework-helper/app/dawn-voice-free.html
+  - https://nl13741619-commits.github.io/homework-helper/app/dawn-music-free.html
+  - https://nl13741619-commits.github.io/homework-helper/app/dawn-short-video-free.html
+- image→video／Magic Hour 閘仍關閉；`dawn-light-image` 仍回 BLOCKED_NO_FREE_IMAGE_PROVIDER
+- 城鎮：見 `docs/dawn-town/PLAN.md`（PLAN_ONLY）

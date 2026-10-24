@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>曙光城城鎮 · 施工計畫骨架</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1020;--panel:#141e2e;--line:#2b3c55;--sun:#ffb347;--ok:#86efac;--bad:#fca5a5;--muted:#aab9ce}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Noto Sans TC",sans-serif;background:radial-gradient(circle at 50% 20%,#1a2744,var(--bg) 55%);color:#eef3ff;min-height:100dvh}
+header{display:flex;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+a{color:#9ecbff;text-decoration:none}.badge{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--bad)}
+main{max-width:960px;margin:0 auto;padding:20px}.map{position:relative;aspect-ratio:16/10;border:1px solid var(--line);border-radius:20px;background:#0c1528;overflow:hidden;margin:16px 0}
+.sun{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#ffe9a8 40%,#ffb347 75%);box-shadow:0 0 40px #ffb34788}
+.sun label{position:absolute;left:50%;top:110%;transform:translateX(-50%);font-size:12px;color:var(--sun);white-space:nowrap}
+.b{position:absolute;padding:8px 10px;border-radius:12px;background:rgba(20,30,46,.92);border:1px solid var(--line);font-size:12px;max-width:140px}
+.b a{display:block;margin-top:4px}.gate{border-color:#f4d7a4}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0;line-height:1.65;color:var(--muted)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}code{color:#e8eef4}
+#banner{padding:10px 14px;border-radius:12px;background:#3b1d1d;border:1px solid #7f1d1d;color:#fecaca;display:none}
+</style>
+</head>
+<body>
+<header>
+  <strong>☀ 曙光城城鎮</strong>
+  <span class="badge">PLAN_SCAFFOLD · 非 AVAILABLE</span>
+  <span style="flex:1"></span>
+  <a href="media.html">媒體中心</a>
+  <a href="dawn-city.html">3D 裝飾城</a>
+  <a href="docs/dawn-town/PLAN.md">計畫全文</a>
+</header>
+<main>
+  <div id="banner"></div>
+  <p>中心是<strong>小太陽</strong>（不是暗星塔）。建築連到已上線的免費專案頁；<strong>进城／离城 presence 與主城 token 儀表尚未實作</strong>（Base 2 尚無 `dawn_town_presence` 表；需 Base 1 transfer API）。</p>
+  <div class="map" id="map" aria-label="曙光城平面圖骨架">
+    <div class="sun"><label>小太陽廣場</label></div>
+  </div>
+  <section class="card">
+    <h2>開關</h2>
+    <p>關閉：在 Console 執行 <code>localStorage.DAWN_TOWN_OFF='1'</code> 或網址加 <code>?dawn_town_off=1</code>。關閉後不載入建築互動（本骨架本來就不寫 DB）。</p>
+    <p>Presence：<span class="bad">NOT_AVAILABLE</span>（表不存在）。Transfer：<span class="bad">BLOCKED_BASE1_API</span>。配額權威數字：僅 Base 1。</p>
+  </section>
+</main>
+<script src="app/dawn-town/off-switch.js"></script>
+<script>
+(async function(){
+  const banner = document.getElementById('banner');
+  if (window.DawnTown && DawnTown.off()) {
+    banner.style.display = 'block';
+    banner.textContent = 'DAWN_TOWN_OFF=1：城鎮骨架已暫停。';
+    return;
+  }
+  const res = await fetch('app/dawn-town/buildings.json', { cache: 'no-store' });
+  const data = await res.json();
+  const map = document.getElementById('map');
+  const layout = [
+    { id:'gate_north', x:'50%', y:'8%', gate:true },
+    { id:'b_jpg', x:'12%', y:'30%' },
+    { id:'b_voice', x:'78%', y:'28%' },
+    { id:'b_music', x:'14%', y:'62%' },
+    { id:'b_video', x:'76%', y:'60%' },
+    { id:'b_media_hub', x:'50%', y:'78%' },
+    { id:'b_qwen', x:'32%', y:'48%' },
+    { id:'b_sandbox', x:'68%', y:'48%' }
+  ];
+  const byId = {};
+  byId[data.gate.id] = data.gate;
+  data.buildings.forEach(b => byId[b.id] = b);
+  layout.forEach(pos => {
+    const meta = byId[pos.id]; if (!meta) return;
+    const el = document.createElement('div');
+    el.className = 'b' + (pos.gate ? ' gate' : '');
+    el.style.left = pos.x; el.style.top = pos.y; el.style.transform = 'translate(-50%,-50%)';
+    el.innerHTML = '<strong>' + meta.title + '</strong><div class="bad">' + (meta.building_status || meta.status || 'PLAN') + '</div>';
+    if (meta.href) {
+      const a = document.createElement('a');
+      a.href = meta.href;
+      a.textContent = '開啟專案頁（' + (meta.page_status || '') + '）';
+      el.appendChild(a);
+    } else {
+      const s = document.createElement('div');
+      s.textContent = '需 Base 1 transfer API';
+      s.className = 'bad';
+      el.appendChild(s);
+    }
+    map.appendChild(el);
+  });
+})();
+</script>
+</body>
+</html>
