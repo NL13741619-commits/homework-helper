@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#1a140e">
+<title>曙光自建即時語音測試（非 Gemini Live）</title>
+<style>
+:root{--bg:#1a140e;--card:#2a2118;--line:#3d3226;--text:#fff8ef;--muted:#b8a48a;--sun:#ffb347;--ok:#86efac;--warn:#fbbf24;--err:#f87171}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;min-height:100dvh}
+header{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sun{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#ffe9a8 40%,#ffb347 75%);box-shadow:0 0 16px #ffb34788}
+h1{font-size:16px;margin:0}
+.sub{font-size:12px;color:var(--muted);margin:2px 0 0}
+.badge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);margin-left:auto}
+.badge.warn{color:var(--warn);border-color:#785f1a}
+.badge.ok{color:var(--ok);border-color:#14532d}
+main{padding:12px;display:grid;gap:12px;max-width:720px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.card h2{font-size:13px;margin:0 0 8px;color:var(--muted);font-weight:600}
+#status{font-size:14px;line-height:1.5}
+#status[data-k=listen]{color:var(--ok)}
+#status[data-k=speak]{color:var(--sun)}
+#status[data-k=err]{color:var(--err)}
+#status[data-k=warn]{color:var(--warn)}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--muted)}
+.meta b{display:block;color:var(--text);font-size:13px;margin-top:2px}
+#log{min-height:220px;max-height:48vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.row{display:flex;flex-direction:column;gap:2px}
+.row .who{font-size:11px;color:var(--muted)}
+.row .bubble{padding:8px 12px;border-radius:12px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.row.user .bubble{background:#3d3226;align-self:flex-end}
+.row.dawn .bubble{background:#422a12;border:1px solid #785f1a;align-self:flex-start}
+.row .src{font-size:10px;color:var(--muted)}
+#interim{min-height:1.2em;font-size:12px;color:var(--muted);font-style:italic}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{appearance:none;border:1px solid var(--line);background:#3d3226;color:var(--text);border-radius:12px;padding:10px 14px;font-size:14px;cursor:pointer}
+button.primary{background:linear-gradient(135deg,#ffb347,#ef991b);color:#1a140e;border:0;font-weight:700}
+button.danger{background:#4c0519;border-color:#7f1d1d;color:#fecaca}
+button:disabled{opacity:.4;cursor:not-allowed}
+.composer{display:flex;gap:8px}
+.composer input{flex:1;border-radius:12px;border:1px solid var(--line);background:#1a140e;color:var(--text);padding:10px 12px;font:inherit}
+.notice{font-size:12px;color:var(--muted);line-height:1.6}
+a{color:var(--sun)}
+</style>
+</head>
+<body>
+<header>
+  <div class="sun" aria-hidden="true"></div>
+  <div>
+    <h1>☀ 曙光自建即時語音</h1>
+    <p class="sub">第二基地獨立測試頁 · 禁止 Gemini Live · 小太陽優先</p>
+  </div>
+  <span class="badge warn" id="liveBadge">Gemini Live：未使用</span>
+</header>
+<main>
+  <section class="card">
+    <h2>狀態</h2>
+    <div id="status" data-k="info">尚未開始。建議先用 ?mock=1 驗證流程。</div>
+    <div class="meta" style="margin-top:10px">
+      <div>認可聲線 wav<b id="wavMeta">檢查中…</b></div>
+      <div>對話來源<b id="modeMeta">—</b></div>
+      <div>STT<b id="sttMeta">—</b></div>
+      <div>TTS<b id="ttsMeta">瀏覽器臨時 speechSynthesis</b></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>字幕／對話</h2>
+    <div id="log" aria-live="polite"></div>
+    <div id="interim"></div>
+  </section>
+
+  <section class="card">
+    <h2>控制</h2>
+    <div class="btns">
+      <button class="primary" type="button" id="btnStart">🎤 開始聆聽</button>
+      <button class="danger" type="button" id="btnStop" disabled>⏹ 結束並釋放麥克風</button>
+      <button type="button" id="btnBarge" disabled>插話中止</button>
+      <button type="button" id="btnWav" disabled>預覽認可 wav</button>
+    </div>
+    <form class="composer" id="form" style="margin-top:10px">
+      <input id="text" placeholder="STT 不可用時可打字（仍走同一對話管線）" autocomplete="off">
+      <button class="primary" type="submit">送出</button>
+    </form>
+    <p class="notice" style="margin-top:10px">
+      關閉開關：網址加 <code>?voice=0</code>，或 <code>localStorage.DAWN_OWN_VOICE_OFF=1</code>。<br>
+      MOCK：<code>?mock=1</code>。本頁不呼叫 dawn-city-ai Live、不呼叫圖生影片。<br>
+      <a href="../index.html">回曙光城首頁</a>
+      · <a href="dawn-own-voice-test.html?mock=1">開 MOCK</a>
+    </p>
+  </section>
+</main>
+<script src="dawn-own-voice.js?v=20261024-own1"></script>
+<script>
+(function(){
+  var log=document.getElementById('log');
+  var statusEl=document.getElementById('status');
+  var engine=new DawnOwnVoice({
+    onStatus:function(t,k){statusEl.textContent=t;statusEl.dataset.k=k||'info';},
+    onSubtitle:function(role,text,meta){
+      var row=document.createElement('div');
+      row.className='row '+role;
+      var who=document.createElement('div');who.className='who';who.textContent=role==='user'?'你':'☀ 曙光';
+      var b=document.createElement('div');b.className='bubble';b.textContent=text;
+      row.append(who,b);
+      if(meta&&meta.source){var s=document.createElement('div');s.className='src';s.textContent='source='+meta.source+(meta.model?' · '+meta.model:'');row.append(s);}
+      log.append(row);log.scrollTop=log.scrollHeight;
+      document.getElementById('modeMeta').textContent=meta&&meta.source?meta.source:document.getElementById('modeMeta').textContent;
+    },
+    onInterim:function(t){document.getElementById('interim').textContent=t?'辨識中：'+t:'';}
+  });
+
+  var Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  document.getElementById('sttMeta').textContent=Rec?'Web Speech API':'NOT LIVE（無 SpeechRecognition，請打字）';
+  document.getElementById('modeMeta').textContent=/mock=1/.test(location.search)?'MOCK':'AUTO（腦閘道失敗則 MOCK）';
+
+  engine.probeWav().then(function(st){
+    document.getElementById('wavMeta').textContent=st==='PRESENT'?'PRESENT（可預覽，非即時 TTS）':'MISSING（臨時 TTS，非認可音色）';
+    document.getElementById('btnWav').disabled=st!=='PRESENT';
+    document.getElementById('ttsMeta').textContent=st==='PRESENT'?'臨時 speechSynthesis（wav 僅預覽）':'臨時 speechSynthesis · wav MISSING';
+  });
+
+  var btnStart=document.getElementById('btnStart');
+  var btnStop=document.getElementById('btnStop');
+  var btnBarge=document.getElementById('btnBarge');
+  btnStart.onclick=async function(){
+    btnStart.disabled=true;
+    var ok=await engine.start();
+    btnStop.disabled=!ok;btnBarge.disabled=!ok;
+    if(!ok)btnStart.disabled=false;
+  };
+  btnStop.onclick=async function(){
+    await engine.stop(true);
+    btnStart.disabled=false;btnStop.disabled=true;btnBarge.disabled=true;
+  };
+  btnBarge.onclick=function(){engine.bargeIn('button');};
+  document.getElementById('btnWav').onclick=function(){engine.previewApprovedWav();};
+  document.getElementById('form').onsubmit=async function(e){
+    e.preventDefault();
+    var v=document.getElementById('text').value.trim();
+    if(!v)return;
+    document.getElementById('text').value='';
+    await engine.sendText(v);
+  };
+  window.addEventListener('pagehide',function(){engine.stop(false);});
+  window.addEventListener('beforeunload',function(){engine.stop(false);});
+})();
+</script>
+</body>
+</html>
