@@ -19,10 +19,9 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 |------|------|
 | 瀏覽器 `speechSynthesis` 當產品聲 | **REJECTED** |
 | 產品播音 | **MUTED** 直到神經克隆聽感通過 |
-| **`dawn-natural-female-v2.wav`（說話參考）** | **REFERENCE_WAV_READY**（現行對話說話錨點） |
-| **`dawn-singing-melody-ref-v1.wav`（影片音軌）** | **SINGING_MELODY_REF_READY** — 唱歌／音律／抑揚性格 **ONLY**；**不是**說話 TARGET（見 `DAWN-SINGING-MELODY-REF-V1.md`） |
-| 更好說話樣本 | **需要** — 見 `SPEAKING-PROSODY-SAMPLE-NEEDED.md` |
-| Max Factor v3 抽出 | **CANDIDATE_REJECTED_AS_IS**（BGM＋廣告腔；reports only；見 `DAWN-V3-SPEAK-CANDIDATE.md`） |
+| **`dawn-natural-female-v3-speak.wav`（暫定說話 TARGET）** | **REFERENCE_TARGET_READY**（Max Factor VO · Demucs；見 `DAWN-SPEAKING-V3.md`） |
+| **`dawn-natural-female-v2.wav`** | 早期說話錨點，**保留** |
+| **`dawn-singing-melody-ref-v1.wav`** | **SINGING_MELODY_REF_READY** — 清唱／音律 ONLY（Option B） |
 | Qwen3-TTS／CosyVoice | **BLOCKED_NEED_GPU**（施工機無 GPU、無 torch） |
 | 產品標 AVAILABLE | **禁止**，直到聽感驗收通過 |
 
@@ -53,7 +52,7 @@ TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 
 ## 下一步（需使用者）
 
-1. 說話參考：v2 暫用；請提供符合 `SPEAKING-PROSODY-SAMPLE-NEEDED.md` 的真人說話錄音。
-2. 唱歌／音律：`dawn-singing-melody-ref-v1.wav` 已入庫作 F0／旋律研究（非說話）。
-3. 核准免費 GPU／自架主機跑 Qwen3-TTS 或 CosyVoice，以**說話** wav 為克隆錨點。
-4. 部署 `dawn-own-tts` 並接上游後，聽感通過（抑揚頓挫規格）才可標 AVAILABLE。
+1. 說話暫定：`dawn-natural-female-v3-speak.wav`（Demucs；廣告腔／可能殘 BGM）— 見 `DAWN-SPEAKING-V3.md`。
+2. 唱歌／音律：`dawn-singing-melody-ref-v1.wav`（Option B，非說話）。
+3. 核准免費 GPU／自架 Qwen3-TTS 或 CosyVoice，以 **v3** 為克隆錨點。
+4. 聽感通過（含殘 BGM／廣告腔可否接受）才可標 AVAILABLE。

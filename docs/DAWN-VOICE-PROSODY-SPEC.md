@@ -50,8 +50,17 @@
 | F0 median / stdev（粗） | ~247 Hz / **~75 Hz**（唱歌音高走勢代理） |
 | 內容誠實 | ~85% 多說話者清唱；1:04–1:08 合成旁白 → 拒絕當產品聲 |
 
-**對照：** 清唱 video wav＝**唱歌 F0 研究**；speak target＝**v2**。Max Factor v3 抽出＝`CANDIDATE_REJECTED_AS_IS`（BGM＋廣告腔；見 `DAWN-V3-SPEAK-CANDIDATE.md`），**未**升為說話 TARGET。  
+**對照：** 清唱＝**唱歌 F0 研究**；speak target＝**v3 Demucs dry**（使用者堅持；廣告腔／可能殘 BGM；見 `DAWN-SPEAKING-V3.md`）；v2 保留。  
 詳見 `docs/DAWN-SINGING-MELODY-REF-V1.md`。
+
+## 2c. 暫定說話目標（dawn-natural-female-v3-speak.wav · Demucs）
+
+| 指標 | 數值 |
+|------|------|
+| 時長 | ~12.09 s · 24 kHz mono |
+| SHA-256 | `c42a877c6af9cb48384e4b9a8bf3d24aac137107faf49d5201955df69398cf1d` |
+| 分離 | Demucs htdemucs `--two-stems=vocals`（CPU） |
+| 誠實 | Max Factor 廣告配音；原有 BGM；可能殘滲；廣告腔；非 AVAILABLE |
 
 ## 3. 引擎優先序（免費／自架）
 
@@ -63,7 +72,8 @@
 
 | 狀態 | 意義 |
 |------|------|
-| REFERENCE_WAV_READY | 說話參考 v2 已入庫，可預覽（仍非 AVAILABLE） |
+| REFERENCE_TARGET_READY | 暫定說話 v3（Demucs）已入庫，可預覽（仍非 AVAILABLE） |
+| REFERENCE_WAV_READY | 早期 v2 已入庫，可預覽 |
 | SINGING_MELODY_REF_READY | 唱歌／音律參考已入庫，可預覽（非說話 TARGET） |
 | BLOCKED_NEED_GPU | 即時神經克隆未部署 |
 | AVAILABLE | **僅當**神經 TTS 聽感通過抑揚頓挫規格 |
@@ -71,7 +81,7 @@
 ## 5. 說話能唱歌（與 #22–#24 對齊）
 
 - 產品「唱歌」必須是**有音高軌跡的人聲／歌聲模型**，不是朗讀加 pitch slider，也不是 Web Audio sine（`EXPERIMENTAL_DSP_SINGING`）。
-- **說話**錨點：`dawn-natural-female-v2.wav`（直到更好的說話樣本）。  
-- **唱歌／音律**參考：`dawn-singing-melody-ref-v1.wav`（分開，Option B）。
+- **說話**錨點：`dawn-natural-female-v3-speak.wav`（暫定）；v2 保留。  
+- **唱歌／音律**參考：`dawn-singing-melody-ref-v1.wav`（Option B）。
 - 旋律須可對照 MIDI／JSON；F0 隨時間應跟隨指定音符。
 - 詳見 `docs/DAWN-VOICE-AND-SINGING-PLAN.md`。

@@ -1,0 +1,49 @@
+{
+  "measured_at": "2026-10-24 13:41 Asia/Taipei",
+  "user_override": "t307u — insist Max Factor VO as Dawn speaking voice",
+  "status": "REFERENCE_TARGET_READY",
+  "product_available": false,
+  "source": {
+    "description": "Taiwan Max Factor Lipfinity-style commercial VO",
+    "speech_not_singing": true,
+    "bgm_in_source": true,
+    "prosody": "commercial announcer / sales-pitch (not casual conversational)",
+    "mp4": "/home/box/agent-data/agents/8bb7edd6-a612-4fd2-af67-d01927a55809/attachments/502ca58a092c0959b86b873a56d613c2cb0b8d03fe6065a94d231a6fff7953a9.mp4"
+  },
+  "isolation": {
+    "tool": "demucs 4.1.0",
+    "model": "htdemucs",
+    "flags": "--two-stems=vocals",
+    "runtime": "CPU torch 2.14.1+cpu in /workspace/venvs/demucs",
+    "residual_bgm_note": "no_vocals stem RMS ~-26.7 dBFS; vocals stem may still have audible BGM bleed",
+    "mix_sha256": "aff37e2e23005af31065f97d52413e1757f1c42ff64ee9103786c4c1f122ba8d",
+    "dry_sha256": "c42a877c6af9cb48384e4b9a8bf3d24aac137107faf49d5201955df69398cf1d",
+    "no_vocals_sha256": "11aa3c7c043f542f7f0e905b4f5da5024e8fb3251c6444df325eaf6becf7ecc3"
+  },
+  "speaking_v3_dry": {
+    "asset_path": "app/assets/dawn-voice/dawn-natural-female-v3-speak.wav",
+    "report_path": "/workspace/reports/dawn-voice/dawn-natural-female-v3-speak.wav",
+    "role": "PROVISIONAL_REALTIME_SPEAKING_TARGET",
+    "bytes": 580240,
+    "duration_s": 12.087,
+    "sample_rate": 24000,
+    "channels": 1,
+    "rms_dbfs": -20.11,
+    "peak_dbfs": -5.96,
+    "sha256": "c42a877c6af9cb48384e4b9a8bf3d24aac137107faf49d5201955df69398cf1d",
+    "pitch_hz": {
+      "median": 240.0,
+      "stdev": 61.1,
+      "voiced_frames": 315
+    }
+  },
+  "earlier_v2_kept": {
+    "path": "app/assets/dawn-voice/dawn-natural-female-v2.wav",
+    "sha256": "75f94ca3ae9d8746f2bcf0c22e184fb146aceb3fb46279cee6045fe5a5f108ce"
+  },
+  "singing_melody_ref_only": {
+    "path": "app/assets/dawn-voice/dawn-singing-melody-ref-v1.wav",
+    "sha256": "f067dd215e87d8787b3ca375596b59d44ad369cb74e169f119432696194142ea"
+  },
+  "product_status": "SPEAK: REFERENCE_TARGET_READY(v3-demucs) · SING_MELODY_REF_READY · MUTED/BLOCKED_NEED_GPU · NOT AVAILABLE"
+}
