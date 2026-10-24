@@ -1,0 +1,122 @@
+{
+  "n_notes": 16,
+  "measured": 16,
+  "cents_min": 0.6254739971355692,
+  "cents_max": 4.694644661325856,
+  "cents_median": 1.6792909961951161,
+  "measurements": [
+    {
+      "lyric": "Dawn",
+      "midi": 60,
+      "target_hz": 261.6255653005986,
+      "measured_hz": 261.22070223552186,
+      "cents_error": 2.6811432234744994
+    },
+    {
+      "lyric": "shines",
+      "midi": 64,
+      "target_hz": 329.6275569128699,
+      "measured_hz": 328.88245562819725,
+      "cents_error": 3.917769631320873
+    },
+    {
+      "lyric": "bright",
+      "midi": 67,
+      "target_hz": 391.99543598174927,
+      "measured_hz": 392.1920594125469,
+      "cents_error": 0.8681627477455921
+    },
+    {
+      "lyric": "now",
+      "midi": 64,
+      "target_hz": 329.6275569128699,
+      "measured_hz": 329.80777587367584,
+      "cents_error": 0.9462677945505603
+    },
+    {
+      "lyric": "We",
+      "midi": 62,
+      "target_hz": 293.6647679174076,
+      "measured_hz": 293.4265776000637,
+      "cents_error": 1.4047667822650383
+    },
+    {
+      "lyric": "sing",
+      "midi": 65,
+      "target_hz": 349.2282314330039,
+      "measured_hz": 348.533322185207,
+      "cents_error": 3.4483153802447677
+    },
+    {
+      "lyric": "with",
+      "midi": 69,
+      "target_hz": 440.0,
+      "measured_hz": 439.6838049966623,
+      "cents_error": 1.2445553195102326
+    },
+    {
+      "lyric": "joy",
+      "midi": 67,
+      "target_hz": 391.99543598174927,
+      "measured_hz": 392.2967728783018,
+      "cents_error": 1.3303325350653994
+    },
+    {
+      "lyric": "A",
+      "midi": 64,
+      "target_hz": 329.6275569128699,
+      "measured_hz": 328.7594552662273,
+      "cents_error": 4.565363446877154
+    },
+    {
+      "lyric": "new",
+      "midi": 67,
+      "target_hz": 391.99543598174927,
+      "measured_hz": 392.1370847949134,
+      "cents_error": 0.6254739971355692
+    },
+    {
+      "lyric": "day",
+      "midi": 72,
+      "target_hz": 523.2511306011972,
+      "measured_hz": 523.0030391406863,
+      "cents_error": 0.8210326021930788
+    },
+    {
+      "lyric": "comes",
+      "midi": 71,
+      "target_hz": 493.8833012561241,
+      "measured_hz": 492.5458358086304,
+      "cents_error": 4.694644661325856
+    },
+    {
+      "lyric": "We",
+      "midi": 69,
+      "target_hz": 440.0,
+      "measured_hz": 439.7799368209247,
+      "cents_error": 0.8660822111568156
+    },
+    {
+      "lyric": "share",
+      "midi": 67,
+      "target_hz": 391.99543598174927,
+      "measured_hz": 392.43807918513903,
+      "cents_error": 1.9538152101251938
+    },
+    {
+      "lyric": "our",
+      "midi": 64,
+      "target_hz": 329.6275569128699,
+      "measured_hz": 329.24333114499325,
+      "cents_error": 2.019165877070471
+    },
+    {
+      "lyric": "light",
+      "midi": 60,
+      "target_hz": 261.6255653005986,
+      "measured_hz": 261.21239690543337,
+      "cents_error": 2.7361874779936204
+    }
+  ],
+  "note": "Per-note median F0 in middle window \u2014 NOT mean-pitch-only; still not full-song analysis"
+}
