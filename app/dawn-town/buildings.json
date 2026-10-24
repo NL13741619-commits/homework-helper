@@ -1,0 +1,16 @@
+{
+  "center": { "id": "plaza_sun", "title": "小太陽廣場", "role": "landmark", "status": "PLAN" },
+  "gate": { "id": "gate_north", "title": "北城門（往返主城）", "role": "transfer", "status": "PLAN_BLOCKED_BASE1_API" },
+  "buildings": [
+    { "id": "b_jpg", "title": "JPG 工作室", "href": "app/dawn-jpg-studio.html", "page_status": "AVAILABLE_CANVAS_JPEG", "building_status": "PLAN" },
+    { "id": "b_voice", "title": "語音坊", "href": "app/dawn-voice-free.html", "page_status": "AVAILABLE_BROWSER_SPEECH", "building_status": "PLAN" },
+    { "id": "b_music", "title": "歌唱坊", "href": "app/dawn-music-free.html", "page_status": "EXPERIMENTAL_DSP_SINGING", "building_status": "PLAN" },
+    { "id": "b_video", "title": "短片坊", "href": "app/dawn-short-video-free.html", "page_status": "AVAILABLE_CANVAS_RECORDING_STAR", "building_status": "PLAN" },
+    { "id": "b_media_hub", "title": "媒體中心", "href": "media.html", "page_status": "LIVE", "building_status": "PLAN" },
+    { "id": "b_qwen", "title": "曙光問答亭", "href": "dawn.html", "page_status": "EXISTING_QWEN_ISSUE_FLOW", "building_status": "PLAN" },
+    { "id": "b_sandbox", "title": "圖生影片沙盒", "href": "dawn-sandbox.html", "page_status": "GATES_CLOSED", "building_status": "PLAN" }
+  ],
+  "presence_table": "dawn_town_presence",
+  "presence_exists_on_base2": false,
+  "note": "Building cards may link to live free pages; town presence/transfer is NOT AVAILABLE until P2/P3."
+}
