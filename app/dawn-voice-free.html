@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>小太陽免費語音 · 非 Gemini Live</title>
+<link rel="stylesheet" href="dawn-free/media-hub.css">
+</head>
+<body>
+<header class="top">
+  <a href="../media.html">← 媒體中心</a>
+  <strong>☀ 小太陽免費語音</strong>
+  <span class="badge ok">瀏覽器 Web Speech</span>
+</header>
+<main>
+  <div class="sunface" id="sun"><div class="eyes">● ●</div><div class="mouth">◐</div></div>
+  <p class="lead">政策：第二基地即時語音<strong>不得</strong>依賴 Gemini Live。此頁只用系統／瀏覽器的語音合成與辨識，不呼叫付費 TTS，也不連主城 Live relay。</p>
+  <section class="card">
+    <label>小太陽要說的話</label>
+    <textarea id="text">你好，我是曙光城的小太陽。這是免費瀏覽器語音，不是 Gemini Live。</textarea>
+    <div class="row">
+      <button id="speak">朗讀</button>
+      <button id="stop" class="sec">停止</button>
+      <button id="listen" class="sec">按住聽你說一句</button>
+    </div>
+    <p id="status" class="status">初始化中…</p>
+    <pre id="meta" class="note"></pre>
+  </section>
+  <section class="card">
+    <h2>狀態</h2>
+    <ul>
+      <li>瀏覽器 TTS → 見下方即時偵測</li>
+      <li>瀏覽器 ASR → 見下方即時偵測</li>
+      <li>Gemini Live → <span class="bad">DISABLED_BY_POLICY</span></li>
+      <li>自架 Qwen3-TTS（app/services/aivault-voice）→ <span class="bad">NOT_DEPLOYED（需 GPU 節點）</span></li>
+      <li>Draft PR #21/#26 本機語音／歌唱 → 另見 GitHub，尚未合併</li>
+    </ul>
+  </section>
+</main>
+<script src="dawn-free/browser-voice.js"></script>
+<script>
+const sun = document.getElementById('sun');
+const status = document.getElementById('status');
+const meta = document.getElementById('meta');
+function setFace(mode){
+  sun.querySelector('.eyes').textContent = mode==='speak' ? '^ ^' : mode==='listen' ? '● ◐' : '● ●';
+  sun.querySelector('.mouth').textContent = mode==='speak' ? '◕' : mode==='listen' ? '○' : '◐';
+}
+function refreshMeta(){
+  const s = DawnFreeVoice.STATUS;
+  const v = DawnFreeVoice.pickZhVoice();
+  meta.textContent = JSON.stringify({...s, zh_voice: v && {name:v.name, lang:v.lang}}, null, 2);
+  status.textContent = 'TTS=' + s.tts + ' · ASR=' + s.asr;
+  status.className = 'status ' + (s.tts.indexOf('AVAILABLE')===0 ? 'ok' : 'bad');
+}
+if(window.speechSynthesis){
+  speechSynthesis.onvoiceschanged = refreshMeta;
+  refreshMeta();
+} else refreshMeta();
+
+document.getElementById('speak').onclick = async () => {
+  try{
+    setFace('speak');
+    status.textContent = '朗讀中…';
+    const r = await DawnFreeVoice.speak(document.getElementById('text').value);
+    status.textContent = '完成 · voice=' + (r.voice||'default');
+    status.className = 'status ok';
+  }catch(e){
+    status.textContent = String(e.message||e);
+    status.className = 'status bad';
+  }finally{ setFace('idle'); }
+};
+document.getElementById('stop').onclick = () => { DawnFreeVoice.stopSpeak(); setFace('idle'); };
+document.getElementById('listen').onclick = async () => {
+  try{
+    setFace('listen');
+    status.textContent = '請說話…';
+    const r = await DawnFreeVoice.listenOnce();
+    document.getElementById('text').value = r.text;
+    status.textContent = '辨識：' + r.text;
+    status.className = 'status ok';
+  }catch(e){
+    status.textContent = '辨識失敗：' + (e.message||e);
+    status.className = 'status bad';
+  }finally{ setFace('idle'); }
+};
+</script>
+</body>
+</html>

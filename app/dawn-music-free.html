@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>小太陽免費歌唱原型 · DSP</title>
+<link rel="stylesheet" href="dawn-free/media-hub.css">
+</head>
+<body>
+<header class="top">
+  <a href="../media.html">← 媒體中心</a>
+  <strong>☀ 小太陽歌唱（DSP 原型）</strong>
+  <span class="badge">EXPERIMENTAL</span>
+</header>
+<main>
+  <p class="lead">對應施工單 #22／#24 的<strong>最低可聽原型</strong>：Web Audio 振盪器依樂譜唱出音高與節拍。這<strong>不是</strong>神經歌唱模型，也<strong>不是</strong>翻唱商業歌曲。草稿 PR #21／#25 有更完整的本機 WORLD 聲碼器與旋律分析，尚未合併。</p>
+  <section class="card">
+    <label>歌詞（逐字對到 8 個音符；可改）</label>
+    <input id="lyrics" value="小太陽啊早安呀！">
+    <div class="row">
+      <button id="sing">小太陽唱四小節</button>
+      <button id="stop" class="sec">停止</button>
+    </div>
+    <p id="status" class="status">就緒</p>
+    <pre id="score" class="note"></pre>
+  </section>
+  <section class="card">
+    <h2>授權與誠實標示</h2>
+    <ul>
+      <li>引擎：AIVAULT-owned Web Audio DSP</li>
+      <li>狀態：<span class="bad">EXPERIMENTAL_DSP_SINGING</span>（不可標 AVAILABLE 神經歌唱）</li>
+      <li>禁止：未授權商業歌曲搜尋下載、聲紋克隆、付費 API</li>
+      <li>進階：見 Draft PR #21（WORLD 聲碼器）、#25（旋律／押韻）</li>
+    </ul>
+  </section>
+</main>
+<script src="dawn-free/melody-sing.js"></script>
+<script>
+let handle = null;
+document.getElementById('score').textContent = JSON.stringify(DawnFreeSing.SCORE, null, 2);
+document.getElementById('sing').onclick = () => {
+  try{
+    if(handle && handle.stop) handle.stop();
+    handle = DawnFreeSing.sing(document.getElementById('lyrics').value);
+    document.getElementById('status').textContent = '播放中 · ' + handle.duration_sec + 's · ' + handle.status;
+    document.getElementById('status').className = 'status ok';
+    document.getElementById('score').textContent = JSON.stringify(handle.notes, null, 2);
+  }catch(e){
+    document.getElementById('status').textContent = String(e.message||e);
+    document.getElementById('status').className = 'status bad';
+  }
+};
+document.getElementById('stop').onclick = () => { if(handle&&handle.stop) handle.stop(); document.getElementById('status').textContent='已停止'; };
+</script>
+</body>
+</html>

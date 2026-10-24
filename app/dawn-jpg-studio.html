@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>曙光 JPG 工作室 · 免費 Canvas</title>
+<link rel="stylesheet" href="dawn-free/media-hub.css">
+</head>
+<body>
+<header class="top">
+  <a href="../media.html">← 媒體中心</a>
+  <strong>☀ 曙光 JPG 工作室</strong>
+  <span class="badge ok">免費 · 本機 Canvas</span>
+</header>
+<main>
+  <p class="lead">對應施工單 <a href="https://github.com/NL13741619-commits/homework-helper/issues/5">#5</a> 第一階段：本機繪製並匯出真實 JPEG。這<strong>不是</strong>神經網路生圖；AI 插畫路徑目前標記為 <code>BLOCKED_NO_FREE_IMAGE_PROVIDER</code>（主城暗星走 Gemini／付費閘，第二基地禁用）。</p>
+
+  <section class="card">
+    <label>標題</label>
+    <input id="title" value="曙光城 · 小太陽">
+    <label>提示詞／說明（影響海報主題色）</label>
+    <textarea id="prompt">清晨陽光灑在曙光城，小太陽微笑迎接同學。</textarea>
+    <label>尺寸</label>
+    <select id="size">
+      <option value="1024x1024">1024×1024</option>
+      <option value="1280x720" selected>1280×720</option>
+      <option value="1080x1920">1080×1920</option>
+    </select>
+    <div class="row">
+      <button id="draw">繪製海報</button>
+      <button id="export" class="sec" disabled>下載 JPG</button>
+      <button id="upload" class="sec" disabled>載入圖片再轉 JPG</button>
+      <input id="file" type="file" accept="image/*" hidden>
+    </div>
+    <p id="status" class="status">等待繪製</p>
+  </section>
+
+  <section class="card">
+    <h2>預覽</h2>
+    <canvas id="stage" width="1280" height="720"></canvas>
+    <img id="preview" alt="JPEG 預覽" hidden>
+    <p class="note">iPhone：下載後若系統攔截，可長按預覽圖「加入照片」。JPG 不支援透明，匯出前已填白底。</p>
+  </section>
+
+  <section class="card">
+    <h2>能力狀態（誠實）</h2>
+    <ul>
+      <li>Canvas 海報繪製 → <span class="ok">AVAILABLE（本機）</span></li>
+      <li>JPEG 匯出 toBlob → <span class="ok">AVAILABLE（瀏覽器）</span></li>
+      <li>外部圖轉 JPG（需 CORS 可讀） → <span class="ok">AVAILABLE</span></li>
+      <li>神經網路 AI 插畫 → <span class="bad">BLOCKED_NO_FREE_IMAGE_PROVIDER</span></li>
+      <li>主城 Gemini／暗星 image-generation → <span class="bad">禁用（付費／跨基地金鑰）</span></li>
+    </ul>
+  </section>
+</main>
+<script src="dawn-free/export-jpeg.js"></script>
+<script src="dawn-free/procedural-poster.js"></script>
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const preview = document.getElementById('preview');
+  const status = document.getElementById('status');
+  const btnExport = document.getElementById('export');
+  let objectUrl = null;
+  let lastBlob = null;
+
+  function setSize(){
+    const [w,h] = document.getElementById('size').value.split('x').map(Number);
+    stage.width = w; stage.height = h;
+  }
+  document.getElementById('size').onchange = setSize;
+
+  function clearUrl(){
+    if(objectUrl){ DawnFreeJpeg.revokeLater(objectUrl); objectUrl = null; }
+    preview.hidden = true; preview.removeAttribute('src');
+  }
+
+  document.getElementById('draw').onclick = async () => {
+    try{
+      setSize();
+      clearUrl();
+      DawnFreePoster.drawPoster(stage, {
+        title: document.getElementById('title').value,
+        prompt: document.getElementById('prompt').value
+      });
+      lastBlob = await DawnFreeJpeg.exportJpeg(stage, 0.92);
+      objectUrl = URL.createObjectURL(lastBlob);
+      preview.src = objectUrl; preview.hidden = false;
+      btnExport.disabled = false;
+      status.textContent = '已繪製並編碼 JPEG：' + lastBlob.size + ' bytes · type=' + lastBlob.type;
+      status.className = 'status ok';
+    }catch(e){
+      status.textContent = '失敗：' + (e && e.message || e);
+      status.className = 'status bad';
+    }
+  };
+
+  document.getElementById('export').onclick = () => {
+    if(!lastBlob || !objectUrl) return;
+    const a = document.createElement('a');
+    a.href = objectUrl;
+    a.download = 'dawn-image.jpg';
+    a.click();
+  };
+
+  document.getElementById('upload').onclick = () => document.getElementById('file').click();
+  document.getElementById('upload').disabled = false;
+  document.getElementById('file').onchange = async (ev) => {
+    const f = ev.target.files && ev.target.files[0];
+    if(!f) return;
+    try{
+      clearUrl();
+      const bmp = await createImageBitmap(f);
+      stage.width = bmp.width; stage.height = bmp.height;
+      const ctx = stage.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,stage.width,stage.height);
+      ctx.drawImage(bmp,0,0);
+      bmp.close && bmp.close();
+      lastBlob = await DawnFreeJpeg.exportJpeg(stage, 0.92);
+      objectUrl = URL.createObjectURL(lastBlob);
+      preview.src = objectUrl; preview.hidden = false;
+      btnExport.disabled = false;
+      status.textContent = '已轉成 JPEG：' + lastBlob.size + ' bytes';
+      status.className = 'status ok';
+    }catch(e){
+      status.textContent = '讀圖失敗（可能是 CORS 或格式）：' + (e && e.message || e);
+      status.className = 'status bad';
+    }
+  };
+
+  // auto-draw once for immediate proof
+  document.getElementById('draw').click();
+})();
+</script>
+</body>
+</html>

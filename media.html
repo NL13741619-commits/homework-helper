@@ -1,20 +1,73 @@
 <!doctype html>
-<html lang="zh-Hant"><head><script>document.documentElement.style.visibility="hidden"</script><script src="shared-auth-config.js"></script><script src="shared-auth.js"></script><noscript>請啟用 JavaScript 並登入。</noscript><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第二基地｜數字人與短影片 AI</title>
+<html lang="zh-Hant"><head><script>document.documentElement.style.visibility="hidden"</script><script src="shared-auth-config.js"></script><script src="shared-auth.js"></script><noscript>請啟用 JavaScript 並登入。</noscript><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第二基地｜曙光媒體中心</title>
 <style>
-:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#0c111b;color:#eef3ff}*{box-sizing:border-box}body{margin:0}header,main{max-width:1080px;margin:auto;padding:24px}header{display:flex;gap:20px;align-items:center;border-bottom:1px solid #293348}a{color:#9ecbff}header a{margin-left:auto}h1{font-size:clamp(26px,4vw,42px);margin-bottom:12px}p{line-height:1.7;color:#aab9ce}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}section{background:#141e2e;border:1px solid #2b3c55;border-radius:20px;padding:24px}h2{margin-top:0}video{width:100%;height:300px;object-fit:contain;background:#090d15;border-radius:12px}.badge{display:block;padding:12px;background:#202b3c;border-radius:10px;line-height:1.6;margin:16px 0}.links{display:flex;gap:12px;flex-wrap:wrap}.links a{padding:10px 14px;background:#29415e;border-radius:10px;text-decoration:none}small{color:#aab9ce;line-height:1.6}#connection{padding:12px 0}footer{margin:24px 0;color:#aab9ce;font-size:14px;line-height:1.7}
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#0c111b;color:#eef3ff}*{box-sizing:border-box}body{margin:0}header,main{max-width:1080px;margin:auto;padding:24px}header{display:flex;gap:20px;align-items:center;border-bottom:1px solid #293348}a{color:#9ecbff}header a{margin-left:auto}h1{font-size:clamp(26px,4vw,42px);margin-bottom:12px}p{line-height:1.7;color:#aab9ce}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}section{background:#141e2e;border:1px solid #2b3c55;border-radius:20px;padding:24px}h2{margin-top:0}video{width:100%;height:220px;object-fit:contain;background:#090d15;border-radius:12px}.badge{display:block;padding:12px;background:#202b3c;border-radius:10px;line-height:1.6;margin:16px 0}.ok{color:#86efac}.bad{color:#fca5a5}.links{display:flex;gap:12px;flex-wrap:wrap}.links a{padding:10px 14px;background:#29415e;border-radius:10px;text-decoration:none}small{color:#aab9ce;line-height:1.6}#connection{padding:12px 0}footer{margin:24px 0;color:#aab9ce;font-size:14px;line-height:1.7}.sun{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#ffe9a8 40%,#ffb347 80%);box-shadow:0 0 18px #ffb34766}
 </style></head><body>
-<header><strong>AIVAULT · 第二基地</strong><a href="app/aivault-home.html">返回主頁</a></header>
-<main><h1>數字人與短影片 AI</h1><p>主城的數字人素材、前端及生成服務程式已複製。以下狀態來自第二基地後端；尚未接通的模型不會顯示為可生成。</p><div id="connection" role="status">正在讀取第二基地模型狀態…</div>
-<div class="grid"><section><h2>☀ 曙光數字人 · 主角色</h2><p>第二基地以曙光為主，數字人與任務入口優先顯示曙光。</p><div class="links"><a href="app/dawn-digital-human.html">進入曙光數字人</a><a href="dawn.html">與曙光對話／建立任務</a></div></section><section><h2>暗星數字人 · 第二角色</h2><video src="app/digital-human-real/video/talk.mp4" poster="app/digital-human-real/video/idle.jpg" controls loop playsinline preload="metadata"></video><p><small>這是已複製的既有動作素材預覽，並非本次新生成作品。</small></p><div class="badge" id="human">生成模型：等待確認</div><p>照片說話、嘴形同步與新動作生成，需要接通模型服務。角色外觀與動作素材可先在完整介面查看。</p><div class="links"><a href="app/aivault-digital-human.html?avatar=darkstar">開啟暗星完整介面</a><a href="app/digital-human-real/digital-human-real.html">查看角色素材</a></div></section>
-<section><h2>短影片</h2><div class="badge" id="video">生成模型：等待確認</div><p>已移植文字轉影片、照片轉影片介面與後端原始碼。模型連線及實際生成驗證完成後，才會啟用正式生成。</p><div class="links"><a href="app/aivault-video-studio.html">開啟影片工作室</a><a href="app/dawn-light-photo-video.html">照片轉影片介面</a></div><hr style="border:0;border-top:1px solid #2b3c55;margin:28px 0"><h2>曙光 Qwen</h2><p>已驗證可自動接收 GitHub 任務，啟動第二基地模型推理並回覆。你也可以先請曙光撰寫短片腳本。</p><div class="links"><a href="dawn.html">向曙光提問</a><a href="https://github.com/NL13741619-commits/homework-helper/issues/7#issuecomment-6360950447">查看真實驗證結果</a></div></section></div>
-<footer>資料庫與生成模型仍需各自驗收。複製素材、介面或程式碼，不代表已安裝影片生成模型。</footer></main>
+<header><div class="sun" aria-hidden="true"></div><strong>AIVAULT · 曙光城媒體中心</strong><a href="app/aivault-home.html">返回主頁</a></header>
+<main>
+<h1>☀ 小太陽／曙光媒體</h1>
+<p>第二基地以曙光為主。下列<strong>免費本機模組</strong>可立即使用；付費／Magic Hour／Gemini Live／image→video 金鑰維持關閉，不得標成可用。</p>
+<div id="connection" role="status">正在讀取第二基地付費模型目錄狀態…</div>
+
+<div class="grid">
+<section>
+  <h2>☀ JPG 工作室（免費）</h2>
+  <div class="badge"><span class="ok">AVAILABLE</span> · Canvas 海報 + JPEG 匯出<br><span class="bad">BLOCKED</span> · 神經網路 AI 插畫（無免費 provider）</div>
+  <p>施工單 #5 第一階段：本機繪製並下載真實 JPG。不呼叫主城暗星／Gemini 生圖。</p>
+  <div class="links"><a href="app/dawn-jpg-studio.html">開啟 JPG 工作室</a></div>
+</section>
+
+<section>
+  <h2>☀ 免費語音（非 Gemini Live）</h2>
+  <div class="badge"><span class="ok">AVAILABLE</span> · 瀏覽器 Web Speech<br><span class="bad">DISABLED</span> · Gemini Live（政策禁止）</div>
+  <p>小太陽朗讀與聽一句，走系統語音。自架 Qwen3-TTS 尚未部署。</p>
+  <div class="links"><a href="app/dawn-voice-free.html">小太陽免費語音</a><a href="dawn.html">曙光對話入口</a></div>
+</section>
+
+<section>
+  <h2>☀ 歌唱原型（DSP）</h2>
+  <div class="badge"><span class="bad">EXPERIMENTAL_DSP_SINGING</span> · Web Audio 音高／節拍<br>不是神經歌唱；不可標 AVAILABLE</div>
+  <p>施工單 #22／#24 最低可聽原型。進階 WORLD／旋律分析見 Draft PR #21／#25。</p>
+  <div class="links"><a href="app/dawn-music-free.html">小太陽唱四小節</a></div>
+</section>
+
+<section>
+  <h2>☀ 免費短影片</h2>
+  <div class="badge"><span class="ok">AVAILABLE*</span> · Canvas + MediaRecorder<br><span class="bad">GATES_CLOSED</span> · Magic Hour image→video</div>
+  <p>*Chrome／Android 通常可得 WebM；iPhone 可能 BLOCKED。不是 AI 圖生影片。</p>
+  <div class="links"><a href="app/dawn-short-video-free.html">錄製免費短片</a></div>
+</section>
+
+<section>
+  <h2>☀ 曙光數字人 · 主角色</h2>
+  <p>數字人與任務入口優先顯示曙光。</p>
+  <div class="links"><a href="app/dawn-digital-human.html">進入曙光數字人</a><a href="dawn.html">與曙光對話</a><a href="dawn-city.html">曙光城 3D</a></div>
+</section>
+
+<section>
+  <h2>暗星數字人 · 第二角色</h2>
+  <video src="app/digital-human-real/video/talk.mp4" poster="app/digital-human-real/video/idle.jpg" controls loop playsinline preload="metadata"></video>
+  <p><small>已複製素材預覽，並非本次新生成。</small></p>
+  <div class="badge" id="human">生成模型：等待確認</div>
+  <div class="links"><a href="app/aivault-digital-human.html?avatar=darkstar">暗星完整介面</a></div>
+</section>
+
+<section>
+  <h2>付費短影片目錄（未授權）</h2>
+  <div class="badge" id="video">生成模型：等待確認</div>
+  <p>Magic Hour 程式已移植，但 <strong>PAID_API 閘關閉</strong>，金鑰禁止使用。正式生成前不得標 AVAILABLE。</p>
+  <div class="links"><a href="app/aivault-video-studio.html">影片工作室（介面）</a><a href="app/dawn-light-photo-video.html">照片轉影片介面</a></div>
+</section>
+</div>
+<footer>誠實狀態原則：mock／介面複製 ≠ 真實推論。免費模組與付費目錄分開標示。</footer>
+</main>
 <script>
 const endpoint='https://svtkpdmqemidlasowqew.supabase.co/functions/v1/aivault-media-catalog';
 fetch(endpoint,{headers:{apikey:'sb_publishable_ijiUkIvCMv-44aDAWx0t3A_iX1Viscf'},signal:AbortSignal.timeout(12000)}).then(async r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(data=>{
  const human=data.models.find(x=>x.id==='digital-human-generative');
  const video=data.models.find(x=>x.id==='short-video-generative');
- document.getElementById('connection').textContent='已讀取第二基地模型狀態';
- document.getElementById('human').textContent=human.key_configured?'生成模型尚未接通；仍需推理驗證':'生成模型未接通：第二基地尚未設定生成服務金鑰';
- document.getElementById('video').textContent=!video.key_configured?'生成模型未接通：第二基地尚未設定生成服務金鑰':!video.video_authorized?'生成模型等待用量授權':'已設定連線條件；仍需實際生成驗證';
-}).catch(()=>{document.getElementById('connection').textContent='暫時無法讀取模型狀態，請重新整理';});
+ document.getElementById('connection').textContent='已讀取付費模型目錄（與免費模組分開）';
+ document.getElementById('human').innerHTML=human.key_configured?'<span class="bad">付費 talking-photo 金鑰存在但閘未開／未驗證</span>':'<span class="bad">付費生成未接通</span>';
+ document.getElementById('video').innerHTML=!video.key_configured?'<span class="bad">BLOCKED_NO_PROVIDER_KEY · 且政策禁止使用 image→video 金鑰</span>':!video.video_authorized?'<span class="bad">BLOCKED_PROVIDER_AUTHORIZATION（PAID_API_ALLOW 未含 magic_hour_video）</span>':'<span class="bad">金鑰條件存在，仍禁止呼叫；需另核准</span>';
+}).catch(()=>{document.getElementById('connection').textContent='暫時無法讀取付費目錄；免費模組仍可本機使用';});
 </script></body></html>
