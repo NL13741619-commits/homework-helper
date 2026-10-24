@@ -144,6 +144,12 @@ a{color:var(--sun)}
     document.getElementById('text').value='';
     await engine.sendText(v);
   };
+  
+  if(/[?&]demo=1(?:&|$)/.test(location.search)){
+    statusEl.textContent='DEMO MOCK：自動送出一句（未開麥克風）';
+    statusEl.dataset.k='warn';
+    setTimeout(function(){engine.sendText('你好，曙光');},400);
+  }
   window.addEventListener('pagehide',function(){engine.stop(false);});
   window.addEventListener('beforeunload',function(){engine.stop(false);});
 })();
