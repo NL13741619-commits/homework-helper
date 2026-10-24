@@ -25,9 +25,10 @@ main{padding:12px;display:grid;gap:12px;max-width:720px;margin:0 auto}
 #status[data-k=speak]{color:var(--sun)}
 #status[data-k=err]{color:var(--err)}
 #status[data-k=warn]{color:var(--warn)}
+#status[data-k=think]{color:#93c5fd}
 .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--muted)}
-.meta b{display:block;color:var(--text);font-size:13px;margin-top:2px}
-#log{min-height:220px;max-height:48vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.meta b{display:block;color:var(--text);font-size:13px;margin-top:2px;word-break:break-word}
+#log{min-height:200px;max-height:42vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
 .row{display:flex;flex-direction:column;gap:2px}
 .row .who{font-size:11px;color:var(--muted)}
 .row .bubble{padding:8px 12px;border-radius:12px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
@@ -44,7 +45,14 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .composer input{flex:1;border-radius:12px;border:1px solid var(--line);background:#1a140e;color:var(--text);padding:10px 12px;font:inherit}
 .notice{font-size:12px;color:var(--muted);line-height:1.6}
 .banner{background:#4c0519;border:1px solid #7f1d1d;color:#fecaca;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.55}
+.drop{border:2px dashed #785f1a;border-radius:12px;padding:14px;text-align:center;color:var(--muted);font-size:13px;line-height:1.5;background:#1f1810}
+.drop.drag{border-color:var(--sun);color:var(--sun)}
+.level{height:8px;background:#1a140e;border-radius:999px;overflow:hidden;margin-top:8px}
+.level>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#86efac,#ffb347,#f87171);transition:width .05s linear}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:11px;color:var(--muted)}
+.metrics b{display:block;color:var(--text);font-size:14px;margin-top:2px}
 a{color:var(--sun)}
+code{font-size:11px}
 </style>
 </head>
 <body>
@@ -52,26 +60,51 @@ a{color:var(--sun)}
   <div class="sun" aria-hidden="true"></div>
   <div>
     <h1>☀ 曙光自建即時語音</h1>
-    <p class="sub">第二基地獨立測試頁 · 禁止 Gemini Live · 拒絕瀏覽器電音合成當產品聲</p>
+    <p class="sub">第二基地獨立測試頁 · Gemini Live：未使用 · 拒絕瀏覽器電音合成當產品聲</p>
   </div>
-  <span class="badge warn" id="liveBadge">已駁回／暫代，非曙光正式聲音</span>
+  <span class="badge warn" id="liveBadge">產品 TTS：非 AVAILABLE</span>
 </header>
 <main>
   <section class="banner" role="status">
-    <strong>產品音色政策：</strong>瀏覽器 <code>speechSynthesis</code>（電音／合成腔）<strong>已被拒絕</strong>當曙光產品聲。
-    目前字幕可測；產品播音<strong>靜音</strong>，等待認可參考檔
-    <code>dawn-natural-female-v2.wav</code> + 免費自然神經 TTS（例如未來 Qwen3-TTS）。
+    <strong>產品音色政策：</strong>瀏覽器 <code>speechSynthesis</code>（電音）已被拒絕。
+    產品播音<strong>靜音</strong>，直到認可檔 <code>dawn-natural-female-v2.wav</code> + 免費神經 TTS（Qwen3-TTS／CosyVoice；本機<strong>無 GPU</strong> → <code>BLOCKED_NEED_GPU</code>）。
+    不得標 AVAILABLE。
   </section>
 
   <section class="card">
     <h2>狀態</h2>
-    <div id="status" data-k="info">尚未開始。建議先用 ?mock=1 驗證字幕／流程（不會播電音）。</div>
+    <div id="status" data-k="info">尚未開始。建議先用 ?mock=1 驗證字幕／VAD／插話（不會播電音）。</div>
+    <div class="level" title="麥克風能量"><i id="levelBar"></i></div>
     <div class="meta" style="margin-top:10px">
       <div>認可聲線 wav<b id="wavMeta">檢查中…</b></div>
+      <div>神經 TTS 引擎<b id="engineMeta">—</b></div>
       <div>對話來源<b id="modeMeta">—</b></div>
-      <div>STT（辨識）<b id="sttMeta">—</b></div>
-      <div>產品 TTS<b id="ttsMeta">REJECTED · 靜音等待自然神經 TTS</b></div>
+      <div>STT（僅辨識）<b id="sttMeta">—</b></div>
+      <div>產品 TTS<b id="ttsMeta">MUTED · 等待 wav+神經 TTS</b></div>
+      <div>階段 phase<b id="phaseMeta">IDLE</b></div>
     </div>
+    <div class="metrics" style="margin-top:10px">
+      <div>EOT 次數<b id="mEot">0</b></div>
+      <div>插話次數<b id="mBarge">0</b></div>
+      <div>上次靜音 ms<b id="mSilence">—</b></div>
+      <div>思考 ms<b id="mThink">—</b></div>
+      <div>字幕首現 ms<b id="mTtf">—</b></div>
+      <div>回合數<b id="mUtt">0</b></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>投放認可女聲（dawn-natural-female-v2.wav）</h2>
+    <div class="drop" id="drop" tabindex="0">
+      拖放或點此選擇 <code>.wav</code>（RIFF）。檔案先存瀏覽器 IndexedDB，<strong>不會</strong>自動 commit 進 Git。<br>
+      倉庫路徑目標：<code>app/assets/dawn-voice/dawn-natural-female-v2.wav</code>
+      <input type="file" id="wavFile" accept="audio/wav,.wav" hidden>
+    </div>
+    <div class="btns" style="margin-top:8px">
+      <button type="button" id="btnWav" disabled>預覽參考 wav</button>
+      <button type="button" id="btnClearWav">清除本機投放</button>
+    </div>
+    <p class="notice" id="wavDetail">搜尋結果：倉庫／信件／附件仍 MISSING（2026-10-24）。</p>
   </section>
 
   <section class="card">
@@ -86,27 +119,52 @@ a{color:var(--sun)}
       <button class="primary" type="button" id="btnStart">🎤 開始聆聽</button>
       <button class="danger" type="button" id="btnStop" disabled>⏹ 結束並釋放麥克風</button>
       <button type="button" id="btnBarge" disabled>插話中止</button>
-      <button type="button" id="btnWav" disabled>預覽認可 wav</button>
     </div>
     <form class="composer" id="form" style="margin-top:10px">
-      <input id="text" placeholder="STT 不可用時可打字（仍走同一對話管線）" autocomplete="off">
+      <input id="text" placeholder="STT 不可用時可打字（同一對話管線）" autocomplete="off">
       <button class="primary" type="submit">送出</button>
     </form>
     <p class="notice" style="margin-top:10px">
-      關閉開關：網址加 <code>?voice=0</code>，或 <code>localStorage.DAWN_OWN_VOICE_OFF=1</code>。<br>
+      關閉：<code>?voice=0</code> 或 <code>localStorage.DAWN_OWN_VOICE_OFF=1</code>。<br>
       MOCK：<code>?mock=1</code>。除錯電音（非產品）：<code>?synth=1</code> — 仍標 REJECTED。<br>
+      VAD／EOT：客戶端能量偵測，靜音門檻預設 700ms（規格 500–800）。STT 使用 Web Speech <strong>僅辨識</strong>。<br>
       本頁不呼叫 dawn-city-ai Live、不呼叫圖生影片、不播瀏覽器合成當產品聲。<br>
       <a href="../index.html">回曙光城首頁</a>
       · <a href="dawn-own-voice-test.html?mock=1">開 MOCK</a>
+      · <a href="dawn-own-voice-test.html?mock=1&amp;demo=1">DEMO 一句</a>
       · <a href="../docs/DAWN-OWN-REALTIME-VOICE.md">文件</a>
     </p>
   </section>
 </main>
-<script src="dawn-own-voice.js?v=20261024-reject-synth"></script>
+<script src="dawn-neural-tts.js?v=20261024-mvp"></script>
+<script src="dawn-own-voice.js?v=20261024-mvp"></script>
 <script>
 (function(){
   var log=document.getElementById('log');
   var statusEl=document.getElementById('status');
+  var levelBar=document.getElementById('levelBar');
+
+  function paintNeural(st){
+    if(!st)return;
+    var wav=st.wavStatus||'UNKNOWN';
+    var eng=st.engineStatus||'UNKNOWN';
+    document.getElementById('wavMeta').textContent=
+      wav.indexOf('PRESENT')===0
+        ? wav+(st.wavMeta&&st.wavMeta.sha256?' · sha256='+st.wavMeta.sha256.slice(0,12)+'…':'')+(st.wavMeta&&st.wavMeta.source?' · '+st.wavMeta.source:'')
+        : 'MISSING · 請投放或向使用者／GPT 索取';
+    document.getElementById('engineMeta').textContent=eng+(st.nextStep?' · '+st.nextStep:'');
+    document.getElementById('ttsMeta').textContent=
+      st.productPlayback===true ? 'AVAILABLE（不應在本階段出現）' : 'MUTED · '+eng;
+    document.getElementById('btnWav').disabled=wav.indexOf('PRESENT')!==0;
+    document.getElementById('liveBadge').textContent=
+      '產品 TTS：非 AVAILABLE · '+eng;
+    document.getElementById('liveBadge').className='badge warn';
+    var detail='引擎：'+eng;
+    if(st.wavMeta&&st.wavMeta.sha256) detail+='｜sha256 '+st.wavMeta.sha256;
+    if(st.reason) detail+='｜'+st.reason;
+    document.getElementById('wavDetail').textContent=detail;
+  }
+
   var engine=new DawnOwnVoice({
     onStatus:function(t,k){statusEl.textContent=t;statusEl.dataset.k=k||'info';},
     onSubtitle:function(role,text,meta){
@@ -117,36 +175,87 @@ a{color:var(--sun)}
       row.append(who,b);
       if(meta&&meta.source){
         var s=document.createElement('div');s.className='src';
-        s.textContent='source='+meta.source+(meta.model?' · '+meta.model:'')+(meta.tts?' · tts='+meta.tts:'');
+        s.textContent='source='+meta.source+(meta.model?' · '+meta.model:'')+(meta.tts?' · tts='+meta.tts:'')+(meta.thinkMs!=null?' · think='+meta.thinkMs+'ms':'');
         row.append(s);
       }
       log.append(row);log.scrollTop=log.scrollHeight;
-      document.getElementById('modeMeta').textContent=meta&&meta.source?meta.source:document.getElementById('modeMeta').textContent;
+      if(meta&&meta.source) document.getElementById('modeMeta').textContent=meta.source;
     },
     onInterim:function(t){document.getElementById('interim').textContent=t?'辨識中：'+t:'';},
     onTtsPolicy:function(p){
-      document.getElementById('ttsMeta').textContent=
-        p&&p.productPlayback===false
-          ? '靜音 · REJECTED_BROWSER_SYNTH · 等待 wav+神經 TTS'
-          : document.getElementById('ttsMeta').textContent;
+      if(p&&p.neural) paintNeural(p.neural);
+      else if(p&&p.productPlayback===false){
+        document.getElementById('ttsMeta').textContent='靜音 · '+((p.reason)||'MUTED');
+      }
+    },
+    onNeural:paintNeural,
+    onPhase:function(ph){document.getElementById('phaseMeta').textContent=ph;},
+    onMetrics:function(m){
+      document.getElementById('mEot').textContent=m.eotCount||0;
+      document.getElementById('mBarge').textContent=m.bargeInCount||0;
+      document.getElementById('mSilence').textContent=m.lastSilenceMs!=null?m.lastSilenceMs:'—';
+      document.getElementById('mThink').textContent=m.lastThinkMs!=null?m.lastThinkMs:'—';
+      document.getElementById('mTtf').textContent=m.lastTtfSubtitleMs!=null?m.lastTtfSubtitleMs:'—';
+      document.getElementById('mUtt').textContent=m.utterances||0;
+    },
+    onLevel:function(rms){
+      var pct=Math.min(100, Math.round(rms*400));
+      levelBar.style.width=pct+'%';
+    },
+    onEot:function(info){
+      document.getElementById('interim').textContent='EOT（靜音 '+Math.round(info.silenceMs)+'ms）';
     }
   });
 
   var Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
   document.getElementById('sttMeta').textContent=Rec?'Web Speech API（僅辨識，非產品聲）':'NOT LIVE（無 SpeechRecognition，請打字）';
-  document.getElementById('modeMeta').textContent=/mock=1/.test(location.search)?'MOCK':'AUTO（腦閘道失敗則 MOCK）';
+  document.getElementById('modeMeta').textContent=/mock=1/.test(location.search)?'MOCK':'AUTO（需登入腦閘道；失敗回明確錯誤，不轉付費）';
   document.getElementById('ttsMeta').textContent=
     /synth=1/.test(location.search)
       ? 'DEBUG ?synth=1 · REJECTED（非產品）'
-      : 'REJECTED · 產品播音靜音 · 等待 dawn-natural-female-v2.wav';
+      : 'MUTED · 等待 dawn-natural-female-v2.wav + 神經 TTS';
 
-  engine.probeWav().then(function(st){
-    document.getElementById('wavMeta').textContent=
-      st==='PRESENT'
-        ? 'PRESENT（可預覽參考檔；神經 TTS 尚未接）'
-        : 'MISSING · 請向使用者／GPT 索取 dawn-natural-female-v2.wav';
-    document.getElementById('btnWav').disabled=st!=='PRESENT';
+  engine.probeWav().then(function(){ paintNeural(engine.neuralStatus); });
+
+  var drop=document.getElementById('drop');
+  var fileInput=document.getElementById('wavFile');
+  drop.addEventListener('click',function(){fileInput.click();});
+  drop.addEventListener('dragover',function(e){e.preventDefault();drop.classList.add('drag');});
+  drop.addEventListener('dragleave',function(){drop.classList.remove('drag');});
+  drop.addEventListener('drop',async function(e){
+    e.preventDefault();drop.classList.remove('drag');
+    var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+    if(!f)return;
+    try{
+      var st=await engine.acceptWavFile(f);
+      paintNeural(st);
+      statusEl.textContent='已接收本機 wav（IndexedDB）。仍非產品 TTS，直到神經引擎 READY。';
+      statusEl.dataset.k='warn';
+    }catch(err){
+      statusEl.textContent='投放失敗：'+(err.message||err);
+      statusEl.dataset.k='err';
+    }
   });
+  fileInput.addEventListener('change',async function(){
+    var f=fileInput.files&&fileInput.files[0];
+    if(!f)return;
+    try{
+      var st=await engine.acceptWavFile(f);
+      paintNeural(st);
+      statusEl.textContent='已接收本機 wav（IndexedDB）。仍非產品 TTS。';
+      statusEl.dataset.k='warn';
+    }catch(err){
+      statusEl.textContent='投放失敗：'+(err.message||err);
+      statusEl.dataset.k='err';
+    }
+    fileInput.value='';
+  });
+  document.getElementById('btnClearWav').onclick=async function(){
+    var st=await engine.clearDroppedWav();
+    paintNeural(st);
+    statusEl.textContent='已清除本機投放 wav。';
+    statusEl.dataset.k='info';
+  };
 
   var btnStart=document.getElementById('btnStart');
   var btnStop=document.getElementById('btnStop');
@@ -160,6 +269,7 @@ a{color:var(--sun)}
   btnStop.onclick=async function(){
     await engine.stop(true);
     btnStart.disabled=false;btnStop.disabled=true;btnBarge.disabled=true;
+    levelBar.style.width='0%';
   };
   btnBarge.onclick=function(){engine.bargeIn('button');};
   document.getElementById('btnWav').onclick=function(){engine.previewApprovedWav();};
