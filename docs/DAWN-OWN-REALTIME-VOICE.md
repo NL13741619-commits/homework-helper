@@ -1,68 +1,56 @@
 # 曙光自建即時語音（非 Gemini Live · 拒電音合成）
 
 第二基地獨立測試頁：`app/dawn-own-voice-test.html`  
-實驗室頁（非產品聲）：`app/dawn-voice-free.html`
+引擎：`app/dawn-own-voice.js` + `app/dawn-neural-tts.js`  
+實驗室頁（非產品聲）：`app/dawn-voice-free.html`  
+TTS stub（未部署／誠實 503）：`supabase/functions/dawn-own-tts`
 
 ## 方針
 
 - **不用 Gemini Live**、不連 `technical-dark-star-live-voice-v2`、不把 `dawn-city-ai` WebSocket 當語音依賴。
-- `dawn-city-ai` 目前上游是 Gemini Live，本輪**不接線**；另建模組，帶關閉開關。
-- 不呼叫圖生影片／`dawn-light-video`／`dawn-light-photo-video`／付費 Grok／Kling／Magic Hour。
+- `dawn-city-ai` 目前上游是 Gemini Live，**不接線**。
+- 不呼叫圖生影片／付費 Grok／Kling／Magic Hour。
 - 不修改第一基地 `m9wmtcb782-arch/AIVAULT` 正式頁。
+- 付費閘道 `_shared/paid_gate.ts` 必須遵守；預設禁止。
 
 ## 產品音色政策（2026-10-24）
 
-使用者明確拒絕：「聲音太假，不要電腦合成的電音。」
-
 | 項目 | 狀態 |
 |------|------|
-| 瀏覽器 `speechSynthesis`／Web Speech TTS 當**產品聲** | **REJECTED** |
-| 產品播音 | **靜音**，直到認可路徑就緒 |
-| 認可參考檔 `dawn-natural-female-v2.wav` | **MISSING**（倉庫尚無實體檔；請向使用者／GPT 索取） |
-| 免費自然神經 TTS（例如未來 Qwen3-TTS） | **NOT_DEPLOYED**（需 GPU／部署核准） |
-| 除錯合成 `?synth=1` 或實驗室「暫時解鎖」 | 允許工程聽一下，**仍標 REJECTED**，不得當產品聲 |
+| 瀏覽器 `speechSynthesis` 當產品聲 | **REJECTED** |
+| 產品播音 | **MUTED** 直到認可路徑就緒 |
+| `dawn-natural-female-v2.wav` | **MISSING**（倉庫／信件／附件均無；測試頁可 IndexedDB 投放） |
+| Qwen3-TTS／CosyVoice | **BLOCKED_NEED_GPU**（施工機無 GPU、無 torch） |
+| 產品標 AVAILABLE | **禁止**，直到聽感驗收通過 |
 
-**認可路徑（唯一產品方向）：**
+## MVP 管線（本輪）
 
-1. 放入並校驗 `app/assets/dawn-voice/dawn-natural-female-v2.wav`（逸豪已認可之自然年輕女聲參考）。
-2. 接上免費／自架自然神經 TTS（候選：Qwen3-TTS 等 Apache-2.0 開放權重），以參考檔做音色條件或微調。
-3. 通過實機聽感後，才可標產品 TTS＝AVAILABLE。
+1. **麥克風** → `getUserMedia`；結束／離頁釋放。
+2. **VAD／EOT** → 客戶端能量偵測；靜音 **700ms**（規格 500–800，見 `learn-gemini-live-voice.md`）。
+3. **STT** → Web Speech API **僅辨識**（誠實標示）；不支援則打字。
+4. **對話** → `?mock=1` 本機 MOCK；否則第二基地 `aivault-brain-gateway`（需登入）。失敗回**明確錯誤**，不偷偷轉付費、不默默 MOCK 冒充成功（AUTO 無登入 → `ERROR_NO_AUTH`）。
+5. **TTS** → `DawnNeuralTts`：無 wav → `MUTED_WAITING_WAV`；有 wav 無 GPU → `BLOCKED_NEED_GPU`；**永不**用瀏覽器合成當產品聲。
+6. **插話** → 停播 + flush PCM 佇列 + AbortController 取消 generati。
+7. **字幕／重連／釋放 mic** → 有。
+8. **wav 投放** → 拖放進測試頁 → IndexedDB；預覽參考；清除本機投放。
 
-不得把 API 轉送、預錄假回答、或瀏覽器電音合成冒充「曙光已接通自然語音」。
-
-## MVP 管線（現況）
-
-1. **麥克風**：`getUserMedia` → 結束／離頁釋放。
-2. **STT**：瀏覽器 Web Speech API（`SpeechRecognition`）— **僅辨識**，不是產品聲。不支援時標示 NOT LIVE，改打字。
-3. **對話**：
-   - 預設／`?mock=1`：本機腳本回覆（明確 MOCK）。
-   - 可選：第二基地 `aivault-brain-gateway` 文字（需登入且 model_policy 就緒）；失敗則回落 MOCK 並標示原因。
-4. **產品 TTS**：**靜音**。字幕照常顯示。`speak()` 預設不呼叫 `speechSynthesis`。
-5. **插話**：若除錯合成正在播，偵測到新語音／按「插話」→ `cancel()`。
-6. **字幕**：使用者與曙光文字列在對話區。
-7. **重連**：STT 結束後若仍在聆聽會自動重開；失敗顯示狀態。
+可選資產：`app/assets/dawn-voice/aivault-eot-v1-int8.onnx`（主城 EOT v1 int8，供未來 WASM EOT；本輪能量 VAD 已可測）。
 
 ## 關閉開關
 
-- URL：`?voice=0`
-- 或 `localStorage.DAWN_OWN_VOICE_OFF=1`
-- 除錯電音（非產品）：`?synth=1`
+- `?voice=0` / `localStorage.DAWN_OWN_VOICE_OFF=1`
+- 除錯電音：`?synth=1`（REJECTED）
+- MOCK：`?mock=1`；DEMO：`?mock=1&demo=1`
 
 ## 驗收邊界
 
-- 本機／桌面瀏覽器可測 mic 權限、字幕、插話、釋放。
-- **未**宣稱產品自然女聲已接通。
-- **未**宣稱 iPhone Safari 成功，直到實機量測延遲與斷音。
-- mock 測試 ≠ 真實模型已接通；字幕 ≠ 產品播音。
+- ✅ 可測：mic、VAD 能量條、EOT 計數、字幕、插話、重連、釋放、wav 投放校驗（RIFF）
+- ❌ 未宣稱：產品自然女聲已接通、iPhone Safari 成功、AVAILABLE
+- ❌ mock ≠ 真實模型；字幕 ≠ 產品播音
 
-## 與 media 中心其他頁的關係
+## 下一步（需使用者）
 
-- `app/dawn-voice-free.html`：實驗室；朗讀預設關閉，解鎖後仍標 REJECTED。
-- `app/dawn-own-voice-test.html`：連續聆聽 MVP（插話、字幕、重連、釋放 mic、MOCK 對話；產品播音靜音）。
-- 兩者皆 **禁用 Gemini Live**，且 **拒絕瀏覽器合成當產品聲**。
-
-## 下一步（需父代理／使用者）
-
-1. 向使用者或 GPT 索取 `dawn-natural-female-v2.wav` 實體檔並放入倉庫。
-2. 規劃免費神經 TTS 部署（Qwen3-TTS 等）與授權核對。
-3. 草稿 PR 合併前聽感驗收；未核准不得 force-merge。
+1. 提供 `dawn-natural-female-v2.wav`（聊天上傳或放入倉庫）。
+2. 核准免費 GPU／自架主機跑 Qwen3-TTS 或 CosyVoice。
+3. 部署 `dawn-own-tts` 並接上游後，聽感通過才可標 AVAILABLE。
+4. 合併本草稿 PR 前再聽感／流程確認。
