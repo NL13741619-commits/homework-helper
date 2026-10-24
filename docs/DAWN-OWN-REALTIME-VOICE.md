@@ -31,3 +31,9 @@
 - 本機／桌面瀏覽器可測 mic 權限、字幕、插話、釋放。
 - **未**宣稱 iPhone Safari 成功，直到實機量測延遲與斷音。
 - mock 測試 ≠ 真實模型已接通。
+
+## 與 media 中心其他頁的關係
+
+- `app/dawn-voice-free.html`：單次朗讀／聽一句（已在 main）。
+- `app/dawn-own-voice-test.html`：連續聆聽 MVP（插話、字幕、重連、釋放 mic、MOCK 對話）。
+- 兩者皆 **禁用 Gemini Live**。
