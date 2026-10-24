@@ -127,3 +127,11 @@
 | 歌唱頁 | 「小太陽唱四小節」 | **DSP 實驗・非產品聲** |
 
 Gemini Live／付費 TTS／image→video：仍禁用。
+
+
+---
+
+## 歌唱與自然聲對齊（2026-10-24 13:16）
+
+詳見 `docs/base2-singing-inventory.md`。`dawn-natural-female-v2.wav` 已入庫（REFERENCE_WAV_READY）。
+說＋唱演示：`app/dawn-sing-ref.html`（REFERENCE_PLAYBACK，非神經）。產品歌唱仍 NOT AVAILABLE。

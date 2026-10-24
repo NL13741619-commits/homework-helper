@@ -13,7 +13,7 @@
 </header>
 <main>
   <div class="sunface" id="sun"><div class="eyes">● ●</div><div class="mouth">◐</div></div>
-  <p class="lead">使用者已駁回電腦合成／電音感聲線。瀏覽器 <code>speechSynthesis</code>（Web Speech）<strong>不是</strong>曙光產品音色，本頁<strong>預設不播放</strong>。正式路徑：認可參考 <code>dawn-natural-female-v2.wav</code> + 免費神經 TTS（如自架 Qwen3-TTS）。目前 wav <strong>MISSING</strong> → 狀態 <span class="bad">PENDING_NATURAL_CLONE</span>／<span class="bad">BLOCKED_NO_NATURAL_TTS</span>。</p>
+  <p class="lead">使用者已駁回電腦合成／電音感聲線。瀏覽器 <code>speechSynthesis</code>（Web Speech）<strong>不是</strong>曙光產品音色，本頁<strong>預設不播放</strong>。正式路徑：認可參考 <code>dawn-natural-female-v2.wav</code> + 免費神經 TTS（如自架 Qwen3-TTS）。認可 wav 已入庫 → <span class="ok">REFERENCE_WAV_READY</span>（可預覽參考錄音）。即時產品 TTS 仍 <span class="bad">BLOCKED_NEED_GPU</span>／非 AVAILABLE。產品聲必須有<strong>抑揚頓挫</strong>（音高變化／句重音）；禁止平坦電音。</p>
 
   <section class="card">
     <h2>產品播音</h2>
@@ -59,13 +59,13 @@
     stopBtn.disabled = !allow.checked;
   };
 
-  fetch(WAV, { method: 'HEAD', cache: 'no-store' }).then(r => {
+  fetch(WAV, { method: 'GET', cache: 'no-store' }).then(r => {
     const ok = r.ok;
-    document.getElementById('wavBadge').textContent = ok ? 'PRESENT（可預覽參考，仍非即時 TTS）' : 'MISSING → PENDING_NATURAL_CLONE';
+    document.getElementById('wavBadge').textContent = ok ? 'REFERENCE_WAV_READY（可預覽參考錄音 · 非即時 TTS）' : 'MISSING';
     document.getElementById('wavBadge').className = ok ? 'ok' : 'bad';
     wavBtn.disabled = !ok;
   }).catch(() => {
-    document.getElementById('wavBadge').textContent = 'MISSING → PENDING_NATURAL_CLONE';
+    document.getElementById('wavBadge').textContent = 'MISSING';
   });
 
   wavBtn.onclick = () => {
@@ -76,7 +76,7 @@
   meta.textContent = JSON.stringify({
     product_tts: 'MUTED_REJECTED_BROWSER_SYNTH',
     natural_wav: 'dawn-natural-female-v2.wav',
-    natural_status: 'PENDING_NATURAL_CLONE',
+    natural_status: 'REFERENCE_WAV_READY',
     neural_tts: 'NOT_DEPLOYED',
     gemini_live: 'DISABLED_BY_POLICY',
     browser_synth: DawnFreeVoice.STATUS
