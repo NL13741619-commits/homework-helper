@@ -16,7 +16,7 @@
 | `app/dawn-voice-free.html` | 頁面 | Web Speech **REJECTED**；wav **REFERENCE_WAV_READY** | 產品合成預設靜音 |
 | `app/dawn-own-voice*.js/html` | 自建語音 | 產品 TTS **MUTED**／**PENDING_FREE_NEURAL_TTS** | 禁 Gemini Live |
 | Draft PR #21 `feat/dawn-local-chat-sing` | local-ai Qwen+WORLD 四小節 | **DRAFT** / EXPERIMENTAL | 音高驗證過；未合併；非 Pages 產品 |
-| Draft PR #25 `feat/dawn-melody-lyrics` | 旋律／押韻 | **DRAFT** | 未合併 |
+| Draft PR #25 `feat/dawn-melody-lyrics` | 旋律／押韻／a cappella | **PARENT_VERIFYING**（父代理驗證中） | **勿合併／勿宣稱 live** |
 | Draft PR #26 本地即時語音 | DRAFT | 未合併 |
 | PR #27 免費媒體 | MERGED | JPG／DSP／Web Speech 實驗室 |
 | PR #30 駁回電音合成 | MERGED | 產品聲靜音政策 |
@@ -64,3 +64,6 @@
 ## 6. 政策不變
 
 無付費 API、無 Gemini Live、image→video 閘關閉。
+
+
+整合見 `docs/DAWN-SPEAK-SING-INTEGRATION-PLAN.md`。
