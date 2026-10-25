@@ -280,18 +280,19 @@
 
   <main class="content">
     <div class="panel active" id="panel-home">
-      <a id="dawnDigitalHumanEntry" class="agent-card" href="technical-dark-star.html" style="margin-bottom:12px;display:block;text-decoration:none;border-color:#ffb347;background:linear-gradient(135deg,#422a12,#1e293b)">
+      <a id="dawnDigitalHumanEntry" class="agent-card" href="dawn-digital-human.html" style="margin-bottom:12px;display:block;text-decoration:none;border-color:#ffb347;background:linear-gradient(135deg,#422a12,#1e293b)">
         <div class="agent-name" style="font-size:18px;color:#ffd27a">☀ 曙光數字人 · 第二基地主角</div>
-        <div class="agent-role" style="margin:8px 0">曙光 Dawn Light｜對話、任務與數字人入口</div>
+        <div class="agent-role" style="margin:8px 0">Dawn 男主角｜Gemini 男聲 Charon｜雪茄儀式閉環</div>
         <span style="color:#ffd27a">進入曙光 →</span>
       </a>
-      <div id="darkStarEntry" class="agent-card" style="margin-bottom:12px; grid-column:1/-1; display:block; border-color:rgba(17,17,17,.55); background:linear-gradient(135deg,#0f0f12,#1e293b);">
+      <div id="darkStarEntry" class="agent-card" style="margin-bottom:12px; grid-column:1/-1; display:block; border-color:rgba(251,146,60,.45); background:linear-gradient(135deg,#7c2d12,#1e293b);">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
           <div>
-            <div class="agent-name" style="font-size:15px;">曙光 · 第二基地數字人</div>
-            <div class="agent-role" style="margin-bottom:0;">即時工程引擎 · AI Gateway · Sandbox · 測試／評估 · 語音通道</div>
+            <div class="agent-name" style="font-size:15px;">曙光｜男數字人</div>
+            <div class="agent-role" style="margin-bottom:2px;">第二基地 · Gemini 男聲 Charon · 雪茄儀式</div>
+            <div class="agent-role" style="margin-bottom:0;">暗星女版保留；由此直開 dawn-male。</div>
           </div>
-          <div style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 5px; border-radius:20px; background:#111; color:#fff; font-size:12px; font-weight:700;"><span id="homeDawnOrb" data-size="36" title="曙光動畫"></span>進入曙光</div>
+          <div style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 5px; border-radius:20px; background:linear-gradient(135deg,#f97316,#ea580c); color:#fff; font-size:12px; font-weight:700;"><span id="homeDawnOrb" data-size="36" title="曙光動畫"></span>進入曙光</div>
         </div>
       </div>
 
@@ -1029,10 +1030,10 @@
     document.getElementById('btnEnterRoom').addEventListener('click', () => { markAgentsInMeeting(); location.href = 'aivault-warroom.html'; });
     document.getElementById('warroomEntry')?.addEventListener('click', () => { markAgentsInMeeting(); location.href = 'aivault-warroom.html'; });
     document.getElementById('proposalWsEntry')?.addEventListener('click', () => { location.href = 'aivault-proposal-workspace.html'; });
-    document.getElementById('darkStarEntry')?.addEventListener('click', () => { location.href = 'technical-dark-star.html'; });
+    document.getElementById('darkStarEntry')?.addEventListener('click', () => { location.href = 'aivault-digital-human.html?avatar=dawn-male'; });
     document.getElementById('researchWsEntry')?.addEventListener('click', () => { location.href = 'aivault-research-warroom.html'; });
     document.getElementById('videoStudioEntry')?.addEventListener('click', () => { location.href = 'aivault-video-studio.html'; });
-    document.getElementById('digitalHumanEntry')?.addEventListener('click', () => { location.href = 'aivault-digital-human.html'; });
+    document.getElementById('digitalHumanEntry')?.addEventListener('click', () => { location.href = 'aivault-digital-human.html?avatar=darkstar'; });
     document.getElementById('mp4ImportEntry')?.addEventListener('click', () => { location.href = 'aivault-mp4-import.html'; });
     document.getElementById('mp4ImportEntry')?.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); location.href = 'aivault-mp4-import.html'; } });
     document.getElementById('textImportEntry')?.addEventListener('click', () => { location.href = 'aivault-text-import.html'; });
