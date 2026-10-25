@@ -1,0 +1,160 @@
+{
+  "engine": "dawn-score-world-v1",
+  "status": "EXPERIMENTAL_DSP_SINGING",
+  "trained_singing_model": false,
+  "voice_id": "flite-slt-en",
+  "duration_seconds": 9.6,
+  "generation_seconds": 1.638,
+  "timeline": [
+    {
+      "lyric": "Dawn",
+      "midi": 60,
+      "beats": 1,
+      "start_seconds": 0,
+      "end_seconds": 0.6,
+      "target_hz": 261.6255653005986
+    },
+    {
+      "lyric": "shines",
+      "midi": 64,
+      "beats": 1,
+      "start_seconds": 0.6,
+      "end_seconds": 1.2,
+      "target_hz": 329.6275569128699
+    },
+    {
+      "lyric": "bright",
+      "midi": 67,
+      "beats": 1,
+      "start_seconds": 1.2,
+      "end_seconds": 1.8,
+      "target_hz": 391.99543598174927
+    },
+    {
+      "lyric": "now",
+      "midi": 64,
+      "beats": 1,
+      "start_seconds": 1.8,
+      "end_seconds": 2.4,
+      "target_hz": 329.6275569128699
+    },
+    {
+      "lyric": "We",
+      "midi": 62,
+      "beats": 1,
+      "start_seconds": 2.4,
+      "end_seconds": 3.0,
+      "target_hz": 293.6647679174076
+    },
+    {
+      "lyric": "sing",
+      "midi": 65,
+      "beats": 1,
+      "start_seconds": 3.0,
+      "end_seconds": 3.6,
+      "target_hz": 349.2282314330039
+    },
+    {
+      "lyric": "with",
+      "midi": 69,
+      "beats": 1,
+      "start_seconds": 3.6,
+      "end_seconds": 4.2,
+      "target_hz": 440.0
+    },
+    {
+      "lyric": "joy",
+      "midi": 67,
+      "beats": 1,
+      "start_seconds": 4.2,
+      "end_seconds": 4.8,
+      "target_hz": 391.99543598174927
+    },
+    {
+      "lyric": "A",
+      "midi": 64,
+      "beats": 1,
+      "start_seconds": 4.8,
+      "end_seconds": 5.4,
+      "target_hz": 329.6275569128699
+    },
+    {
+      "lyric": "new",
+      "midi": 67,
+      "beats": 1,
+      "start_seconds": 5.4,
+      "end_seconds": 6.0,
+      "target_hz": 391.99543598174927
+    },
+    {
+      "lyric": "day",
+      "midi": 72,
+      "beats": 1,
+      "start_seconds": 6.0,
+      "end_seconds": 6.6,
+      "target_hz": 523.2511306011972
+    },
+    {
+      "lyric": "comes",
+      "midi": 71,
+      "beats": 1,
+      "start_seconds": 6.6,
+      "end_seconds": 7.2,
+      "target_hz": 493.8833012561241
+    },
+    {
+      "lyric": "We",
+      "midi": 69,
+      "beats": 1,
+      "start_seconds": 7.2,
+      "end_seconds": 7.8,
+      "target_hz": 440.0
+    },
+    {
+      "lyric": "share",
+      "midi": 67,
+      "beats": 1,
+      "start_seconds": 7.8,
+      "end_seconds": 8.4,
+      "target_hz": 391.99543598174927
+    },
+    {
+      "lyric": "our",
+      "midi": 64,
+      "beats": 1,
+      "start_seconds": 8.4,
+      "end_seconds": 9.0,
+      "target_hz": 329.6275569128699
+    },
+    {
+      "lyric": "light",
+      "midi": 60,
+      "beats": 1,
+      "start_seconds": 9.0,
+      "end_seconds": 9.6,
+      "target_hz": 261.6255653005986
+    }
+  ],
+  "artifacts": {
+    "rerun-english-vocal.wav": {
+      "bytes": 423404,
+      "sha256": "2b8201e7ee4626de77c9d2528ecd174472f7ef1430fa77c1e3719b2e9f5f1adf"
+    },
+    "rerun-english-backing.wav": {
+      "bytes": 423404,
+      "sha256": "933aa48d0778380d6c58aecb632e7df5b354517d497cc4321853e69c8d129220"
+    },
+    "rerun-english-mix.wav": {
+      "bytes": 423404,
+      "sha256": "681207bb72bcae26882c1fcabe351d68ea29c23d61f0f56bc2075a25b123bc00"
+    },
+    "rerun-english-melody.mid": {
+      "bytes": 300,
+      "sha256": "cfe8156158db7c462cb496e80e6d2fe929cb7661252595ebc9ea5fdc2919ad2e"
+    }
+  },
+  "rights": "original",
+  "label": "本地可執行",
+  "backend_deployed": false,
+  "website_connected": false
+}
