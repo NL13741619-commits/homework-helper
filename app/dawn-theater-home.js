@@ -155,7 +155,6 @@
     $('#search-result').textContent = found ? '找到 1 部公開授權測試動畫。' : '目前沒有符合「' + query + '」的作品。';
   });
   ['#sample-card', '#search-sample'].forEach((selector) => $(selector).addEventListener('click', () => { dialog.close(); selectFeed('comic'); showView('home'); userPaused = false; syncVideo(); }));
-  if (window.DarkStarOrb) window.DarkStarOrb.mount($('#introDawnOrb'), { size: 64, theme: 'dawn' });
   setTimeout(() => {
     $('#theater-intro').hidden = true;
     playbackReady = true;
