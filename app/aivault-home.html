@@ -9,9 +9,9 @@
 <script>document.documentElement.style.visibility='hidden';</script>
 <script src="../shared-auth-config.js"></script>
 <script src="../shared-auth.js"></script>
-<link rel="stylesheet" href="dawn-theater-home.css?v=20261026-video1">
+<link rel="stylesheet" href="dawn-theater-home.css?v=20261026-audio1">
 <script src="darkstar-orb.js?v=20261016-expr2" defer></script>
-<script src="dawn-theater-home.js?v=20261026-video1" defer></script>
+<script src="dawn-theater-home.js?v=20261026-audio1" defer></script>
 </head>
 <body>
 <noscript><style>html{visibility:visible!important}</style>請啟用 JavaScript 以使用曙光劇場。</noscript>
@@ -22,9 +22,9 @@
 <div class="feed-bar"><div class="feed-tabs" role="tablist" aria-label="首頁內容分類"><button id="tab-following" role="tab" aria-selected="false" aria-controls="feed-panel" tabindex="-1" data-feed="following">關注</button><button id="tab-comic" role="tab" aria-selected="true" aria-controls="feed-panel" data-feed="comic">漫劇</button><button id="tab-live" role="tab" aria-selected="false" aria-controls="feed-panel" tabindex="-1" data-feed="live">真人劇</button><button id="tab-recommended" role="tab" aria-selected="false" aria-controls="feed-panel" tabindex="-1" data-feed="recommended">推薦</button></div><button class="icon-button" id="open-search" aria-label="搜尋作品"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.1 16.1 4.8 4.8"/></svg></button></div>
 <div id="feed-panel" role="tabpanel" aria-labelledby="tab-comic" tabindex="0">
 <section class="video-feature" id="video-feature" aria-label="測試動畫播放">
-<div class="video-frame"><video id="home-video" controls autoplay muted playsinline preload="metadata" aria-label="Big Buck Bunny 完整測試動畫" data-src="https://media.w3.org/2010/05/bunny/movie.mp4">你的瀏覽器不支援影片播放。</video><span class="video-label">公開授權 · 播放測試</span></div>
-<div class="playback-row"><p id="video-status" role="status">準備載入測試動畫…</p><button id="video-sound" aria-pressed="false">開啟聲音</button></div>
-<div class="playback-actions"><button id="video-retry" hidden>點一下播放</button><button id="video-fullscreen">全螢幕觀看 ↗</button></div>
+<div class="video-frame"><video id="home-video" controls autoplay playsinline preload="metadata" aria-label="Big Buck Bunny 完整測試動畫" data-src="https://media.w3.org/2010/05/bunny/movie.mp4">你的瀏覽器不支援影片播放。</video><span class="video-label">公開授權 · 播放測試</span><button id="video-retry" class="video-play-overlay" hidden>▶ 點一下有聲播放</button></div>
+<div class="playback-row"><p id="video-status" role="status">準備載入測試動畫…</p><button id="video-sound">開聲播放</button></div>
+<div class="playback-actions"><button id="video-fullscreen">全螢幕觀看 ↗</button></div>
 <div class="video-details"><span class="section-kicker">FIRST SCREENING · 001</span><h1>Big Buck Bunny</h1><p>大雄兔 · 完整動畫短片 · 約 10 分鐘</p><div class="video-tags"><span>動畫短片</span><span>喜劇</span><span>測試片源</span></div><p class="video-synopsis">一隻溫和的大兔子，遇上森林裡愛惡作劇的小動物。先用這部公開授權動畫，測試首頁直接播放的體驗。</p><details class="video-license"><summary>作品來源與授權</summary><p>© 2008 Blender Foundation / www.bigbuckbunny.org。CC BY 3.0。完整片尾名單保留；影片未剪輯。此片為 3D 動畫測試作品，非本站原創或連載漫劇。</p><a href="https://peach.blender.org/about/" target="_blank" rel="noopener">官方授權說明 ↗</a> · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0 ↗</a><p>測試播放來源：W3C 公開測試媒體。外部片源可能受連線或服務限制影響。</p></details></div>
 </section>
 <div class="stage" id="stage" hidden><div class="stage-grain" aria-hidden="true"></div><div class="stage-top"><span class="eyebrow" id="stage-label">DAWN · COMIC THEATER</span><span class="outline-badge">即將開映</span></div><div class="orbital" aria-hidden="true"><div class="sun"></div><div class="horizon"></div><span class="orbit-star star-one">✦</span><span class="orbit-star star-two">✧</span></div><div class="stage-copy"><span class="chapter">第一個故事，從這裡開始</span><h1 id="stage-title">讓想像，<br>成為下一幕。</h1><p id="stage-description">曙光漫劇片庫籌備中<br>第一部作品上架後，就能在這裡觀看。</p><button id="stage-action" class="primary-button">認識曙光 AI <span aria-hidden="true">↗</span></button></div><div class="stage-footer"><span><i></i> 漫劇準備中</span><span>原創 · 授權改編</span></div></div>
