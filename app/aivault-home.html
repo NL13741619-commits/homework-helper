@@ -1,74 +1,35 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><script>document.documentElement.style.visibility="hidden"</script><script src="../shared-auth-config.js"></script><script src="../shared-auth.js"></script><noscript>請啟用 JavaScript 並登入。</noscript>
+<head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#ffffff">
-<title>AIVAULT — AI Agent 協作工作平台</title>
-<script>
-(function () {
-  try {
-    if (window.top !== window.self) {
-      window.top.location.replace('https://nl13741619-commits.github.io/homework-helper/app/aivault-home.html');
-      return;
-    }
-  } catch (e) {}
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function (regs) {
-      regs.forEach(function (reg) { reg.unregister(); });
-    });
-  }
-  if (window.caches && caches.keys) {
-    caches.keys().then(function (keys) {
-      keys.forEach(function (key) { caches.delete(key); });
-    });
-  }
-})();
-</script>
-<style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
-.home-nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:8px;padding:8px 10px;box-sizing:border-box;overflow-x:auto;overflow-y:hidden}
-.home-nav a{height:40px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0 12px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;color:#334155;text-decoration:none;font-size:14px;font-weight:700;white-space:nowrap}
-@media(max-width:360px){.home-nav a{padding:0 8px;font-size:13px}}
-iframe{display:block;position:absolute;top:56px;left:0;width:100%;height:calc(100% - 56px);border:0;background:#fff}
-html:not(.av-authed) .home-nav{display:none}
-html:not(.av-authed) iframe{top:0;height:100%}
-.town-pub{display:none}html:not(.av-authed) .town-pub{display:inline-flex;position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom) + 10px);z-index:1001;align-items:center;height:34px;padding:0 12px;border-radius:999px;background:rgba(15,23,42,.82);color:#fff;font:700 13px -apple-system,system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.3)}
-</style>
-<script>
-(function(){try{var j=JSON.parse(localStorage.getItem('sb-clcddygkaaqqtsbswgdf-auth-token')||'null');var u=j&&(j.user||(j.currentSession&&j.currentSession.user));if(u&&(j.refresh_token||(j.currentSession&&j.currentSession.refresh_token)))document.documentElement.classList.add('av-authed');}catch(e){}})();
-window.addEventListener('storage',function(e){if(e.key==='sb-clcddygkaaqqtsbswgdf-auth-token'&&!e.newValue)document.documentElement.classList.remove('av-authed');});
-</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151619">
+<meta name="apple-mobile-web-app-title" content="曙光劇場">
+<title>曙光劇場 · AIVAULT</title>
+<script>document.documentElement.style.visibility='hidden';</script>
+<script src="../shared-auth-config.js"></script>
+<script src="../shared-auth.js"></script>
+<link rel="stylesheet" href="dawn-theater-home.css?v=20261026">
+<script src="darkstar-orb.js?v=20261016-expr2" defer></script>
+<script src="dawn-theater-home.js?v=20261026" defer></script>
 </head>
 <body>
-<nav class="home-nav" id="aivaultTopNav" aria-label="AIVAULT 快速入口"></nav>
-<a class="town-pub" href="aivault-town.html" target="_top">🏰 AI 協作城</a>
-<iframe id="aivaultApp" data-src="aivault-home-original-dark.html?v=20261025-dawn-lip-home" title="AIVAULT"></iframe>
-<script>
-(function () {
-  var NAV_HTML =
-    '<a href="aivault-digital-human.html?avatar=dawn-male" target="_top">☀ 曙光數字人</a>' +
-    '<a href="../media.html" target="_top">🎬 數字人與短影片</a>';
-  var nav = document.getElementById('aivaultTopNav');
-  function lockNav() {
-    if (!nav) return;
-    if (nav.getAttribute('data-locked') === '1' && nav.children.length === 2) return;
-    nav.innerHTML = NAV_HTML;
-    nav.setAttribute('data-locked', '1');
-  }
-  lockNav();
-  if (window.MutationObserver && nav) {
-    new MutationObserver(function () {
-      if (nav.children.length !== 2) {
-        nav.setAttribute('data-locked', '0');
-        lockNav();
-      }
-    }).observe(nav, { childList: true });
-  }
-  document.querySelectorAll('.home-nav').forEach(function (el) {
-    if (el !== nav) el.remove();
-  });
-})();
-</script>
-<script>AIVAULT_AUTH_READY.then(function(client){if(client){var frame=document.getElementById("aivaultApp");frame.src=frame.dataset.src;}});</script></body>
+<noscript><style>html{visibility:visible!important}</style>請啟用 JavaScript 以使用曙光劇場。</noscript>
+<div class="app-shell">
+<header class="masthead"><a class="brand" href="aivault-home.html" aria-label="曙光劇場首頁"><span class="brand-mark" aria-hidden="true">✦</span><span>曙光劇場<small>AIVAULT ORIGINALS</small></span></a><a class="ai-pill" href="aivault-digital-human.html?avatar=dawn-male"><span id="homeDawnOrb" data-size="36" title="曙光小太陽動畫" aria-hidden="true"></span> 找曙光聊聊 <span aria-hidden="true">↗</span></a></header>
+<main id="main">
+<section id="home-view" aria-label="首頁">
+<div class="feed-bar"><div class="feed-tabs" role="tablist" aria-label="首頁內容分類"><button id="tab-following" role="tab" aria-selected="false" aria-controls="feed-panel" tabindex="-1" data-feed="following">關注</button><button id="tab-comic" role="tab" aria-selected="true" aria-controls="feed-panel" data-feed="comic">漫劇</button><button id="tab-live" role="tab" aria-selected="false" aria-controls="feed-panel" tabindex="-1" data-feed="live">真人劇</button><button id="tab-recommended" role="tab" aria-selected="false" aria-controls="feed-panel" tabindex="-1" data-feed="recommended">推薦</button></div><button class="icon-button" id="open-search" aria-label="搜尋作品"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.1 16.1 4.8 4.8"/></svg></button></div>
+<div id="feed-panel" role="tabpanel" aria-labelledby="tab-comic" tabindex="0">
+<div class="stage" id="stage"><div class="stage-grain" aria-hidden="true"></div><div class="stage-top"><span class="eyebrow" id="stage-label">DAWN · COMIC THEATER</span><span class="outline-badge">即將開映</span></div><div class="orbital" aria-hidden="true"><div class="sun"></div><div class="horizon"></div><span class="orbit-star star-one">✦</span><span class="orbit-star star-two">✧</span></div><div class="stage-copy"><span class="chapter">第一個故事，從這裡開始</span><h1 id="stage-title">讓想像，<br>成為下一幕。</h1><p id="stage-description">曙光漫劇片庫籌備中<br>第一部作品上架後，就能在這裡觀看。</p><button id="stage-action" class="primary-button">認識曙光 AI <span aria-hidden="true">↗</span></button></div><div class="stage-footer"><span><i></i> 漫劇準備中</span><span>原創 · 授權改編</span></div></div>
+<div class="below-stage"><div><span class="section-kicker">NEXT CHAPTER</span><h2 id="section-title">好故事，值得等待</h2><p id="section-description">從原創故事，到未來的授權小說漫劇。</p></div><span class="page-counter" aria-hidden="true">01 / ∞</span></div>
+<a class="ai-feature" href="aivault-home-original-dark.html"><span class="feature-symbol" aria-hidden="true">✦</span><span><strong>曙光 AI，一直都在</strong><small>進入原有 AI 中心，繼續對話與創作</small></span><span class="feature-arrow" aria-hidden="true">↗</span></a>
+</div></section>
+<section id="theater-view" class="secondary-view" aria-labelledby="theater-title" hidden><span class="section-kicker">THE COLLECTION</span><h1 id="theater-title">劇場</h1><p class="muted">收藏每一個值得追下去的故事。</p><div class="collection-filters" role="group" aria-label="劇場分類"><button class="selected" aria-pressed="true" data-category="all">全部</button><button aria-pressed="false" data-category="comic">漫劇</button><button aria-pressed="false" data-category="live">真人劇</button></div><div class="empty-state"><span aria-hidden="true">▤</span><h2 id="collection-title">第一部作品，準備中</h2><p>目前尚無上架作品。<br>作品發布後，會出現在這裡。</p><button class="subtle-button" data-view="home">回到首頁</button></div></section>
+<section id="mine-view" class="secondary-view" aria-labelledby="mine-title" hidden><span class="section-kicker">YOUR SPACE</span><h1 id="mine-title">我的</h1><p class="muted">你的 AI 與創作入口。</p><div class="account-card"><span class="account-avatar" aria-hidden="true">✦</span><div><strong id="account-name">AIVAULT 使用者</strong><small>歡迎來到曙光劇場</small></div></div><div class="menu-list"><a href="aivault-home-original-dark.html">AI 中心與專門模型 <span>↗</span></a><a href="aivault-digital-human.html?avatar=dawn-male">曙光數字人 <span>↗</span></a><a href="aivault-dark-star-digital-human.html">暗星數字人 <span>↗</span></a><a href="../media.html">數字人與短影片創作 <span>↗</span></a><a href="aivault-town.html">AI 協作城 <span>↗</span></a></div><p class="footnote">曙光與暗星原有角色、動畫及模型入口持續保留。</p></section>
+</main>
+<nav class="bottom-nav" aria-label="主要導覽"><button class="active" data-view="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/></svg><span>首頁</span></button><button data-view="theater"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 9 5 3-5 3Z"/></svg><span>劇場</span></button><a class="nav-ai" href="aivault-digital-human.html?avatar=dawn-male"><span class="nav-spark" aria-hidden="true">✦</span><span>曙光 AI</span></a><button data-view="mine"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg><span>我的</span></button></nav>
+</div>
+<dialog id="search-dialog" aria-labelledby="search-title"><form id="search-form"><div class="search-top"><button type="button" class="icon-button" id="close-search" aria-label="關閉搜尋">‹</button><label class="search-field"><span class="sr-only" id="search-title">搜尋作品</span><input id="search-input" type="search" placeholder="搜尋劇名、題材" maxlength="120" autocomplete="off"></label><button type="submit" class="search-submit">搜尋</button></div><div class="search-body"><span class="section-kicker">FIND YOUR NEXT STORY</span><h2>找一個喜歡的故事</h2><p id="search-result" role="status">片庫籌備中，上架後即可搜尋作品。</p><div class="search-note">想先聊聊故事？<a href="aivault-digital-human.html?avatar=dawn-male">找曙光 AI ↗</a></div></div></form></dialog>
+</body>
 </html>
