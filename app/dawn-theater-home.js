@@ -9,6 +9,9 @@
     following: { label: 'DAWN · FOLLOWING', title: '喜歡的創作，\n值得一直追。', description: '目前尚無可關注的創作者\n創作者與作品上架後，就能在這裡發現。', chapter: '與喜歡的故事，再靠近一點', footer: '關注內容準備中', section: '與創作者，一起期待', detail: '未來可在這裡追蹤創作者與作品更新。' }
   };
   const video = $('#home-video');
+  video.defaultMuted = false;
+  video.muted = false;
+  video.volume = 1;
   let authorized = false;
   let activeFeed = 'comic';
   let activeView = 'home';
@@ -18,18 +21,19 @@
     if (!wantedVideo()) { video.pause(); return; }
     if (!video.getAttribute('src')) video.src = video.dataset.src;
     if (!userPaused) video.play().catch(() => {
-      $('#video-status').textContent = '自動播放未啟動，請點一下播放。';
+      $('#video-status').textContent = '瀏覽器需要你點一下，才能有聲播放。';
+      $('#video-retry').textContent = '▶ 點一下有聲播放';
       $('#video-retry').hidden = false;
     });
   }
-  video.addEventListener('playing', () => { $('#video-status').textContent = video.muted ? '播放中 · 點「開啟聲音」收聽' : '播放中 · 聲音已開啟'; $('#video-retry').hidden = true; userPaused = false; });
+  video.addEventListener('playing', () => { $('#video-status').textContent = video.muted ? '已靜音 · 點「開聲播放」恢復聲音' : '播放中 · 聲音已開啟'; $('#video-retry').hidden = true; userPaused = false; });
   video.addEventListener('pause', () => { if (wantedVideo() && !video.ended) { userPaused = true; $('#video-status').textContent = '已暫停，點影片播放鍵繼續。'; } });
   video.addEventListener('waiting', () => { $('#video-status').textContent = '影片緩衝中，請稍候…'; });
   video.addEventListener('error', () => { $('#video-status').textContent = '外部片源暫時無法載入，請重試。'; $('#video-retry').hidden = false; });
   video.addEventListener('ended', () => { $('#video-status').textContent = '本片已播放完畢，目前僅一部測試片。'; $('#video-retry').textContent = '重新播放'; $('#video-retry').hidden = false; userPaused = true; });
-  video.addEventListener('volumechange', () => { $('#video-sound').textContent = video.muted ? '開啟聲音' : '靜音'; $('#video-sound').setAttribute('aria-pressed', String(!video.muted)); if (!video.paused) $('#video-status').textContent = video.muted ? '播放中 · 點「開啟聲音」收聽' : '播放中 · 聲音已開啟'; });
-  $('#video-sound').addEventListener('click', () => { video.muted = !video.muted; if (video.paused) { userPaused = false; syncVideo(); } });
-  $('#video-retry').addEventListener('click', () => { if (video.error) video.load(); if (video.ended) video.currentTime = 0; userPaused = false; syncVideo(); });
+  video.addEventListener('volumechange', () => { if (!video.paused) $('#video-status').textContent = video.muted || video.volume === 0 ? '已靜音 · 點「開聲播放」恢復聲音' : '播放中 · 聲音已開啟'; });
+  $('#video-sound').addEventListener('click', () => { video.muted = false; video.volume = 1; userPaused = false; syncVideo(); });
+  $('#video-retry').addEventListener('click', () => { video.muted = false; video.volume = 1; if (video.error) video.load(); if (video.ended) video.currentTime = 0; userPaused = false; syncVideo(); });
   $('#video-fullscreen').addEventListener('click', () => {
     const enter = video.requestFullscreen ? video.requestFullscreen() : video.webkitEnterFullscreen ? video.webkitEnterFullscreen() : null;
     if (enter && enter.catch) enter.catch(() => { $('#video-status').textContent = '請使用影片控制列的全螢幕按鈕。'; });
