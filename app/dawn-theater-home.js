@@ -12,22 +12,24 @@
   video.defaultMuted = false;
   video.muted = false;
   video.volume = 1;
+  video.controls = false;
   let authorized = false;
   let activeFeed = 'comic';
   let activeView = 'home';
   let userPaused = false;
+  function updateLayout() { document.body.classList.toggle('immersive', activeView === 'home' && ['comic', 'recommended'].includes(activeFeed)); }
   function wantedVideo() { return authorized && activeView === 'home' && ['comic', 'recommended'].includes(activeFeed) && !document.hidden && !$('#search-dialog').open; }
   function syncVideo() {
     if (!wantedVideo()) { video.pause(); return; }
     if (!video.getAttribute('src')) video.src = video.dataset.src;
     if (!userPaused) video.play().catch(() => {
       $('#video-status').textContent = '瀏覽器需要你點一下，才能有聲播放。';
-      $('#video-retry').textContent = '▶ 點一下有聲播放';
+      $('#video-retry').textContent = '▶ 輕觸畫面有聲播放';
       $('#video-retry').hidden = false;
     });
   }
   video.addEventListener('playing', () => { $('#video-status').textContent = video.muted ? '已靜音 · 點「開聲播放」恢復聲音' : '播放中 · 聲音已開啟'; $('#video-retry').hidden = true; userPaused = false; });
-  video.addEventListener('pause', () => { if (wantedVideo() && !video.ended) { userPaused = true; $('#video-status').textContent = '已暫停，點影片播放鍵繼續。'; } });
+  video.addEventListener('pause', () => { if (wantedVideo() && !video.ended) { userPaused = true; $('#video-status').textContent = '已暫停，輕觸畫面繼續。'; } });
   video.addEventListener('waiting', () => { $('#video-status').textContent = '影片緩衝中，請稍候…'; });
   video.addEventListener('error', () => { $('#video-status').textContent = '外部片源暫時無法載入，請重試。'; $('#video-retry').hidden = false; });
   video.addEventListener('ended', () => { $('#video-status').textContent = '本片已播放完畢，目前僅一部測試片。'; $('#video-retry').textContent = '重新播放'; $('#video-retry').hidden = false; userPaused = true; });
@@ -35,9 +37,45 @@
   $('#video-sound').addEventListener('click', () => { video.muted = false; video.volume = 1; userPaused = false; syncVideo(); });
   $('#video-retry').addEventListener('click', () => { video.muted = false; video.volume = 1; if (video.error) video.load(); if (video.ended) video.currentTime = 0; userPaused = false; syncVideo(); });
   $('#video-fullscreen').addEventListener('click', () => {
-    const enter = video.requestFullscreen ? video.requestFullscreen() : video.webkitEnterFullscreen ? video.webkitEnterFullscreen() : null;
-    if (enter && enter.catch) enter.catch(() => { $('#video-status').textContent = '請使用影片控制列的全螢幕按鈕。'; });
+    video.controls = true;
+    try {
+      const enter = video.requestFullscreen ? video.requestFullscreen() : video.webkitEnterFullscreen ? video.webkitEnterFullscreen() : null;
+      if (!video.requestFullscreen && !video.webkitEnterFullscreen) { video.controls = false; $('#video-status').textContent = '此瀏覽器不支援全螢幕，可切換滿版裁切觀看。'; }
+      if (enter && enter.catch) enter.catch(() => { video.controls = false; $('#video-status').textContent = '此瀏覽器目前無法進入全螢幕，可使用滿版裁切觀看。'; });
+    } catch (_) { video.controls = false; $('#video-status').textContent = '目前無法進入全螢幕，可使用滿版裁切觀看。'; }
   });
+  document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) video.controls = false; });
+  video.addEventListener('webkitendfullscreen', () => { video.controls = false; });
+  function togglePlayback() {
+    if (video.paused || video.ended) { if (video.ended) video.currentTime = 0; userPaused = false; syncVideo(); }
+    else { userPaused = true; video.pause(); }
+  }
+  $('#video-toggle').addEventListener('click', togglePlayback);
+  video.addEventListener('click', togglePlayback);
+  function updatePlaybackButton() {
+    const label = video.paused ? '播放' : '暫停';
+    const small = document.createElement('small'); small.textContent = label;
+    $('#video-toggle').replaceChildren(document.createTextNode(video.paused ? '▶' : 'Ⅱ'), small);
+    $('#video-toggle').setAttribute('aria-label', label + '影片');
+  }
+  video.addEventListener('play', updatePlaybackButton);
+  video.addEventListener('pause', updatePlaybackButton);
+  $('#video-fit').addEventListener('click', () => {
+    const cover = $('#video-feature').classList.toggle('is-cover');
+    $('#video-fit').setAttribute('aria-pressed', String(cover));
+    $('#video-fit small').textContent = cover ? '完整畫面' : '滿版裁切';
+  });
+  function clock(seconds) { if (!Number.isFinite(seconds)) return '00:00'; return Math.floor(seconds / 60).toString().padStart(2, '0') + ':' + Math.floor(seconds % 60).toString().padStart(2, '0'); }
+  function updateTime() {
+    const duration = Number.isFinite(video.duration) ? video.duration : 596.48;
+    $('#video-seek').max = String(duration);
+    $('#video-seek').value = String(video.currentTime);
+    $('#video-clock').textContent = clock(video.currentTime) + ' / ' + clock(duration);
+    $('#video-seek').setAttribute('aria-valuetext', clock(video.currentTime) + '，共 ' + clock(duration));
+  }
+  video.addEventListener('timeupdate', updateTime);
+  video.addEventListener('loadedmetadata', updateTime);
+  $('#video-seek').addEventListener('input', () => { if (Number.isFinite(video.duration)) video.currentTime = Math.min(video.duration, Number($('#video-seek').value)); });
   document.addEventListener('visibilitychange', syncVideo);
   window.addEventListener('pagehide', () => video.pause());
   window.addEventListener('pageshow', syncVideo);
@@ -46,6 +84,7 @@
     const copy = feedCopy[key];
     if (!copy) return;
     activeFeed = key;
+    updateLayout();
     const hasVideo = ['comic', 'recommended'].includes(key);
     $('#video-feature').hidden = !hasVideo;
     $('#stage').hidden = hasVideo;
@@ -76,6 +115,7 @@
   function showView(view) {
     if (!['home', 'theater', 'mine'].includes(view)) view = 'home';
     activeView = view;
+    updateLayout();
     ['home', 'theater', 'mine'].forEach((name) => { $('#' + name + '-view').hidden = name !== view; });
     document.querySelectorAll('.bottom-nav button').forEach((button) => {
       const active = button.dataset.view === view; button.classList.toggle('active', active);
