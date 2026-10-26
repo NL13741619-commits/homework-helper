@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
+<script>
+(function () {
+ const params = new URLSearchParams(location.search);
+ if (!params.has('next') && params.get('auth') !== '1') location.replace(new URL('app/aivault-home.html', location.href).href);
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0c0a08">
