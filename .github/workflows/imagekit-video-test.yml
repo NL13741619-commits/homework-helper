@@ -1,0 +1,72 @@
+name: ImageKit Video Storage Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-imagekit-video-storage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify ImageKit private key secret exists
+        shell: bash
+        env:
+          IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${IMAGEKIT_PRIVATE_KEY:-}" ]; then
+            echo "ERROR: IMAGEKIT_PRIVATE_KEY is not configured."
+            exit 1
+          fi
+          echo "IMAGEKIT_PRIVATE_KEY is configured."
+
+      - name: Create tiny test video
+        shell: bash
+        run: |
+          set -euo pipefail
+          ffmpeg -f lavfi -i color=c=black:s=320x240:d=1 -an -c:v libx264 -pix_fmt yuv420p /tmp/dawn-imagekit-test.mp4 -y -loglevel error
+          test -s /tmp/dawn-imagekit-test.mp4
+          echo "Created test MP4: $(stat -c%s /tmp/dawn-imagekit-test.mp4) bytes"
+
+      - name: Upload video to ImageKit
+        id: upload
+        shell: bash
+        env:
+          IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          HTTP_CODE=$(curl --silent --show-error \
+            --output /tmp/imagekit-response.json \
+            --write-out '%{http_code}' \
+            --request POST 'https://upload.imagekit.io/api/v1/files/upload' \
+            --user "${IMAGEKIT_PRIVATE_KEY}:" \
+            --form 'file=@/tmp/dawn-imagekit-test.mp4;type=video/mp4' \
+            --form "fileName=dawn-second-base-test-${GITHUB_RUN_ID}.mp4" \
+            --form 'folder=/dawn-second-base/tests')
+
+          echo "ImageKit HTTP status: ${HTTP_CODE}"
+          if [ "${HTTP_CODE}" -lt 200 ] || [ "${HTTP_CODE}" -ge 300 ]; then
+            echo "ImageKit upload failed. Safe response follows (credentials are not printed):"
+            cat /tmp/imagekit-response.json
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import json
+          with open('/tmp/imagekit-response.json', encoding='utf-8') as f:
+              data = json.load(f)
+          required = ['fileId', 'name', 'url']
+          missing = [k for k in required if not data.get(k)]
+          if missing:
+              raise SystemExit('Upload response missing: ' + ', '.join(missing))
+          print('UPLOAD_OK=true')
+          print('fileId=' + data['fileId'])
+          print('name=' + data['name'])
+          print('url=' + data['url'])
+          PY
+
+      - name: Test result
+        run: echo 'ImageKit video storage test PASSED.'
