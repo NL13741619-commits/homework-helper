@@ -8,10 +8,43 @@
     recommended: { label: 'DAWN · FOR YOU', title: '下一個喜歡，\n在這裡相遇。', description: '目前尚無上架作品\n片庫建立後，這裡會呈現推薦內容。', chapter: '為好奇心，留一個位置', footer: '推薦內容準備中', section: '新的故事，即將相遇', detail: '推薦內容會隨正式上架作品逐步增加。' },
     following: { label: 'DAWN · FOLLOWING', title: '喜歡的創作，\n值得一直追。', description: '目前尚無可關注的創作者\n創作者與作品上架後，就能在這裡發現。', chapter: '與喜歡的故事，再靠近一點', footer: '關注內容準備中', section: '與創作者，一起期待', detail: '未來可在這裡追蹤創作者與作品更新。' }
   };
+  const video = $('#home-video');
+  let authorized = false;
+  let activeFeed = 'comic';
+  let activeView = 'home';
+  let userPaused = false;
+  function wantedVideo() { return authorized && activeView === 'home' && ['comic', 'recommended'].includes(activeFeed) && !document.hidden && !$('#search-dialog').open; }
+  function syncVideo() {
+    if (!wantedVideo()) { video.pause(); return; }
+    if (!video.getAttribute('src')) video.src = video.dataset.src;
+    if (!userPaused) video.play().catch(() => {
+      $('#video-status').textContent = '自動播放未啟動，請點一下播放。';
+      $('#video-retry').hidden = false;
+    });
+  }
+  video.addEventListener('playing', () => { $('#video-status').textContent = video.muted ? '播放中 · 點「開啟聲音」收聽' : '播放中 · 聲音已開啟'; $('#video-retry').hidden = true; userPaused = false; });
+  video.addEventListener('pause', () => { if (wantedVideo() && !video.ended) { userPaused = true; $('#video-status').textContent = '已暫停，點影片播放鍵繼續。'; } });
+  video.addEventListener('waiting', () => { $('#video-status').textContent = '影片緩衝中，請稍候…'; });
+  video.addEventListener('error', () => { $('#video-status').textContent = '外部片源暫時無法載入，請重試。'; $('#video-retry').hidden = false; });
+  video.addEventListener('ended', () => { $('#video-status').textContent = '本片已播放完畢，目前僅一部測試片。'; $('#video-retry').textContent = '重新播放'; $('#video-retry').hidden = false; userPaused = true; });
+  video.addEventListener('volumechange', () => { $('#video-sound').textContent = video.muted ? '開啟聲音' : '靜音'; $('#video-sound').setAttribute('aria-pressed', String(!video.muted)); if (!video.paused) $('#video-status').textContent = video.muted ? '播放中 · 點「開啟聲音」收聽' : '播放中 · 聲音已開啟'; });
+  $('#video-sound').addEventListener('click', () => { video.muted = !video.muted; if (video.paused) { userPaused = false; syncVideo(); } });
+  $('#video-retry').addEventListener('click', () => { if (video.error) video.load(); if (video.ended) video.currentTime = 0; userPaused = false; syncVideo(); });
+  $('#video-fullscreen').addEventListener('click', () => {
+    const enter = video.requestFullscreen ? video.requestFullscreen() : video.webkitEnterFullscreen ? video.webkitEnterFullscreen() : null;
+    if (enter && enter.catch) enter.catch(() => { $('#video-status').textContent = '請使用影片控制列的全螢幕按鈕。'; });
+  });
+  document.addEventListener('visibilitychange', syncVideo);
+  window.addEventListener('pagehide', () => video.pause());
+  window.addEventListener('pageshow', syncVideo);
   const tabs = Array.from(document.querySelectorAll('[data-feed]'));
   function selectFeed(key) {
     const copy = feedCopy[key];
     if (!copy) return;
+    activeFeed = key;
+    const hasVideo = ['comic', 'recommended'].includes(key);
+    $('#video-feature').hidden = !hasVideo;
+    $('#stage').hidden = hasVideo;
     tabs.forEach((tab) => { const active = tab.dataset.feed === key; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });
     $('#feed-panel').setAttribute('aria-labelledby', 'tab-' + key);
     $('#stage-label').textContent = copy.label;
@@ -20,8 +53,9 @@
     $('.chapter').textContent = copy.chapter;
     const indicator = document.createElement('i');
     $('.stage-footer span').replaceChildren(indicator, document.createTextNode(' ' + copy.footer));
-    $('#section-title').textContent = copy.section;
-    $('#section-description').textContent = copy.detail;
+    $('#section-title').textContent = hasVideo ? '第一部測試動畫，開始播放' : copy.section;
+    $('#section-description').textContent = hasVideo ? '先試看完整動畫，未來逐步增加原創與授權漫劇。' : copy.detail;
+    syncVideo();
   }
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => selectFeed(tab.dataset.feed));
@@ -37,31 +71,42 @@
   });
   function showView(view) {
     if (!['home', 'theater', 'mine'].includes(view)) view = 'home';
+    activeView = view;
     ['home', 'theater', 'mine'].forEach((name) => { $('#' + name + '-view').hidden = name !== view; });
     document.querySelectorAll('.bottom-nav button').forEach((button) => {
       const active = button.dataset.view === view; button.classList.toggle('active', active);
       if (active) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
+    syncVideo();
   }
   document.querySelectorAll('[data-view]').forEach((button) => button.addEventListener('click', () => { showView(button.dataset.view); location.hash = button.dataset.view; }));
   document.querySelectorAll('[data-category]').forEach((button) => button.addEventListener('click', () => {
     document.querySelectorAll('[data-category]').forEach((item) => { const active = item === button; item.classList.toggle('selected', active); item.setAttribute('aria-pressed', String(active)); });
+    $('#sample-card').hidden = button.dataset.category === 'live';
+    $('#collection-empty').hidden = button.dataset.category !== 'live';
     $('#collection-title').textContent = { all: '第一部作品，準備中', comic: '漫劇作品，準備中', live: '真人劇作品，準備中' }[button.dataset.category];
   }));
   window.addEventListener('hashchange', () => showView(location.hash.slice(1)));
   showView(location.hash.slice(1));
   $('#stage-action').addEventListener('click', () => { location.href = 'aivault-digital-human.html?avatar=dawn-male'; });
   const dialog = $('#search-dialog');
-  $('#open-search').addEventListener('click', () => { dialog.showModal(); $('#search-input').focus(); });
+  $('#open-search').addEventListener('click', () => { dialog.showModal(); syncVideo(); $('#search-input').focus(); });
+  dialog.addEventListener('close', syncVideo);
   $('#close-search').addEventListener('click', () => dialog.close());
   $('#search-form').addEventListener('submit', (event) => {
     event.preventDefault();
     const query = $('#search-input').value.trim();
-    $('#search-result').textContent = query ? '目前沒有符合「' + query + '」的作品。片庫尚在籌備中，作品上架後即可搜尋。' : '請輸入劇名或題材；目前片庫尚在籌備中。';
+    const found = !query || /big|buck|bunny|大雄兔|兔|動畫|喜劇/i.test(query);
+    $('#search-sample').hidden = !found;
+    $('#search-result').textContent = found ? '找到 1 部公開授權測試動畫。' : '目前沒有符合「' + query + '」的作品。';
   });
+  ['#sample-card', '#search-sample'].forEach((selector) => $(selector).addEventListener('click', () => { dialog.close(); selectFeed('comic'); showView('home'); userPaused = false; syncVideo(); }));
   if (window.AIVAULT_AUTH_READY) window.AIVAULT_AUTH_READY.then((client) => {
-    if (!client || !window.AIVAULT_USER) return;
+    if (!client) return;
+    authorized = true;
+    syncVideo();
+    if (!window.AIVAULT_USER) return;
     const user = window.AIVAULT_USER;
     $('#account-name').textContent = user.user_metadata?.display_name || user.user_metadata?.full_name || 'AIVAULT 使用者';
   });
