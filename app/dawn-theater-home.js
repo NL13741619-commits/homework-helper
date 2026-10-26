@@ -13,12 +13,12 @@
   video.muted = false;
   video.volume = 1;
   video.controls = false;
-  let authorized = false;
+  let playbackReady = false;
   let activeFeed = 'comic';
   let activeView = 'home';
   let userPaused = false;
   function updateLayout() { document.body.classList.toggle('immersive', activeView === 'home' && ['comic', 'recommended'].includes(activeFeed)); }
-  function wantedVideo() { return authorized && activeView === 'home' && ['comic', 'recommended'].includes(activeFeed) && !document.hidden && !$('#search-dialog').open; }
+  function wantedVideo() { return playbackReady && activeView === 'home' && ['comic', 'recommended'].includes(activeFeed) && !document.hidden && !$('#search-dialog').open; }
   function syncVideo() {
     if (!wantedVideo()) { video.pause(); return; }
     if (!video.getAttribute('src')) video.src = video.dataset.src;
@@ -155,12 +155,18 @@
     $('#search-result').textContent = found ? '找到 1 部公開授權測試動畫。' : '目前沒有符合「' + query + '」的作品。';
   });
   ['#sample-card', '#search-sample'].forEach((selector) => $(selector).addEventListener('click', () => { dialog.close(); selectFeed('comic'); showView('home'); userPaused = false; syncVideo(); }));
-  if (window.AIVAULT_AUTH_READY) window.AIVAULT_AUTH_READY.then((client) => {
-    if (!client) return;
-    authorized = true;
+  function updateAccount(user) {
+    $('#account-name').textContent = user ? (user.user_metadata?.display_name || user.user_metadata?.full_name || 'AIVAULT 使用者') : '未註冊';
+    $('#account-caption').textContent = user ? '已登入 · 歡迎來到曙光劇場' : '訪客模式 · 可直接觀看';
+    $('#account-login').hidden = !!user;
+  }
+  window.addEventListener('dawn-account-change', (event) => updateAccount(event.detail));
+  updateAccount(window.AIVAULT_USER);
+  if (window.AIVAULT_AUTH_READY) window.AIVAULT_AUTH_READY.then(() => updateAccount(window.AIVAULT_USER));
+  if (window.DarkStarOrb) window.DarkStarOrb.mount($('#introDawnOrb'), { size: 64, theme: 'dawn' });
+  setTimeout(() => {
+    $('#theater-intro').hidden = true;
+    playbackReady = true;
     syncVideo();
-    if (!window.AIVAULT_USER) return;
-    const user = window.AIVAULT_USER;
-    $('#account-name').textContent = user.user_metadata?.display_name || user.user_metadata?.full_name || 'AIVAULT 使用者';
-  });
+  }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 120 : 700);
 })();
