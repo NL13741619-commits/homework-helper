@@ -15,7 +15,7 @@ body.immersive{overflow:hidden;background:#000}
 .immersive .video-frame{position:absolute;inset:0;aspect-ratio:auto;background:#08090c}
 .immersive .video-backdrop{display:block;position:absolute;inset:-30px;background:linear-gradient(#0007,#0007),url('assets/theater/big-buck-bunny-poster.jpg') center/cover;filter:blur(22px);opacity:.65}
 .immersive .video-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(#0009 0%,transparent 28%,transparent 52%,#0009 74%,#000e 100%);pointer-events:none}
-.immersive .video-frame video{position:relative;width:100%;height:100%;object-fit:contain}.immersive .video-feature.is-cover video{object-fit:cover}
+.immersive .video-frame video{position:relative;width:100%;height:100%;object-fit:contain}
 .immersive .video-label{top:calc(123px + env(safe-area-inset-top));left:20px;font-size:9px;z-index:1}
 .immersive .video-play-overlay{z-index:3;font-size:13px;background:#0009;color:#fff;border-color:#fff5;backdrop-filter:blur(10px)}
 .immersive .video-details{position:absolute;z-index:2;bottom:calc(155px + env(safe-area-inset-bottom));left:20px;right:75px;padding:0;text-shadow:0 1px 5px #000}.immersive .video-details>.section-kicker,.immersive .video-tags{display:none}.immersive .video-details h1{font-size:21px;color:#fff;margin:0 0 8px;line-height:1.25}.immersive .video-details>p{font-size:11px;margin:6px 0;color:#ddd}.immersive .video-details .video-synopsis{display:none}.immersive .video-license{margin:9px 0 0;border:0;padding:0;font-size:10px;color:#ccc}.immersive .video-license[open]{padding:12px;background:#111e;border:1px solid #fff2;border-radius:10px;max-height:34svh;overflow:auto;backdrop-filter:blur(15px)}
@@ -26,3 +26,19 @@ body.immersive{overflow:hidden;background:#000}
 .immersive .below-stage,.immersive .ai-feature{display:none}.immersive .bottom-nav{background:#08090bc9;border-color:#fff1;backdrop-filter:blur(15px)}
 @media(max-width:360px){.immersive .masthead{padding-left:14px;padding-right:14px}.immersive .feed-bar{padding-left:14px;padding-right:14px}.immersive .feed-tabs{gap:16px}.immersive .video-details{left:16px}.immersive .video-details h1{font-size:19px}}
 @media(max-height:650px){.immersive .video-details{bottom:calc(145px + env(safe-area-inset-bottom))}.immersive .video-details>p{display:none}.immersive .player-rail{bottom:calc(170px + env(safe-area-inset-bottom))}.immersive .playback-row{top:calc(140px + env(safe-area-inset-top))}}
+
+#home-video:fullscreen{width:100%;height:100%;object-fit:contain!important;background:#000}#home-video:-webkit-full-screen{width:100%;height:100%;object-fit:contain!important;background:#000}
+@media(orientation:landscape){
+ body.immersive .app-shell{max-width:none;width:100vw;height:100dvh}
+ .immersive .video-feature{left:0;transform:none;max-width:none;width:100vw;height:100dvh;border:0;border-radius:0}
+ .immersive .masthead,.immersive .feed-bar,.immersive .bottom-nav,.immersive .video-details,.immersive .playback-row,.immersive .video-label{display:none}
+ .immersive .video-frame{border:0;border-radius:0}
+ .immersive .video-frame:after{background:linear-gradient(transparent 65%,#0007)}
+ .immersive .player-timeline{bottom:calc(12px + env(safe-area-inset-bottom));left:max(20px,env(safe-area-inset-left));right:max(20px,env(safe-area-inset-right))}
+ .immersive .playback-actions{bottom:calc(47px + env(safe-area-inset-bottom));left:auto;right:max(20px,env(safe-area-inset-right));border:0}
+ .immersive .episode-label{display:none}
+ .immersive .player-rail{bottom:calc(53px + env(safe-area-inset-bottom));left:max(20px,env(safe-area-inset-left));right:auto;gap:0}
+ .immersive #video-fit{display:none}
+ .immersive .player-rail button{min-height:44px;width:44px;font-size:22px}
+ .immersive .player-rail small{display:none}
+}
