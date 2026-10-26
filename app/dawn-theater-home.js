@@ -36,14 +36,28 @@
   video.addEventListener('volumechange', () => { if (!video.paused) $('#video-status').textContent = video.muted || video.volume === 0 ? '已靜音 · 點「開聲播放」恢復聲音' : '播放中 · 聲音已開啟'; });
   $('#video-sound').addEventListener('click', () => { video.muted = false; video.volume = 1; userPaused = false; syncVideo(); });
   $('#video-retry').addEventListener('click', () => { video.muted = false; video.volume = 1; if (video.error) video.load(); if (video.ended) video.currentTime = 0; userPaused = false; syncVideo(); });
-  $('#video-fullscreen').addEventListener('click', () => {
+  function enterFullscreen(automatic = false) {
     video.controls = true;
     try {
       const enter = video.requestFullscreen ? video.requestFullscreen() : video.webkitEnterFullscreen ? video.webkitEnterFullscreen() : null;
-      if (!video.requestFullscreen && !video.webkitEnterFullscreen) { video.controls = false; $('#video-status').textContent = '此瀏覽器不支援全螢幕，可切換滿版裁切觀看。'; }
-      if (enter && enter.catch) enter.catch(() => { video.controls = false; $('#video-status').textContent = '此瀏覽器目前無法進入全螢幕，可使用滿版裁切觀看。'; });
-    } catch (_) { video.controls = false; $('#video-status').textContent = '目前無法進入全螢幕，可使用滿版裁切觀看。'; }
-  });
+      if (!video.requestFullscreen && !video.webkitEnterFullscreen) { video.controls = false; if (!automatic) $('#video-status').textContent = '此瀏覽器不支援全螢幕，請旋轉手機，以完整比例觀看。'; }
+      if (enter && enter.catch) enter.catch(() => { video.controls = false; if (!automatic) $('#video-status').textContent = '此瀏覽器目前無法進入全螢幕，請旋轉手機，以完整比例觀看。'; });
+    } catch (_) { video.controls = false; if (!automatic) $('#video-status').textContent = '目前無法進入全螢幕，請旋轉手機，以完整比例觀看。'; }
+  }
+  $('#video-fullscreen').addEventListener('click', () => enterFullscreen(false));
+  $('#video-fit').addEventListener('click', () => enterFullscreen(false));
+  const landscapePlayback = window.matchMedia('(orientation: landscape) and (max-height: 600px)');
+  let automaticFullscreenAttempted = false;
+  function tryLandscapeFullscreen() {
+    if (!landscapePlayback.matches || !wantedVideo() || video.readyState < 1 || document.fullscreenElement || automaticFullscreenAttempted) return;
+    automaticFullscreenAttempted = true;
+    enterFullscreen(true);
+  }
+  const onOrientationChange = () => { automaticFullscreenAttempted = false; tryLandscapeFullscreen(); };
+  if (landscapePlayback.addEventListener) landscapePlayback.addEventListener('change', onOrientationChange);
+  else landscapePlayback.addListener(onOrientationChange);
+  video.addEventListener('loadedmetadata', tryLandscapeFullscreen);
+  video.addEventListener('playing', tryLandscapeFullscreen);
   document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) video.controls = false; });
   video.addEventListener('webkitendfullscreen', () => { video.controls = false; });
   function togglePlayback() {
@@ -60,11 +74,6 @@
   }
   video.addEventListener('play', updatePlaybackButton);
   video.addEventListener('pause', updatePlaybackButton);
-  $('#video-fit').addEventListener('click', () => {
-    const cover = $('#video-feature').classList.toggle('is-cover');
-    $('#video-fit').setAttribute('aria-pressed', String(cover));
-    $('#video-fit small').textContent = cover ? '完整畫面' : '滿版裁切';
-  });
   function clock(seconds) { if (!Number.isFinite(seconds)) return '00:00'; return Math.floor(seconds / 60).toString().padStart(2, '0') + ':' + Math.floor(seconds % 60).toString().padStart(2, '0'); }
   function updateTime() {
     const duration = Number.isFinite(video.duration) ? video.duration : 596.48;
